@@ -1,0 +1,9 @@
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif; background:#fafafa; color:#111; }
+.container { max-width: 820px; margin: 24px auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+h1 { margin-top: 0; }
+label { display:block; margin: 10px 0 6px; font-weight: 600; }
+input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+textarea { min-height: 120px; }
+button { margin-top: 12px; padding: 10px 14px; border: none; border-radius: 8px; background: #111; color: #fff; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: default; }
+pre { background: #f4f4f6; border-radius: 8px; padding: 12px; overflow:auto; }
