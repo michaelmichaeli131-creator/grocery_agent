@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>סל קנייה זול לפי סופר</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>סל קנייה זול לפי סופר</h1>
+      <div class="lang">
+        <button data-lang="he">עברית</button>
+        <button data-lang="en">English</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 id="t-search">פרטי חיפוש</h2>
+      <label id="t-address">כתובת: <input id="address" placeholder="רחוב, עיר"></label>
+      <label id="t-radius">רדיוס (ק״מ): <input id="radius" type="number" value="5" min="1" max="30"></label>
+    </section>
+
+    <section class="card">
+      <h2 id="t-list">רשימת קניות</h2>
+      <div id="items"></div>
+      <div class="row">
+        <input id="newItem" placeholder="למשל: קוקה קולה" />
+        <button id="addBtn">הוסף</button>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="searchBtn">מצא את הסל הזול</button>
+    </div>
+
+    <section id="results" class="card" hidden></section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
