@@ -31,4 +31,6 @@ jobs:
         with:
           project: "michaelmich-grocery-age-67"
           entrypoint: "main.ts"
-          root: "grocery_agent"
+          root: "."
+          
+          
