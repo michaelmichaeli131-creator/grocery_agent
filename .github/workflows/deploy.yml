@@ -24,7 +24,7 @@ jobs:
           deno-version: v2.x
 
       - name: Build step
-        run: "deno task build"
+        run: "deno run -A https://deno.land/x/fresh@1.6.8/scripts/build.ts"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
