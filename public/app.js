@@ -2,15 +2,15 @@ const $ = (s) => document.querySelector(s);
 const t = {
   he: {
     search: "פרטי חיפוש", address: "כתובת:", radius: "רדיוס (ק״מ):",
-    list: "‌رשימת קניות", add: "הוסף", find: "מצא את הסל הזול",
+    list: "רשימת קניות", add: "הוסף", find: "מצא את הסל הזול",
     example: "למשל: קוקה קולה", total: "סה״כ זול ביותר", err: "שגיאה",
-    ranking: "דירוג ראשון עד שלישי"
+    ranking: "דירוג ראשון עד שלישי", details: "פירוט הסל הזול"
   },
   en: {
     search: "Search details", address: "Address:", radius: "Radius (km):",
     list: "Shopping list", add: "Add", find: "Find the cheapest basket",
     example: "e.g. Coca-Cola", total: "Cheapest total", err: "Error",
-    ranking: "Top 3 ranking"
+    ranking: "Top 3 ranking", details: "Cheapest basket breakdown"
   }
 };
 let lang = "he";
@@ -36,7 +36,7 @@ function renderItems() {
   items.forEach((it, i) => {
     const row = document.createElement("div");
     row.className = "row";
-    row.innerHTML = `<span>${it}</span><button data-i="${i}">×</button>`;
+    row.innerHTML = `<span>${escapeHtml(it)}</span><button data-i="${i}">×</button>`;
     row.querySelector("button").onclick = () => { items.splice(i,1); renderItems(); };
     itemsEl.appendChild(row);
   });
@@ -74,29 +74,36 @@ $("#searchBtn").onclick = async () => {
 
     html += `<ol>`;
     for (const r of top3) {
-      const addr = r?.location?.address ? ` — ${r.location.address}` : "";
-      html += `<li><b>${r.shop_display_name || r.chain}</b> — ${fmt(r.total)} ₪${addr}</li>`;
+      const addr = r?.location?.address ? ` — ${escapeHtml(r.location.address)}` : "";
+      html += `<li><b>${escapeHtml(r.shop_display_name || r.chain)}</b> — ${fmt(r.total)} ₪${addr}</li>`;
     }
     html += `</ol>`;
 
     const best = top3[0];
     if (best?.breakdown?.length) {
-      html += `<details><summary>פירוט הסל הזול</summary><ul>`;
+      html += `<details open><summary>${t[lang].details}</summary><ul>`;
       for (const b of best.breakdown) {
         const price = (b.price == null || Number.isNaN(b.price)) ? "—" : fmt(b.price);
-        html += `<li>${b.item} — ${price} ${b.currency || ""}${b.link ? ` (<a href="${b.link}" target="_blank">קישור</a>)` : ""}</li>`;
+        const title = b.chosen_title || b.item;
+        const desc = b.description ? ` <span class="desc">— ${escapeHtml(b.description)}</span>` : "";
+        const sub = b.substitute ? ` <span class="badge">תחליף</span>` : "";
+        const link = b.link ? ` <a href="${b.link}" target="_blank" rel="noopener">קישור</a>` : "";
+        html += `<li>${escapeHtml(title)}${desc}${sub} — ${price} ${b.currency || ""}${link}</li>`;
       }
       html += `</ul></details>`;
     }
 
     if (warnings?.length) {
-      html += `<div class="error" style="margin-top:8px">${warnings.join("<br>")}</div>`;
+      html += `<div class="error" style="margin-top:8px">${warnings.map(escapeHtml).join("<br>")}</div>`;
     }
 
     out.innerHTML = html;
   } catch (e) {
-    out.innerHTML = `<div class="error">${t[lang].err}: ${e.message || e}</div>`;
+    out.innerHTML = `<div class="error">${t[lang].err}: ${escapeHtml(e.message || String(e))}</div>`;
   }
 };
 
 function fmt(n) { return Number(n).toFixed(2); }
+function escapeHtml(s) {
+  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}

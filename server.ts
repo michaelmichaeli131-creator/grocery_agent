@@ -1,7 +1,9 @@
-// grocery_agent/server.ts
-// שרת Deno מינימלי: מגיש סטטי מ-public/ + API ל-flow שביקשת.
+// server.ts — שרת Deno פשוט: סטטי + REST API
+// מביא סופרים קרובים (Google Places), מועמדים למחירים (SerpAPI / Google Shopping),
+// מעביר ל-LLM לאיחוד ובחירה לפי שם/תיאור, ומחזיר Top-3 ללקוח.
+// חשוב: לא "ממציאים" מחירים; ה-LLM בוחר רק מתוך מועמדים שסופקו.
 
-// בלוק dotenv ללוקאל בלבד (ב-Deno Deploy אין קובץ .env)
+// לוקאלית בלבד (ב-Deno Deploy אין .env)
 if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
   try {
     const { load } = await import("https://deno.land/std@0.201.0/dotenv/mod.ts");
@@ -13,13 +15,13 @@ const PORT = Number(Deno.env.get("PORT") ?? "8000");
 const GOOGLE_API_KEY = Deno.env.get("GOOGLE_API_KEY") ?? "";
 const SERPAPI_KEY   = Deno.env.get("SERPAPI_KEY") ?? "";
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
-const CACHE_TTL_MS  = Number(Deno.env.get("CACHE_TTL_MS") ?? "60000");   // 60s
+const CACHE_TTL_MS  = Number(Deno.env.get("CACHE_TTL_MS") ?? "60000");
 const MAX_SUPERMARKETS = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "10");
 const SERPAPI_CONCURRENCY = Number(Deno.env.get("SERPAPI_CONCURRENCY") ?? "3");
-const USE_CHP_FALLBACK = (Deno.env.get("USE_CHP_FALLBACK") ?? "0") === "1"; // כרגע hook בלבד
+const SERPAPI_MAX_CANDIDATES = Number(Deno.env.get("SERPAPI_MAX_CANDIDATES") ?? "5");
+const USE_CHP_FALLBACK = (Deno.env.get("USE_CHP_FALLBACK") ?? "0") === "1"; // hook בלבד כרגע
 
 // ---------- Utilities ----------
-type Json = Record<string, unknown>;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -48,7 +50,7 @@ function cacheSet(k: string, data: unknown, ttl = CACHE_TTL_MS) {
   memCache.set(k, { exp: Date.now() + ttl, data });
 }
 
-// ---------- Google Places: מציאת סופרים ----------
+// ---------- Google Places ----------
 const KNOWN_CHAINS = [
   // HE
   "שופרסל","רמי לוי","יינות ביתן","ויקטורי","יוחננוף","טיב טעם","סופר-פארם","סופר פארם","מגה","מחסני השוק",
@@ -57,8 +59,8 @@ const KNOWN_CHAINS = [
 ];
 
 type NearbyShop = {
-  chain: string;           // שם רשת מזוהה (נורמליזציה גסה)
-  name: string;            // שם המקום כפי שגוגל מחזיר
+  chain: string;           // נורמליזציה גסה לשם הרשת
+  name: string;            // השם כפי שחוזר מגוגל
   address?: string;        // vicinity
   lat: number; lng: number;
   place_id: string;
@@ -79,7 +81,6 @@ function normalizeChainName(name: string): string {
     "מחסני השוק":"Mahsanei Hashuk","mahsanei hashuk":"Mahsanei Hashuk",
   };
   for (const k in map) if (n.includes(k)) return map[k];
-  // אם לא זוהה: נסה להתאים לשמות מוכרים
   for (const c of KNOWN_CHAINS) if (n.includes(c.toLowerCase())) return c;
   return name;
 }
@@ -121,135 +122,176 @@ async function findNearbySupermarkets(address: string, radiusKm: number): Promis
     } as NearbyShop;
   });
 
-  // העדף רשתות מוכרות, קח עד 10
   const known = base.filter(b => KNOWN_CHAINS.some(c => b.name.toLowerCase().includes(c.toLowerCase())));
   const result = (known.length ? known : base).slice(0, MAX_SUPERMARKETS);
   cacheSet(ck, result);
   return result;
 }
 
-// ---------- SerpAPI (Google Shopping) ----------
-type PriceRow = { item: string; price: number; currency: string; title?: string; link?: string; shop?: string; source?: "serpapi"|"chp" };
+// ---------- SerpAPI / Google Shopping ----------
+type PriceCandidate = {
+  itemQuery: string;        // מה שהמשתמש ביקש (שאילתא)
+  title: string;            // שם המוצר בתוצאות
+  description?: string;     // תיאור/סניפט אם קיים
+  price: number;
+  currency: string;
+  link?: string;
+  merchant?: string;
+  source: "serpapi"|"chp";
+};
+type ChainPricing = {
+  chain: string;
+  items: {
+    query: string;
+    candidates: PriceCandidate[];
+  }[];
+};
 
-function normalizePrice(p: any): PriceRow | null {
-  const currency = p?.currency ?? p?.prices?.[0]?.currency ?? "ILS";
-  let priceNum: number | null = null;
-  if (typeof p?.extracted_price === "number") priceNum = p.extracted_price;
-  const t = p?.price ?? p?.prices?.[0]?.price ?? "";
-  if (priceNum == null && typeof t === "string") {
-    const num = Number(t.replace(/[^\d.]/g, ""));
-    if (!Number.isNaN(num)) priceNum = num;
+function _normPriceNum(anyPrice: any): number | null {
+  if (typeof anyPrice === "number") return anyPrice;
+  if (typeof anyPrice === "string") {
+    const n = Number(anyPrice.replace(/[^\d.]/g, ""));
+    if (!Number.isNaN(n)) return n;
   }
-  if (typeof t === "number") priceNum = t;
+  return null;
+}
+function _candidateFromSerp(p: any, query: string): PriceCandidate | null {
+  const priceNum =
+    (typeof p?.extracted_price === "number" && p.extracted_price) ||
+    _normPriceNum(p?.price) ||
+    _normPriceNum(p?.prices?.[0]?.price) ||
+    _normPriceNum(p?.prices?.[0]?.extracted_price);
+
   if (priceNum == null) return null;
+  const title = String(p?.title ?? "").trim();
+  const description = String(p?.snippet ?? p?.description ?? "").trim() || undefined;
+
   return {
-    item: p?.title ?? "",
+    itemQuery: query,
+    title,
+    description,
     price: priceNum,
-    currency,
-    title: p?.title,
+    currency: p?.currency ?? p?.prices?.[0]?.currency ?? "ILS",
     link: p?.link,
-    shop: p?.source ?? p?.merchant ?? p?.seller ?? "",
+    merchant: p?.source ?? p?.merchant ?? p?.seller ?? undefined,
     source: "serpapi",
   };
 }
-
-async function serpSearchItemForChain(query: string, chain: string): Promise<PriceRow | null> {
+async function serpSearchCandidatesForChain(query: string, chain: string): Promise<PriceCandidate[]> {
   if (!SERPAPI_KEY) throw new Error("Missing SERPAPI_KEY");
   const q = `${query} ${chain}`;
-  const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(q)}&hl=iw&gl=il&num=10&api_key=${SERPAPI_KEY}`;
+  const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(q)}&hl=iw&gl=il&num=20&api_key=${SERPAPI_KEY}`;
   const data = await safeJson(url);
   const products: any[] = data?.shopping_results ?? [];
-  if (!products.length) return null;
+  if (!products.length) return [];
 
-  // העדף התאמות לפי merchant/source שמכילים את שם הרשת
-  const lower = chain.toLowerCase();
-  const filtered = products.filter((p) => {
+  const lowerChain = chain.toLowerCase();
+  const preferred = products.filter((p) => {
     const m = (p?.source ?? p?.merchant ?? p?.seller ?? "").toString().toLowerCase();
-    return m.includes(lower);
+    return m.includes(lowerChain);
   });
-  const candidate = filtered[0] ?? products[0];
-  const row = normalizePrice(candidate);
-  return row;
+
+  const pool = (preferred.length ? preferred : products)
+    .map((p) => _candidateFromSerp(p, query))
+    .filter(Boolean) as PriceCandidate[];
+
+  return pool.slice(0, SERPAPI_MAX_CANDIDATES);
 }
 
-// ---------- CHP fallback (HOOK בלבד כרגע) ----------
-async function chpFallbackPrice(query: string, chain: string): Promise<PriceRow | null> {
+// CHP fallback (כרגע hook בלבד)
+async function chpFallbackPrice(_query: string, _chain: string): Promise<PriceCandidate | null> {
   if (!USE_CHP_FALLBACK) return null;
-  // TODO: לממש שאיבה מ-CHP בצורה שמותר לפי התנאים שלהם (אין API רשמי; מומלץ להשיג הרשאה/שכבת פרוקסי חוקית).
-  // כרגע מחזיר null כדי לא "להמציא" שום מחיר.
+  // TODO: לממש באופן חוקי/מאושר. כרגע לא מחזירים דבר כדי לא "להמציא".
   return null;
 }
 
-// ---------- Pricing aggregation ----------
-async function priceBasket(items: string[], chains: string[]) {
-  const result: { chain: string; total: number; breakdown: PriceRow[] }[] = [];
+async function priceBasketMulti(items: string[], chains: string[]): Promise<ChainPricing[]> {
+  const out: ChainPricing[] = chains.map((chain) => ({ chain, items: [] }));
 
-  // תור עם קונקרנציה נמוכה כדי לא להיתקע על ריבוי בקשות
-  const queue: (() => Promise<void>)[] = [];
-  const pushTask = (fn: () => Promise<void>) => queue.push(fn);
-  const runQueue = async () => {
-    const running: Promise<void>[] = [];
-    while (queue.length) {
-      while (running.length < SERPAPI_CONCURRENCY && queue.length) {
-        const task = queue.shift()!;
-        const p = task().finally(() => {
-          const i = running.indexOf(p);
-          if (i >= 0) running.splice(i, 1);
-        });
-        running.push(p);
-      }
-      if (running.length) await Promise.race(running);
-    }
-    await Promise.all(running);
-  };
-
-  const perChain: Record<string, PriceRow[]> = {};
-  for (const chain of chains) perChain[chain] = [];
-
-  for (const chain of chains) {
-    for (const item of items) {
-      pushTask(async () => {
-        const ck = `price:${chain}:${item}`;
-        let row = cacheGet<PriceRow>(ck);
-        if (!row) {
+  const tasks: Promise<void>[] = [];
+  for (const pack of out) {
+    for (const q of items) {
+      tasks.push((async () => {
+        const ck = `cands:${pack.chain}:${q}`;
+        let cands = cacheGet<PriceCandidate[]>(ck);
+        if (!cands) {
           try {
-            row = await serpSearchItemForChain(item, chain);
-            if (!row) row = await chpFallbackPrice(item, chain);
-            if (row) cacheSet(ck, row);
+            cands = await serpSearchCandidatesForChain(q, pack.chain);
+            if (!cands?.length) {
+              const fallback = await chpFallbackPrice(q, pack.chain);
+              cands = fallback ? [fallback] : [];
+            }
+            cacheSet(ck, cands);
           } catch (e) {
-            console.error("PRICE LOOKUP FAIL", { chain, item, e: String(e) });
+            console.error("PRICE LOOKUP FAIL", { chain: pack.chain, item: q, e: String(e) });
+            cands = [];
           }
-          await sleep(250);
+          await sleep(250); // מניעת 429
         }
-        perChain[chain].push(row ?? { item, price: NaN, currency: "ILS", source: "serpapi" });
-      });
+        pack.items.push({ query: q, candidates: cands });
+      })());
+      if (tasks.length % SERPAPI_CONCURRENCY === 0) {
+        await Promise.race(tasks.slice(-SERPAPI_CONCURRENCY));
+      }
     }
   }
+  await Promise.all(tasks);
 
-  await runQueue();
-
-  for (const chain of chains) {
-    const breakdown = perChain[chain];
-    const total = breakdown.reduce((acc, r) => acc + (Number.isFinite(r.price) ? r.price : 0), 0);
-    result.push({ chain, total, breakdown });
-  }
-
-  // מיין מקומי (למקרה שה-LLM ייפול)
-  const rankedLocal = [...result].sort((a, b) => (a.total || Infinity) - (b.total || Infinity));
-  return { result, rankedLocal };
+  return out;
 }
 
-// ---------- OpenAI LLM: איגוד ותיעדוף ----------
-async function consolidateWithLLM(nearby: NearbyShop[], priced: { chain: string; total: number; breakdown: PriceRow[] }[]) {
+// ---------- LLM consolidation ----------
+function localPickTop3(nearby: NearbyShop[], multi: ChainPricing[]) {
+  const ranked = multi.map((pack) => {
+    const breakdown: PriceCandidate[] = [];
+    for (const it of pack.items) {
+      const best = it.candidates.length
+        ? it.candidates.reduce((a, b) => (a.price <= b.price ? a : b))
+        : { itemQuery: it.query, title: it.query, description: "תחליף (לא נמצאה התאמה)", price: NaN, currency: "ILS", source: "serpapi" } as PriceCandidate;
+      breakdown.push(best);
+    }
+    const total = breakdown.reduce((s, c) => s + (Number.isFinite(c.price) ? c.price : 0), 0);
+    return { chain: pack.chain, total, breakdown };
+  }).sort((a, b) => (a.total || Infinity) - (b.total || Infinity));
+
+  const top3 = ranked.slice(0, 3).map((r) => {
+    const loc = nearby.find(n => n.chain === r.chain) || null;
+    return {
+      chain: r.chain,
+      shop_display_name: loc?.name ?? r.chain,
+      total: r.total,
+      currency: "ILS",
+      breakdown: r.breakdown.map(b => ({
+        item: b.itemQuery,
+        chosen_title: b.title,
+        description: b.description ?? null,
+        price: Number.isFinite(b.price) ? b.price : null,
+        currency: b.currency,
+        substitute: !Number.isFinite(b.price),
+        source: b.source,
+        link: b.link,
+        merchant: b.merchant ?? null,
+      })),
+      location: loc ? { name: loc.name, address: loc.address, lat: loc.lat, lng: loc.lng } : null,
+    };
+  });
+
+  return { top3, mode: "local" as const, warnings: [] as string[] };
+}
+
+async function consolidateWithLLM_v2(nearby: NearbyShop[], multi: ChainPricing[]) {
   if (!OPENAI_API_KEY) return null;
+
   const sys = [
     "You are a strict JSON generator for shopping basket comparison.",
-    "You MUST NOT invent prices. Only use the numeric prices provided in input.",
-    "If an item price is NaN/missing, keep it null and include a warning.",
-    "Output MUST be pure JSON (object) with keys: top3 (array of 3), warnings (array).",
-    "Each element of top3: { chain, shop_display_name, total, currency:'ILS', breakdown:[{item, price|null, currency:'ILS', source, link?}], location:{name,address,lat,lng} }",
-    "Pick shops that appear in 'nearby' first; if priced list includes other chains not nearby, ignore them.",
-    "Do not browse the web. Do not estimate. Keep missing items as null.",
+    "You MUST NOT invent prices. Only select from the given candidates.",
+    "For each requested item, you get multiple candidates per chain.",
+    "Pick the best matching candidate by title/description (size/brand if specified by the query).",
+    "If no suitable candidate exists for an item in a chain, mark substitute:true and set price:null.",
+    "Output pure JSON with keys: top3 (array of 3), warnings (array).",
+    "Each top3 element: { chain, shop_display_name, total, currency:'ILS', breakdown:[{ item, chosen_title, description, price|null, currency:'ILS', substitute:boolean, source, link?, merchant? }], location:{name,address,lat,lng} }",
+    "Only consider chains that appear in NEARBY_SHOPS.",
+    "Do NOT browse the web. Do NOT estimate prices.",
   ].join("\n");
 
   const payload = {
@@ -263,8 +305,8 @@ async function consolidateWithLLM(nearby: NearbyShop[], priced: { chain: string;
         content: [
           { type: "text", text: "NEARBY_SHOPS JSON:" },
           { type: "text", text: JSON.stringify(nearby).slice(0, 100000) },
-          { type: "text", text: "\nCHAIN_PRICES JSON:" },
-          { type: "text", text: JSON.stringify(priced).slice(0, 100000) },
+          { type: "text", text: "\nCHAIN_PRICING_CANDIDATES JSON:" },
+          { type: "text", text: JSON.stringify(multi).slice(0, 100000) },
         ],
       },
     ],
@@ -276,16 +318,13 @@ async function consolidateWithLLM(nearby: NearbyShop[], priced: { chain: string;
     body: JSON.stringify(payload),
   });
   if (!r.ok) {
-    const tt = await r.text().catch(() => "");
-    console.error("OPENAI FAIL", r.status, tt.slice(0, 500));
+    console.error("OPENAI FAIL", r.status, await r.text().catch(() => ""));
     return null;
   }
   const json = await r.json();
-  const content = json?.choices?.[0]?.message?.content ?? "{}";
   try {
-    return JSON.parse(content);
+    return JSON.parse(json?.choices?.[0]?.message?.content ?? "{}");
   } catch {
-    console.error("OPENAI PARSE FAIL content:", content.slice(0, 300));
     return null;
   }
 }
@@ -306,38 +345,20 @@ async function handleApi(req: Request) {
 
     if (pathname === "/api/plan" && req.method === "POST") {
       const { address, radiusKm = 5, items = [] } = await req.json();
-
       if (!address || !Array.isArray(items) || items.length === 0) {
         return json({ ok: false, error: "Missing address or items" }, 400);
       }
+
       const nearby = await findNearbySupermarkets(address, Number(radiusKm));
       const chains = Array.from(new Set(nearby.map(n => n.chain))).slice(0, MAX_SUPERMARKETS);
 
-      const { result: priced, rankedLocal } = await priceBasket(items, chains);
+      const multi = await priceBasketMulti(items, chains);
 
-      // LLM לא "ממציא" כלום; רק מסדר JSON. אם נפל—נחזור לפורמט לוקאלי.
-      const llm = await consolidateWithLLM(nearby, priced).catch(() => null);
+      const llm = await consolidateWithLLM_v2(nearby, multi).catch(() => null);
+      if (llm?.top3?.length) return json({ ok: true, mode: "llm", ...llm });
 
-      if (llm?.top3?.length) {
-        return json({ ok: true, mode: "llm", ...llm });
-      } else {
-        // Fallback: טופ 3 לפי חישוב לוקאלי
-        const top3 = rankedLocal.slice(0, 3).map((r) => {
-          const loc = nearby.find(n => n.chain === r.chain) || null;
-          return {
-            chain: r.chain,
-            shop_display_name: loc?.name ?? r.chain,
-            total: r.total,
-            currency: "ILS",
-            breakdown: r.breakdown.map(b => ({
-              item: b.item, price: Number.isFinite(b.price) ? b.price : null,
-              currency: "ILS", source: b.source, link: b.link,
-            })),
-            location: loc ? { name: loc.name, address: loc.address, lat: loc.lat, lng: loc.lng } : null,
-          };
-        });
-        return json({ ok: true, mode: "local", top3, warnings: ["LLM consolidation failed or disabled"] });
-      }
+      const fallback = localPickTop3(nearby, multi);
+      return json({ ok: true, ...fallback });
     }
 
     return json({ ok: false, error: "Not found" }, 404);
