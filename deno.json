@@ -1,16 +1,8 @@
 {
   "importMap": "./import_map.json",
   "tasks": {
-    "build": "deno run -A '$fresh/scripts/build.ts'",
+    "dev": "deno run -A dev.ts",
     "build": "deno run -A dev.ts build",
-    "start": "deno run -A main.ts",
-    "dev": "deno run -A main.ts"
-    "dev": "deno run -A dev.ts"
-  },
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "strict": true,
-    "lib": ["dom","dom.iterable","esnext"]
+    "start": "deno run -A main.ts"
   }
 }
