@@ -77,9 +77,15 @@ function renderResults(baskets) {
                 const link = p.link
                   ? ` <a href="${p.link}" target="_blank" rel="noopener">קישור</a>`
                   : "";
+                // מקור: merchant/domain
+                const srcPieces = [];
+                if (p.merchant) srcPieces.push(escapeHtml(p.merchant));
+                if (p.domain) srcPieces.push(escapeHtml(p.domain));
+                const source = srcPieces.length ? ` <span class="src">[${srcPieces.join(" • ")}]</span>` : "";
+
                 return `<li>
-                  <b>${escapeHtml(p.item)}</b>: ${escapeHtml(p.title)}${desc}${sub}
-                  — ${price} ${p.currency || ""}${link}
+                  <b>${escapeHtml(p.item)}</b>: ${escapeHtml(p.chosen_title || p.item)}${desc}${sub}
+                  — ${price} ${p.currency || ""}${link}${source}
                 </li>`;
               })
               .join("")}
@@ -127,9 +133,7 @@ function renderMap(baskets) {
   }
 }
 
-function fmt(n) {
-  return Number(n).toFixed(2);
-}
+function fmt(n) { return Number(n).toFixed(2); }
 function escapeHtml(s) {
   return String(s)
     .replaceAll("&", "&amp;")
