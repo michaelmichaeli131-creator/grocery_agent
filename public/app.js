@@ -1,37 +1,42 @@
 const $ = (s) => document.querySelector(s);
 
-const itemsEl = $("#items");
+const chips = $("#chips");
 const newItem = $("#newItem");
-let items = ["קוקה קולה", "מים מינרלים 1.5 ליטר", "פסטה"];
+const results = $("#results");
 
-function renderItems() {
-  itemsEl.innerHTML = "";
+let items = ["קוקה קולה 1.5 ליטר", "מים מינרלים 1.5 ליטר", "פסטה"];
+
+function renderChips() {
+  chips.innerHTML = "";
   items.forEach((it, i) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `<span>${escapeHtml(it)}</span><button data-i="${i}">×</button>`;
-    row.querySelector("button").onclick = () => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerHTML = `<span>${escapeHtml(it)}</span><button class="close" title="הסר" aria-label="הסר">×</button>`;
+    chip.querySelector(".close").onclick = () => {
       items.splice(i, 1);
-      renderItems();
+      renderChips();
     };
-    itemsEl.appendChild(row);
+    chips.appendChild(chip);
   });
 }
-renderItems();
+renderChips();
 
 $("#addBtn").onclick = () => {
-  const v = newItem.value.trim();
+  const v = (newItem.value || "").trim();
   if (!v) return;
   items.push(v);
   newItem.value = "";
-  renderItems();
+  renderChips();
 };
 
 $("#searchBtn").onclick = async () => {
-  const address = $("#address").value.trim();
+  const address = ($("#address").value || "").trim();
   const radiusKm = Number($("#radius").value || 15);
-  const out = $("#results");
-  out.innerHTML = "טוען…";
+  if (!address) {
+    results.innerHTML = `<div class="error">נא להזין כתובת</div>`;
+    return;
+  }
+  showSkeleton();
 
   try {
     const res = await fetch("/api/plan", {
@@ -45,65 +50,65 @@ $("#searchBtn").onclick = async () => {
     renderResults(data.baskets);
     renderMap(data.baskets);
   } catch (e) {
-    out.innerHTML = `<div class="error">שגיאה: ${escapeHtml(e.message || String(e))}</div>`;
+    results.innerHTML = `<div class="error">שגיאה: ${escapeHtml(e.message || String(e))}</div>`;
   }
 };
 
+function showSkeleton() {
+  results.innerHTML = `
+    <div class="skel"></div>
+    <div class="skel"></div>
+    <div class="skel"></div>
+  `;
+}
+
 function renderResults(baskets) {
-  const out = $("#results");
   if (!baskets?.length) {
-    out.innerHTML = `<div class="error">לא נמצאו תוצאות</div>`;
+    results.innerHTML = `<div class="error">לא נמצאו תוצאות</div>`;
     return;
   }
   let html = "";
   baskets.forEach((b, i) => {
+    const addr = b.location?.address ? `<div class="subtext">${escapeHtml(b.location.address)}</div>` : "";
     html += `
       <section class="shop">
         <h3>#${i + 1} ${escapeHtml(b.shop_display_name)} — ${fmt(b.total)} ₪</h3>
-        <div class="subtext">${escapeHtml(b.location?.address || "")}</div>
+        ${addr}
         <details ${i === 0 ? "open" : ""}>
           <summary>סל מלא</summary>
           <ul>
-            ${b.breakdown
-              .map((p) => {
-                const price =
-                  p.price == null || Number.isNaN(p.price) ? "—" : fmt(p.price);
-                const desc = p.description
-                  ? `<span class="desc"> — ${escapeHtml(p.description)}</span>`
-                  : "";
-                const sub = p.substitute
-                  ? ` <span class="badge">תחליף</span>`
-                  : "";
-                const link = p.link
-                  ? ` <a href="${p.link}" target="_blank" rel="noopener">קישור</a>`
-                  : "";
-                // מקור: merchant/domain
-                const srcPieces = [];
-                if (p.merchant) srcPieces.push(escapeHtml(p.merchant));
-                if (p.domain) srcPieces.push(escapeHtml(p.domain));
-                const source = srcPieces.length ? ` <span class="src">[${srcPieces.join(" • ")}]</span>` : "";
-
-                return `<li>
-                  <b>${escapeHtml(p.item)}</b>: ${escapeHtml(p.chosen_title || p.item)}${desc}${sub}
-                  — ${price} ${p.currency || ""}${link}${source}
-                </li>`;
-              })
-              .join("")}
+            ${b.breakdown.map(renderLine).join("")}
           </ul>
         </details>
-      </section>`;
+      </section>
+    `;
   });
-  out.innerHTML = html;
+  results.innerHTML = html;
 }
 
-// ---------- Map (Leaflet + OSM) ----------
+function renderLine(p) {
+  const price = p.price == null || Number.isNaN(p.price) ? "—" : fmt(p.price);
+  const desc = p.description ? `<span class="subtext"> — ${escapeHtml(p.description)}</span>` : "";
+  const sub = p.substitute ? ` <span class="badge sub">תחליף</span>` : "";
+  const link = p.link ? ` <a href="${p.link}" target="_blank" rel="noopener">קישור</a>` : "";
+  const srcPieces = [];
+  if (p.merchant) srcPieces.push(escapeHtml(p.merchant));
+  if (p.domain) srcPieces.push(escapeHtml(p.domain));
+  const source = srcPieces.length ? ` <span class="badge src">${srcPieces.join(" • ")}</span>` : "";
+
+  return `<li>
+    <b>${escapeHtml(p.item)}</b>: ${escapeHtml(p.chosen_title || p.item)}${desc}${sub}
+    — ${price} ${p.currency || ""}${link}${source}
+  </li>`;
+}
+
+/* ---------- Map (Leaflet + OSM) ---------- */
 let map, markersLayer;
 function ensureMap() {
   if (map) return map;
   map = L.map("map");
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+    attribution: '&copy; OpenStreetMap',
     maxZoom: 19,
   }).addTo(map);
   markersLayer = L.layerGroup().addTo(map);
@@ -113,30 +118,22 @@ function ensureMap() {
 function renderMap(baskets) {
   ensureMap();
   markersLayer.clearLayers();
-
   const bounds = [];
+
   baskets.forEach((b, i) => {
     const loc = b.location || {};
     if (typeof loc.lat !== "number" || typeof loc.lng !== "number") return;
     const m = L.marker([loc.lat, loc.lng]).addTo(markersLayer);
     const addr = loc.address ? ` — ${escapeHtml(loc.address)}` : "";
-    m.bindPopup(
-      `<b>#${i + 1} ${escapeHtml(b.shop_display_name)}</b>${addr}<br/>סה״כ: ${fmt(
-        b.total,
-      )} ₪`,
-    );
+    m.bindPopup(`<b>#${i + 1} ${escapeHtml(b.shop_display_name)}</b>${addr}<br/>סה״כ: ${fmt(b.total)} ₪`);
     bounds.push([loc.lat, loc.lng]);
   });
 
-  if (bounds.length) {
-    map.fitBounds(bounds, { padding: [20, 20] });
-  }
+  if (bounds.length) map.fitBounds(bounds, { padding: [24, 24] });
 }
 
-function fmt(n) { return Number(n).toFixed(2); }
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+/* ---------- Helpers ---------- */
+function fmt(n){ return Number(n).toFixed(2) }
+function escapeHtml(s){
+  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
