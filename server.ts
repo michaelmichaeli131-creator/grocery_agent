@@ -1,9 +1,7 @@
-// server.ts — שרת Deno פשוט: סטטי + REST API
-// מביא סופרים קרובים (Google Places), מועמדים למחירים (SerpAPI / Google Shopping),
-// מעביר ל-LLM לאיחוד ובחירה לפי שם/תיאור, ומחזיר Top-3 ללקוח.
-// חשוב: לא "ממציאים" מחירים; ה-LLM בוחר רק מתוך מועמדים שסופקו.
+// server.ts — PRO: סטטי + API עם Places משופר, SerpAPI מרובה-מועמדים, LLM נירמול/איחוד,
+// קאש, רטריי, קונקרנציה, החזרת top3 וגם baskets מלאים.
 
-// לוקאלית בלבד (ב-Deno Deploy אין .env)
+// לוקאלית בלבד (.env). ב-Deno Deploy מגדירים Environment Variables בלוח הבקרה.
 if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
   try {
     const { load } = await import("https://deno.land/std@0.201.0/dotenv/mod.ts");
@@ -11,17 +9,22 @@ if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
   } catch {}
 }
 
+/* ===================== ENV & CONSTANTS ===================== */
 const PORT = Number(Deno.env.get("PORT") ?? "8000");
 const GOOGLE_API_KEY = Deno.env.get("GOOGLE_API_KEY") ?? "";
-const SERPAPI_KEY   = Deno.env.get("SERPAPI_KEY") ?? "";
-const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
-const CACHE_TTL_MS  = Number(Deno.env.get("CACHE_TTL_MS") ?? "60000");
-const MAX_SUPERMARKETS = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "10");
-const SERPAPI_CONCURRENCY = Number(Deno.env.get("SERPAPI_CONCURRENCY") ?? "3");
-const SERPAPI_MAX_CANDIDATES = Number(Deno.env.get("SERPAPI_MAX_CANDIDATES") ?? "5");
-const USE_CHP_FALLBACK = (Deno.env.get("USE_CHP_FALLBACK") ?? "0") === "1"; // hook בלבד כרגע
+const SERPAPI_KEY = Deno.env.get("SERPAPI_KEY") ?? "";
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? ""; // אופציונלי
+const MAX_SUPERMARKETS = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "20");
+const SERPAPI_MAX_CANDIDATES = Number(Deno.env.get("SERPAPI_MAX_CANDIDATES") ?? "6");
+const SERPAPI_CONCURRENCY = Number(Deno.env.get("SERPAPI_CONCURRENCY") ?? "4");
+const CACHE_TTL_MS = Number(Deno.env.get("CACHE_TTL_MS") ?? "120000"); // 2 דקות
+const GEO_TTL_MS = Number(Deno.env.get("GEO_TTL_MS") ?? "600000"); // 10 דקות
+const PLACES_TTL_MS = Number(Deno.env.get("PLACES_TTL_MS") ?? "600000"); // 10 דקות
+const LLM_ENABLE_NORMALIZE = (Deno.env.get("LLM_ENABLE_NORMALIZE") ?? "1") === "1";
+const LLM_ENABLE_CONSOLIDATE = (Deno.env.get("LLM_ENABLE_CONSOLIDATE") ?? "1") === "1";
 
-// ---------- Utilities ----------
+/* ===================== UTILITIES ===================== */
+type Json = Record<string, unknown>;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -29,268 +32,269 @@ function json(body: unknown, status = 200) {
     headers: { "content-type": "application/json; charset=utf-8" },
   });
 }
-async function safeJson(url: string, init?: RequestInit) {
-  const r = await fetch(url, init);
-  const text = await r.text();
-  if (!r.ok) {
-    console.error("FETCH FAIL", { url, status: r.status, body: text.slice(0, 500) });
-    throw new Error(`Upstream ${r.status} for ${url}`);
+async function fetchWithRetry(url: string, init: RequestInit = {}, tries = 3, backoffMs = 400) {
+  let lastErr: unknown;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const r = await fetch(url, init);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r;
+    } catch (e) {
+      lastErr = e;
+      await sleep(backoffMs * (i + 1));
+    }
   }
-  try { return JSON.parse(text); }
-  catch { throw new Error(`Invalid JSON from ${url}`); }
+  throw lastErr;
 }
+async function safeJson(url: string, init?: RequestInit, tries = 3) {
+  const r = await fetchWithRetry(url, init, tries);
+  const txt = await r.text();
+  try { return JSON.parse(txt); } catch { throw new Error(`Invalid JSON from ${url}`); }
+}
+
+// In-memory cache
 const memCache = new Map<string, { exp: number; data: unknown }>();
 function cacheGet<T>(k: string): T | null {
-  const hit = memCache.get(k);
-  if (!hit) return null;
-  if (Date.now() > hit.exp) { memCache.delete(k); return null; }
-  return hit.data as T;
+  const rec = memCache.get(k);
+  if (!rec) return null;
+  if (Date.now() > rec.exp) { memCache.delete(k); return null; }
+  return rec.data as T;
 }
 function cacheSet(k: string, data: unknown, ttl = CACHE_TTL_MS) {
   memCache.set(k, { exp: Date.now() + ttl, data });
 }
 
-// ---------- Google Places ----------
-const KNOWN_CHAINS = [
-  // HE
-  "שופרסל","רמי לוי","יינות ביתן","ויקטורי","יוחננוף","טיב טעם","סופר-פארם","סופר פארם","מגה","מחסני השוק",
-  // EN
-  "Shufersal","Rami Levy","Yohananof","Victory","Tiv Taam","Super-Pharm","Mega","Mahsanei Hashuk",
-];
-
+/* ===================== CHAINS MAP & HELPERS ===================== */
 type NearbyShop = {
-  chain: string;           // נורמליזציה גסה לשם הרשת
-  name: string;            // השם כפי שחוזר מגוגל
-  address?: string;        // vicinity
+  chain: string;
+  name: string;
+  address?: string;
   lat: number; lng: number;
   place_id: string;
   rating?: number;
 };
 
-function normalizeChainName(name: string): string {
-  const n = (name || "").toLowerCase();
-  const map: Record<string,string> = {
-    "שופרסל": "Shufersal", "shufersal": "Shufersal",
-    "רמי לוי": "Rami Levy", "rami levy": "Rami Levy",
-    "יוחננוף": "Yohananof", "yohananof": "Yohananof",
-    "ויקטורי": "Victory",  "victory": "Victory",
-    "טיב טעם": "Tiv Taam", "tiv taam": "Tiv Taam",
-    "יינות ביתן": "Yenot Bitan", "yenot bitan": "Yenot Bitan",
-    "סופר פארם": "Super-Pharm", "סופר-פארם":"Super-Pharm", "super-pharm":"Super-Pharm", "super pharm":"Super-Pharm",
-    "mega": "Mega", "מגה":"Mega",
-    "מחסני השוק":"Mahsanei Hashuk","mahsanei hashuk":"Mahsanei Hashuk",
-  };
-  for (const k in map) if (n.includes(k)) return map[k];
-  for (const c of KNOWN_CHAINS) if (n.includes(c.toLowerCase())) return c;
-  return name;
+const CHAIN_MAP: Record<string, string[]> = {
+  "Shufersal": ["shufersal.co.il","שופרסל","shufersal"],
+  "Rami Levy": ["ramilevy.co.il","רמי לוי","rami levy"],
+  "Yohananof": ["yoh.co.il","יוחננוף","yohananof"],
+  "Victory": ["victoryonline.co.il","ויקטורי","victory"],
+  "Tiv Taam": ["tivtaam.co.il","טיב טעם","tiv taam"],
+  "Yenot Bitan": ["yenotbitan.co.il","יינות ביתן","yenot bitan"],
+  "Mahsanei Hashuk": ["hashuk.co.il","מחסני השוק","mahsanei hashuk"],
+  "Super-Pharm": ["super-pharm.co.il","סופר-פארם","super pharm"],
+  "Mega": ["mega.co.il","מגה","mega"],
+};
+
+function normalizeChainName(raw: string): string {
+  const n = (raw || "").toLowerCase();
+  for (const chain in CHAIN_MAP) {
+    if (CHAIN_MAP[chain].some(alias => n.includes(alias.toLowerCase()))) return chain;
+  }
+  return raw || "Unknown";
 }
 
-async function geocodeAddress(address: string) {
+/* ===================== GOOGLE MAPS ===================== */
+async function geocode(address: string) {
   const ck = `geo:${address}`;
-  const cached = cacheGet<any>(ck);
-  if (cached) return cached;
+  const hit = cacheGet<any>(ck);
+  if (hit) return hit;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
-  const json = await safeJson(url);
-  const loc = json?.results?.[0]?.geometry?.location;
+  const data = await safeJson(url, {}, 3);
+  const loc = data?.results?.[0]?.geometry?.location;
   if (!loc) throw new Error("Address not found");
-  cacheSet(ck, loc);
+  cacheSet(ck, loc, GEO_TTL_MS);
   return loc; // { lat, lng }
+}
+
+async function placesNearbyAllPages(lat: number, lng: number, radius: number, type: string) {
+  const all: any[] = [];
+  let pagetoken: string | undefined;
+  for (let i = 0; i < 3; i++) { // עד 3 עמודים
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_API_KEY}${pagetoken ? `&pagetoken=${pagetoken}` : ""}`;
+    const data = await safeJson(url, {}, 3);
+    all.push(...(data?.results ?? []));
+    pagetoken = data?.next_page_token;
+    if (!pagetoken) break;
+    await sleep(2000); // לפי דרישת Places לפני שימוש ב-page_token
+  }
+  return all;
+}
+
+async function placesTextSearch(lat: number, lng: number, radius: number, query: string) {
+  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=${radius}&key=${GOOGLE_API_KEY}`;
+  const data = await safeJson(url, {}, 3);
+  return data?.results ?? [];
 }
 
 async function findNearbySupermarkets(address: string, radiusKm: number): Promise<NearbyShop[]> {
   if (!GOOGLE_API_KEY) throw new Error("Missing GOOGLE_API_KEY");
-  const { lat, lng } = await geocodeAddress(address);
+  const { lat, lng } = await geocode(address);
   const radius = Math.round(radiusKm * 1000);
-
   const ck = `places:${lat},${lng}:${radius}`;
   const cached = cacheGet<NearbyShop[]>(ck);
   if (cached) return cached;
 
-  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=supermarket&key=${GOOGLE_API_KEY}`;
-  const data = await safeJson(url);
-  const base = (data?.results ?? []).map((r: any) => {
-    const name: string = r?.name ?? "";
-    const chain = normalizeChainName(name);
-    return {
-      chain,
+  const types = ["supermarket", "grocery_or_supermarket", "store"];
+  const seen = new Map<string, NearbyShop>();
+
+  for (const t of types) {
+    const arr = await placesNearbyAllPages(lat, lng, radius, t);
+    for (const r of arr) {
+      const place_id = r?.place_id;
+      if (!place_id) continue;
+      const name = r?.name ?? "";
+      seen.set(place_id, {
+        chain: normalizeChainName(name),
+        name,
+        address: r?.vicinity,
+        lat: r?.geometry?.location?.lat,
+        lng: r?.geometry?.location?.lng,
+        place_id,
+        rating: r?.rating,
+      });
+    }
+  }
+
+  // הרחבה עם TextSearch "supermarket" לקבלת תוצאות נוספות
+  const txt = await placesTextSearch(lat, lng, radius, "supermarket");
+  for (const r of txt) {
+    const place_id = r?.place_id;
+    if (!place_id) continue;
+    if (seen.has(place_id)) continue;
+    const name = r?.name ?? "";
+    seen.set(place_id, {
+      chain: normalizeChainName(name),
       name,
-      address: r?.vicinity,
+      address: r?.formatted_address ?? r?.vicinity,
       lat: r?.geometry?.location?.lat,
       lng: r?.geometry?.location?.lng,
-      place_id: r?.place_id,
+      place_id,
       rating: r?.rating,
-    } as NearbyShop;
-  });
+    });
+  }
 
-  const known = base.filter(b => KNOWN_CHAINS.some(c => b.name.toLowerCase().includes(c.toLowerCase())));
-  const result = (known.length ? known : base).slice(0, MAX_SUPERMARKETS);
-  cacheSet(ck, result);
+  const all = Array.from(seen.values());
+  // העדף רשתות שממופות ב-CHAIN_MAP
+  const known = all.filter(s => CHAIN_MAP[s.chain]);
+  const result = (known.length ? known : all).slice(0, MAX_SUPERMARKETS);
+  cacheSet(ck, result, PLACES_TTL_MS);
   return result;
 }
 
-// ---------- SerpAPI / Google Shopping ----------
+/* ===================== SERPAPI (Google Shopping) ===================== */
 type PriceCandidate = {
-  itemQuery: string;        // מה שהמשתמש ביקש (שאילתא)
-  title: string;            // שם המוצר בתוצאות
-  description?: string;     // תיאור/סניפט אם קיים
-  price: number;
+  itemQuery: string;
+  title: string;
+  description?: string;
+  price: number | null;
   currency: string;
   link?: string;
   merchant?: string;
-  source: "serpapi"|"chp";
-};
-type ChainPricing = {
-  chain: string;
-  items: {
-    query: string;
-    candidates: PriceCandidate[];
-  }[];
+  source: "serpapi";
 };
 
-function _normPriceNum(anyPrice: any): number | null {
-  if (typeof anyPrice === "number") return anyPrice;
-  if (typeof anyPrice === "string") {
-    const n = Number(anyPrice.replace(/[^\d.]/g, ""));
-    if (!Number.isNaN(n)) return n;
+function extractNumber(x: unknown): number | null {
+  if (typeof x === "number") return x;
+  if (typeof x === "string") {
+    const n = Number(x.replace(/[^\d.]/g, ""));
+    return Number.isNaN(n) ? null : n;
   }
   return null;
 }
-function _candidateFromSerp(p: any, query: string): PriceCandidate | null {
-  const priceNum =
-    (typeof p?.extracted_price === "number" && p.extracted_price) ||
-    _normPriceNum(p?.price) ||
-    _normPriceNum(p?.prices?.[0]?.price) ||
-    _normPriceNum(p?.prices?.[0]?.extracted_price);
+function candidateFromSerp(r: any, query: string): PriceCandidate | null {
+  const price =
+    extractNumber(r?.extracted_price) ??
+    extractNumber(r?.price) ??
+    extractNumber(r?.prices?.[0]?.price) ??
+    extractNumber(r?.prices?.[0]?.extracted_price);
 
-  if (priceNum == null) return null;
-  const title = String(p?.title ?? "").trim();
-  const description = String(p?.snippet ?? p?.description ?? "").trim() || undefined;
-
+  const title = String(r?.title ?? "");
+  const desc = String(r?.snippet ?? r?.description ?? "") || undefined;
+  const currency = r?.currency ?? r?.prices?.[0]?.currency ?? "ILS";
   return {
     itemQuery: query,
     title,
-    description,
-    price: priceNum,
-    currency: p?.currency ?? p?.prices?.[0]?.currency ?? "ILS",
-    link: p?.link,
-    merchant: p?.source ?? p?.merchant ?? p?.seller ?? undefined,
+    description: desc,
+    price: price ?? null,
+    currency,
+    link: r?.link,
+    merchant: r?.source ?? r?.merchant ?? r?.seller ?? undefined,
     source: "serpapi",
   };
 }
+
 async function serpSearchCandidatesForChain(query: string, chain: string): Promise<PriceCandidate[]> {
   if (!SERPAPI_KEY) throw new Error("Missing SERPAPI_KEY");
-  const q = `${query} ${chain}`;
-  const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(q)}&hl=iw&gl=il&num=20&api_key=${SERPAPI_KEY}`;
-  const data = await safeJson(url);
-  const products: any[] = data?.shopping_results ?? [];
-  if (!products.length) return [];
+  const ck = `serp:${chain}:${query}`;
+  const hit = cacheGet<PriceCandidate[]>(ck);
+  if (hit) return hit;
 
-  const lowerChain = chain.toLowerCase();
-  const preferred = products.filter((p) => {
-    const m = (p?.source ?? p?.merchant ?? p?.seller ?? "").toString().toLowerCase();
-    return m.includes(lowerChain);
+  const q = `${query} ${chain}`;
+  const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(q)}&hl=iw&gl=il&num=40&api_key=${SERPAPI_KEY}`;
+  const data = await safeJson(url, {}, 3);
+  const results: any[] = data?.shopping_results ?? [];
+  if (!results.length) { cacheSet(ck, [], CACHE_TTL_MS); return []; }
+
+  const aliases = CHAIN_MAP[chain] ?? [];
+  const filtered = results.filter((r) => {
+    if (!aliases.length) return true;
+    const merchant = String(r?.source ?? r?.merchant ?? r?.seller ?? "").toLowerCase();
+    const title = String(r?.title ?? "").toLowerCase();
+    return aliases.some(a => merchant.includes(a.toLowerCase()) || title.includes(a.toLowerCase()));
   });
 
-  const pool = (preferred.length ? preferred : products)
-    .map((p) => _candidateFromSerp(p, query))
+  const pool = (filtered.length ? filtered : results)
+    .map(r => candidateFromSerp(r, query))
     .filter(Boolean) as PriceCandidate[];
 
-  return pool.slice(0, SERPAPI_MAX_CANDIDATES);
-}
-
-// CHP fallback (כרגע hook בלבד)
-async function chpFallbackPrice(_query: string, _chain: string): Promise<PriceCandidate | null> {
-  if (!USE_CHP_FALLBACK) return null;
-  // TODO: לממש באופן חוקי/מאושר. כרגע לא מחזירים דבר כדי לא "להמציא".
-  return null;
-}
-
-async function priceBasketMulti(items: string[], chains: string[]): Promise<ChainPricing[]> {
-  const out: ChainPricing[] = chains.map((chain) => ({ chain, items: [] }));
-
-  const tasks: Promise<void>[] = [];
-  for (const pack of out) {
-    for (const q of items) {
-      tasks.push((async () => {
-        const ck = `cands:${pack.chain}:${q}`;
-        let cands = cacheGet<PriceCandidate[]>(ck);
-        if (!cands) {
-          try {
-            cands = await serpSearchCandidatesForChain(q, pack.chain);
-            if (!cands?.length) {
-              const fallback = await chpFallbackPrice(q, pack.chain);
-              cands = fallback ? [fallback] : [];
-            }
-            cacheSet(ck, cands);
-          } catch (e) {
-            console.error("PRICE LOOKUP FAIL", { chain: pack.chain, item: q, e: String(e) });
-            cands = [];
-          }
-          await sleep(250); // מניעת 429
-        }
-        pack.items.push({ query: q, candidates: cands });
-      })());
-      if (tasks.length % SERPAPI_CONCURRENCY === 0) {
-        await Promise.race(tasks.slice(-SERPAPI_CONCURRENCY));
-      }
-    }
-  }
-  await Promise.all(tasks);
-
+  const out = pool.slice(0, SERPAPI_MAX_CANDIDATES);
+  cacheSet(ck, out, CACHE_TTL_MS);
   return out;
 }
 
-// ---------- LLM consolidation ----------
-function localPickTop3(nearby: NearbyShop[], multi: ChainPricing[]) {
-  const ranked = multi.map((pack) => {
-    const breakdown: PriceCandidate[] = [];
-    for (const it of pack.items) {
-      const best = it.candidates.length
-        ? it.candidates.reduce((a, b) => (a.price <= b.price ? a : b))
-        : { itemQuery: it.query, title: it.query, description: "תחליף (לא נמצאה התאמה)", price: NaN, currency: "ILS", source: "serpapi" } as PriceCandidate;
-      breakdown.push(best);
-    }
-    const total = breakdown.reduce((s, c) => s + (Number.isFinite(c.price) ? c.price : 0), 0);
-    return { chain: pack.chain, total, breakdown };
-  }).sort((a, b) => (a.total || Infinity) - (b.total || Infinity));
-
-  const top3 = ranked.slice(0, 3).map((r) => {
-    const loc = nearby.find(n => n.chain === r.chain) || null;
-    return {
-      chain: r.chain,
-      shop_display_name: loc?.name ?? r.chain,
-      total: r.total,
-      currency: "ILS",
-      breakdown: r.breakdown.map(b => ({
-        item: b.itemQuery,
-        chosen_title: b.title,
-        description: b.description ?? null,
-        price: Number.isFinite(b.price) ? b.price : null,
-        currency: b.currency,
-        substitute: !Number.isFinite(b.price),
-        source: b.source,
-        link: b.link,
-        merchant: b.merchant ?? null,
-      })),
-      location: loc ? { name: loc.name, address: loc.address, lat: loc.lat, lng: loc.lng } : null,
-    };
+/* ===================== LLM HELPERS ===================== */
+// נירמול פריטים (אופציונלי) — החזרת מחרוזות נקיות וקצרות (ללא המצאת מחירים)
+async function normalizeItemsWithLLM(items: string[]): Promise<string[]> {
+  if (!OPENAI_API_KEY || !LLM_ENABLE_NORMALIZE) return items;
+  const prompt = [
+    "Normalize the following grocery items (Hebrew or English) into short generic product queries.",
+    "Preserve explicit sizes/brands if provided (e.g., '1.5L', '6-pack', 'Coca-Cola Zero 1.5L').",
+    "Return ONLY a JSON array of strings. No explanations.",
+    `Items: ${JSON.stringify(items)}`
+  ].join("\n");
+  const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "authorization": `Bearer ${OPENAI_API_KEY}` },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+      messages: [{ role: "user", content: prompt }],
+    }),
   });
-
-  return { top3, mode: "local" as const, warnings: [] as string[] };
+  if (!r.ok) return items;
+  const j = await r.json();
+  try {
+    const content = j?.choices?.[0]?.message?.content ?? "{}";
+    const parsed = JSON.parse(content);
+    const arr = parsed?.items ?? parsed;
+    return Array.isArray(arr) ? arr.map((s: any) => String(s)) : items;
+  } catch { return items; }
 }
 
-async function consolidateWithLLM_v2(nearby: NearbyShop[], multi: ChainPricing[]) {
-  if (!OPENAI_API_KEY) return null;
-
+// איחוד/בחירה עם LLM — בוחר את המועמד המתאים פר תיאור/גודל ומחשב טופ-3 (ללא המצאות)
+type ChainPricing = { chain: string; items: { query: string; candidates: PriceCandidate[] }[]; };
+async function consolidateWithLLM(nearby: NearbyShop[], multi: ChainPricing[]) {
+  if (!OPENAI_API_KEY || !LLM_ENABLE_CONSOLIDATE) return null;
   const sys = [
     "You are a strict JSON generator for shopping basket comparison.",
-    "You MUST NOT invent prices. Only select from the given candidates.",
-    "For each requested item, you get multiple candidates per chain.",
-    "Pick the best matching candidate by title/description (size/brand if specified by the query).",
-    "If no suitable candidate exists for an item in a chain, mark substitute:true and set price:null.",
-    "Output pure JSON with keys: top3 (array of 3), warnings (array).",
-    "Each top3 element: { chain, shop_display_name, total, currency:'ILS', breakdown:[{ item, chosen_title, description, price|null, currency:'ILS', substitute:boolean, source, link?, merchant? }], location:{name,address,lat,lng} }",
-    "Only consider chains that appear in NEARBY_SHOPS.",
+    "You MUST NOT invent prices. Only select from provided candidates.",
+    "For each requested item in each chain, choose the best candidate by title/description relevance (size/brand).",
+    "If no suitable candidate exists, set price:null and substitute:true for that line.",
+    "Output pure JSON with keys: top3 (array), baskets (array), warnings (array).",
+    "Each basket: { chain, shop_display_name, total, currency:'ILS', breakdown:[{ item, chosen_title, description, price|null, currency:'ILS', substitute:boolean, source:'serpapi', link?, merchant? }], location:{ name,address,lat,lng } }",
+    "Consider only chains that appear in NEARBY_SHOPS input.",
     "Do NOT browse the web. Do NOT estimate prices.",
   ].join("\n");
 
@@ -300,15 +304,12 @@ async function consolidateWithLLM_v2(nearby: NearbyShop[], multi: ChainPricing[]
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: sys },
-      {
-        role: "user",
-        content: [
-          { type: "text", text: "NEARBY_SHOPS JSON:" },
-          { type: "text", text: JSON.stringify(nearby).slice(0, 100000) },
-          { type: "text", text: "\nCHAIN_PRICING_CANDIDATES JSON:" },
-          { type: "text", text: JSON.stringify(multi).slice(0, 100000) },
-        ],
-      },
+      { role: "user", content: [
+        { type: "text", text: "NEARBY_SHOPS JSON:" },
+        { type: "text", text: JSON.stringify(nearby).slice(0, 100000) },
+        { type: "text", text: "\nCHAIN_PRICING_CANDIDATES JSON:" },
+        { type: "text", text: JSON.stringify(multi).slice(0, 100000) },
+      ]},
     ],
   };
 
@@ -317,48 +318,134 @@ async function consolidateWithLLM_v2(nearby: NearbyShop[], multi: ChainPricing[]
     headers: { "content-type": "application/json", "authorization": `Bearer ${OPENAI_API_KEY}` },
     body: JSON.stringify(payload),
   });
-  if (!r.ok) {
-    console.error("OPENAI FAIL", r.status, await r.text().catch(() => ""));
-    return null;
-  }
-  const json = await r.json();
+  if (!r.ok) return null;
+  const j = await r.json();
   try {
-    return JSON.parse(json?.choices?.[0]?.message?.content ?? "{}");
-  } catch {
-    return null;
-  }
+    const content = j?.choices?.[0]?.message?.content ?? "{}";
+    return JSON.parse(content);
+  } catch { return null; }
 }
 
-// ---------- API Router ----------
+/* ===================== PRICING PIPELINE ===================== */
+async function buildCandidates(items: string[], chains: string[]): Promise<ChainPricing[]> {
+  const out: ChainPricing[] = chains.map((chain) => ({ chain, items: [] }));
+
+  // פייפליין עם קונקרנציה מוגבלת
+  const queue: Promise<void>[] = [];
+  for (const pack of out) {
+    for (const q of items) {
+      const task = (async () => {
+        const cands = await serpSearchCandidatesForChain(q, pack.chain).catch(() => []);
+        pack.items.push({ query: q, candidates: cands });
+        await sleep(150);
+      })();
+      queue.push(task);
+      if (queue.length % SERPAPI_CONCURRENCY === 0) {
+        await Promise.race(queue.slice(-SERPAPI_CONCURRENCY));
+      }
+    }
+  }
+  await Promise.all(queue);
+  return out;
+}
+
+function localPickBaskets(nearby: NearbyShop[], multi: ChainPricing[]) {
+  // בוחר לכל פריט את המועמד הזול ביותר (אם אין — substitute)
+  const baskets = multi.map((pack) => {
+    const breakdown = pack.items.map(({ query, candidates }) => {
+      let best: PriceCandidate | null = null;
+      for (const c of candidates) {
+        if (c.price == null) continue;
+        if (!best || c.price < (best.price ?? Infinity)) best = c;
+      }
+      if (!best) {
+        const c0 = candidates[0];
+        return {
+          item: query,
+          chosen_title: c0?.title ?? query,
+          description: c0?.description ?? null,
+          price: null,
+          currency: (c0?.currency ?? "ILS"),
+          substitute: true,
+          source: "serpapi",
+          link: c0?.link,
+          merchant: c0?.merchant ?? null,
+        };
+      }
+      return {
+        item: query,
+        chosen_title: best.title,
+        description: best.description ?? null,
+        price: best.price,
+        currency: best.currency,
+        substitute: false,
+        source: "serpapi",
+        link: best.link,
+        merchant: best.merchant ?? null,
+      };
+    });
+
+    const total = breakdown.reduce((s, b) => s + (b.price ?? 0), 0);
+    const loc = nearby.find(n => n.chain === pack.chain) || null;
+    return {
+      chain: pack.chain,
+      shop_display_name: loc?.name ?? pack.chain,
+      total,
+      currency: "ILS",
+      breakdown,
+      location: loc ? { name: loc.name, address: loc.address, lat: loc.lat, lng: loc.lng } : null,
+    };
+  });
+
+  baskets.sort((a, b) => (a.total ?? Infinity) - (b.total ?? Infinity));
+  const top3 = baskets.slice(0, 3);
+  return { baskets, top3 };
+}
+
+/* ===================== API ROUTER ===================== */
 async function handleApi(req: Request) {
   const { pathname } = new URL(req.url);
 
   try {
     if (pathname === "/api/health") {
-      const present = {
-        GOOGLE_API_KEY: !!GOOGLE_API_KEY,
-        SERPAPI_KEY: !!SERPAPI_KEY,
-        OPENAI_API_KEY: !!OPENAI_API_KEY,
-      };
-      return json({ ok: true, present });
+      return json({
+        ok: true,
+        present: {
+          GOOGLE_API_KEY: !!GOOGLE_API_KEY,
+          SERPAPI_KEY: !!SERPAPI_KEY,
+          OPENAI_API_KEY: !!OPENAI_API_KEY,
+        },
+      });
     }
 
     if (pathname === "/api/plan" && req.method === "POST") {
-      const { address, radiusKm = 5, items = [] } = await req.json();
+      const { address, radiusKm = 15, items = [] } = await req.json();
       if (!address || !Array.isArray(items) || items.length === 0) {
         return json({ ok: false, error: "Missing address or items" }, 400);
       }
 
+      // 1) מצא סופרים/רשתות בקרבת הכתובת
       const nearby = await findNearbySupermarkets(address, Number(radiusKm));
       const chains = Array.from(new Set(nearby.map(n => n.chain))).slice(0, MAX_SUPERMARKETS);
 
-      const multi = await priceBasketMulti(items, chains);
+      // 2) נירמול שאילתות (אופציונלי עם LLM)
+      const normalizedItems = await normalizeItemsWithLLM(items);
 
-      const llm = await consolidateWithLLM_v2(nearby, multi).catch(() => null);
-      if (llm?.top3?.length) return json({ ok: true, mode: "llm", ...llm });
+      // 3) איסוף מועמדים לכל פריט/רשת
+      const multi = await buildCandidates(normalizedItems, chains);
 
-      const fallback = localPickTop3(nearby, multi);
-      return json({ ok: true, ...fallback });
+      // 4) איחוד עם LLM (בחירה על סמך תיאור/גודל), אם אפשר
+      const llm = await consolidateWithLLM(nearby, multi).catch(() => null);
+      if (llm?.baskets?.length) {
+        // ודא מיון טופ-3
+        const baskets = llm.baskets.sort((a: any, b: any) => (a.total ?? Infinity) - (b.total ?? Infinity));
+        const top3 = (llm.top3?.length ? llm.top3 : baskets.slice(0, 3));
+        return json({ ok: true, mode: "llm", top3, baskets, warnings: llm.warnings ?? [] });
+      }
+
+      // 5) Fallback לוקאלי
+      const { baskets, top3 } = localPickBaskets(nearby, multi);
+      return json({ ok: true, mode: "local", top3, baskets, warnings: ["LLM disabled/unavailable; using local cheapest candidates"] });
     }
 
     return json({ ok: false, error: "Not found" }, 404);
@@ -368,7 +455,7 @@ async function handleApi(req: Request) {
   }
 }
 
-// ---------- Static files ----------
+/* ===================== STATIC SERVER ===================== */
 async function serveStatic(pathname: string) {
   const filePath = pathname === "/" ? "/index.html" : pathname;
   const url = new URL(`file://${Deno.cwd()}/public${filePath}`);
@@ -380,7 +467,10 @@ async function serveStatic(pathname: string) {
       js: "text/javascript; charset=utf-8",
       css: "text/css; charset=utf-8",
       json: "application/json; charset=utf-8",
-      png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", svg: "image/svg+xml",
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      svg: "image/svg+xml",
     } as Record<string, string>)[ext] ?? "application/octet-stream";
     return new Response(file, { headers: { "content-type": ct } });
   } catch {
@@ -388,7 +478,7 @@ async function serveStatic(pathname: string) {
   }
 }
 
-// ---------- Server ----------
+/* ===================== SERVER ===================== */
 Deno.serve({ port: PORT }, (req) => {
   const { pathname } = new URL(req.url);
   if (pathname.startsWith("/api/")) return handleApi(req);

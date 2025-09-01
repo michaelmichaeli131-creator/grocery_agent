@@ -1,43 +1,55 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>סל קנייה זול לפי סופר</title>
-  <link rel="stylesheet" href="/style.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>השוואת סל קניות</title>
+  <link rel="stylesheet" href="/style.css"/>
+
+  <!-- Leaflet (מפה בלי מפתח) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 </head>
 <body>
   <main>
-    <header>
-      <h1>סל קנייה זול לפי סופר</h1>
-      <div class="lang">
-        <button data-lang="he">עברית</button>
-        <button data-lang="en">English</button>
-      </div>
-    </header>
+    <h1>מצא את סל הקניות הזול ביותר</h1>
 
     <section class="card">
-      <h2 id="t-search">פרטי חיפוש</h2>
-      <label id="t-address">כתובת: <input id="address" placeholder="רחוב, עיר"></label>
-      <label id="t-radius">רדיוס (ק״מ): <input id="radius" type="number" value="5" min="1" max="30"></label>
+      <label>כתובת: <input id="address" placeholder="רחוב, עיר"/></label>
+      <label>רדיוס (ק״מ): <input id="radius" type="number" value="15" min="1" max="50"/></label>
     </section>
 
     <section class="card">
-      <h2 id="t-list">רשימת קניות</h2>
+      <h2>רשימת מוצרים</h2>
       <div id="items"></div>
       <div class="row">
-        <input id="newItem" placeholder="למשל: קוקה קולה" />
+        <input id="newItem" placeholder="הוסף מוצר..."/>
         <button id="addBtn">הוסף</button>
       </div>
     </section>
 
     <div class="actions">
-      <button id="searchBtn">מצא את הסל הזול</button>
+      <button id="searchBtn">חפש</button>
     </div>
 
-    <section id="results" class="card" hidden></section>
+    <section id="results" class="card"></section>
+
+    <section class="card">
+      <h2>מפה</h2>
+      <div id="map"></div>
+    </section>
   </main>
 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
   <script type="module" src="/app.js"></script>
 </body>
 </html>
+
