@@ -455,7 +455,7 @@ async function handleApi(req: Request) {
   }
 }
 
-/* ===================== STATIC SERVER ===================== */
+/* ===================== STATIC SERVER  ===================== */
 async function serveStatic(pathname: string) {
   const filePath = pathname === "/" ? "/index.html" : pathname;
   const url = new URL(`file://${Deno.cwd()}/public${filePath}`);
