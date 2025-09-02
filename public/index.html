@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <title>השוואת סל קניות AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- Leaflet map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
@@ -67,8 +66,7 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
 .src-badge{ display:inline-block; padding:2px 8px; border-radius:999px; background:#eef6ff; color:#075985; font-size:12px; margin-inline-start:6px }
 .desc{ color:#475569; font-size:12px }
 .conf{ font-size:12px; color:#065f46; font-weight:800 }
-
-/* map per store */
+.unit{ font-size:12px; color:#0b3b6a; font-weight:800 }
 .map{ width:100%; height:260px; border-radius:14px; border:1px solid #e6edf7; margin-top:10px; overflow:hidden }
 </style>
 </head>
@@ -133,7 +131,7 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
   </div>
 </section>
 
-<!-- Screen 4: Items (chips add) -->
+<!-- Screen 4: Items -->
 <section id="s4" class="screen">
   <div class="page">
     <div class="box">
@@ -183,7 +181,6 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
 </div>
 </div>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -212,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const debugJson = document.getElementById('debugJson');
   const isDebug = new URLSearchParams(location.search).get('debug') === '1';
 
-  // GPS state
+  // GPS
   let gps = null; // {lat,lng}
   gpsBtn?.addEventListener('click', ()=>{
     if (!navigator.geolocation) {
@@ -265,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   renderChips();
+
   document.getElementById('addBtn').onclick = ()=>{
     const v = (newItemEl.value||'').trim();
     if(!v) return shake(newItemEl);
@@ -310,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו לדייק מותג/נפח, להגדיל רדיוס, או מיקום סמוך');
         return;
       }
-      // ציור תוצאות עם מפה פר-סופר
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
 
@@ -324,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderStore(b, idx){
     const total = toPrice(b.total, '₪');
     const addr = b.location?.address || '';
-    const lines = Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : '';
     const mo = (typeof b.match_overall === 'number') ? `${Math.round(b.match_overall*100)}%` : '—';
     const cov = (typeof b.coverage === 'number') ? `${Math.round(b.coverage*100)}%` : '—';
 
@@ -337,14 +333,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="total">${total}</div>
       </div>
     `;
-    // מפה תיטען בפתיחה (lazy)
     return hdr + `
       <details class="box" style="margin-top:10px" data-idx="${idx}">
         <summary>פירוט סל + מפה</summary>
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div style="height:8px"></div>
-        ${lines}
+        ${Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : ''}
       </details>`;
   }
 
@@ -357,17 +352,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p.merchant) srcPieces.push(esc(p.merchant));
     if (p.domain) srcPieces.push(esc(p.domain));
     const source = srcPieces.length ? ` <span class="pill">${srcPieces.join(' • ')}</span>` : '';
-    const title = p.product_name || p.chosen_title || p.title || p.item || '';
-    const brand = p.product_brand ? ` <span class="pill">${esc(p.product_brand)}</span>` : '';
+    const brand = p.product_brand || p.schema_brand;
+    const brandBadge = brand ? ` <span class="pill">${esc(brand)}</span>` : '';
+    const unit = (typeof p.unit_per_liter === 'number')
+      ? `<span class="unit">₪/ל׳ ${p.unit_per_liter.toFixed(2)}</span>`
+      : (typeof p.unit_per_kg === 'number' ? `<span class="unit">₪/ק״ג ${p.unit_per_kg.toFixed(2)}</span>` : '');
     const conf = typeof p.confidence_pct === 'number' ? `<span class="conf">${p.confidence_pct}% אמינות</span>` : '';
+    const title = p.product_name || p.chosen_title || p.title || p.item || '';
+    const size = p.size_text ? ` <span class="pill">${esc(p.size_text)}</span>` : '';
 
     return `
       <div class="row">
         <div>
-          <div><strong>${esc(p.item||'')}</strong>${sub}${brand}</div>
+          <div><strong>${esc(p.item||'')}</strong>${sub}${brandBadge}${size}</div>
           <div class="muted small">${esc(title)}</div>
           ${desc}
-          <div class="small">${link}${source} ${conf}</div>
+          <div class="small">${link}${source} ${unit} ${conf}</div>
         </div>
         <div class="total">${price}</div>
       </div>
