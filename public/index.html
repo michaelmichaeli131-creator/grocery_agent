@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -46,22 +47,23 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
 .good{color:#047857;font-weight:800}
 .bad{color:#b91c1c;font-weight:800}
 .toggle{display:flex;align-items:center;gap:8px}
-
 /* chips */
 .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
-.chip{
-  display:flex; align-items:center; gap:8px;
-  padding:8px 10px; border-radius:999px;
-  background:#eef6ff; border:1px solid #e6edf7;
-  color:#075985; font-size:14px;
-}
+.chip{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:#eef6ff; border:1px solid #e6edf7; color:#075985; font-size:14px }
 .chip .close{ background:transparent; border:none; color:#075985; cursor:pointer; font-size:16px; line-height:1; }
-.add-row{ display:flex; gap:10px; margin-top:10px }
-.btn-secondary{
-  background:#fff; color:#075985; border:1px solid #e6edf7;
-  border-radius:14px; padding:12px 14px; font-weight:900; cursor:pointer;
+.add-row{ display:flex; gap:10px; margin-top:10px; position:relative }
+.btn-secondary{ background:#fff; color:#075985; border:1px solid #e6edf7; border-radius:14px; padding:12px 14px; font-weight:900; cursor:pointer }
+/* dropdown */
+.dropdown{
+  position:absolute; inset-inline-start:0; top:44px; right:0; left:0;
+  background:#fff; border:1px solid #e6edf7; border-radius:14px; box-shadow:var(--shadow);
+  z-index:10; max-height:280px; overflow:auto;
 }
-
+.opt{ padding:10px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer }
+.opt:hover, .opt.active{ background:#eef6ff }
+.opt .left{ display:flex; flex-direction:column }
+.opt .label{ font-weight:700 }
+.opt .meta{ color:#64748b; font-size:12px }
 /* results */
 .src-badge{ display:inline-block; padding:2px 8px; border-radius:999px; background:#eef6ff; color:#075985; font-size:12px; margin-inline-start:6px }
 .desc{ color:#475569; font-size:12px }
@@ -73,24 +75,21 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
 <body>
 <div class="app">
 
-<!-- Screen 1: Landing -->
+<!-- Screen 1 -->
 <section id="s1" class="screen active">
   <div class="landing">
     <header class="landing-head">
       <div class="brand-mini"><div class="dot"></div><span>CartCompare <b>AI</b></span></div>
       <a class="how" href="javascript:void(0)" id="howLink">איך זה עובד?</a>
     </header>
-
     <div class="landing-center">
       <h1 class="hero-title">מצא/י את סל הקניות הזול לידך</h1>
       <p class="hero-sub">מוצא את הזול במהירות באמצעות AI</p>
-
       <div class="badges">
         <span class="badge">⚡ חוסך זמן</span>
         <span class="badge">💸 מחיר הכי זול</span>
         <span class="badge">AI 🤖</span>
       </div>
-
       <button id="startBtn" class="btn btn-black hero-cta">בואו נתחיל</button>
       <button id="gpsBtn" class="btn btn-ghost hero-ghost">שימוש ב-GPS</button>
     </div>
@@ -102,7 +101,7 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
   <div class="page">
     <div class="box">
       <div style="font-weight:800;font-size:20px">מה הכתובת שלך?</div>
-      <div class="muted" style="margin-top:6px">אפשר לכתוב עיר/רחוב או להשתמש ב-GPS במסך הקודם</div>
+      <div class="muted" style="margin-top:6px">אפשר עיר/רחוב או GPS מהמסך הקודם</div>
       <div class="input" style="margin-top:12px">
         <label class="muted" for="address">כתובת / עיר</label>
         <input id="address" placeholder="למשל: חולון, סוקולוב 10" />
@@ -131,18 +130,19 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
   </div>
 </section>
 
-<!-- Screen 4: Items -->
+<!-- Screen 4: Items + Autocomplete -->
 <section id="s4" class="screen">
   <div class="page">
     <div class="box">
       <div style="font-weight:800;font-size:20px">מה תרצה לקנות?</div>
-      <div class="muted" style="margin-top:6px">הוסף מוצרים בלחיצת כפתור. אפשר בעברית או אנגלית.</div>
+      <div class="muted" style="margin-top:6px">הוסף מוצרים בלחיצה. “קו 1.5 ל” → קוקה קולה 1.5 ל׳, “פסטה 500” → פסטה 500 גרם…</div>
 
       <div id="chips" class="chips"></div>
 
       <div class="add-row">
-        <input id="newItem" class="input" placeholder="למשל: קוקה קולה 1.5 ליטר" />
+        <input id="newItem" class="input" placeholder="למשל: קו 1.5 ל / פחית 330 / פסטה 500..." autocomplete="off" />
         <button id="addBtn" class="btn-secondary" type="button" title="הוסף לרשימה">+ הוסף</button>
+        <div id="dropdown" class="dropdown" style="display:none"></div>
       </div>
 
       <div class="toggle" style="margin-top:12px">
@@ -162,7 +162,6 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
         <span class="pill">Maps + Shopping + CHP + Web</span>
       </div>
       <div id="summary" class="muted" style="margin-top:6px"></div>
-
       <div id="results" style="margin-top:12px"></div>
       <div id="loading" class="skeleton" style="height:64px;margin-top:12px;display:none"></div>
 
@@ -200,7 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
-  let items = ["קוקה קולה 1.5 ליטר", "מים מינרלים 1.5 ליטר", "פסטה"];
+  const dropdown = document.getElementById('dropdown');
+  let items = ["קוקה קולה 1.5 ליטר", "מים מינרליים 1.5 ליטר", "פסטה 500 גרם"];
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
@@ -210,18 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDebug = new URLSearchParams(location.search).get('debug') === '1';
 
   // GPS
-  let gps = null; // {lat,lng}
+  let gps = null;
   gpsBtn?.addEventListener('click', ()=>{
-    if (!navigator.geolocation) {
-      alert('הדפדפן לא תומך ב-GPS');
-      return;
-    }
+    if (!navigator.geolocation) return alert('הדפדפן לא תומך ב-GPS');
     navigator.geolocation.getCurrentPosition(
-      (pos)=>{
-        gps = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        alert('מיקום זוהה בהצלחה ✅');
-        goto(2);
-      },
+      (pos)=>{ gps = { lat: pos.coords.latitude, lng: pos.coords.longitude }; alert('מיקום זוהה ✅'); goto(2); },
       (err)=> alert('שגיאת GPS: ' + (err.message||err.code)),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
     );
@@ -235,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   goto(0);
-
   startBtn?.addEventListener('click', ()=> goto(1));
   howLink?.addEventListener('click', ()=> goto(1));
 
@@ -247,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
       goto(step+1);
     });
   });
-
   btnBack.addEventListener('click', ()=>{ if(step===0){ return; } goto(step-1); });
 
   // chips UI
@@ -263,21 +254,70 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderChips();
 
+  // add button
   document.getElementById('addBtn').onclick = ()=>{
     const v = (newItemEl.value||'').trim();
     if(!v) return shake(newItemEl);
     items.push(v);
     newItemEl.value = '';
+    hideDropdown();
     renderChips();
   };
 
+  // Autocomplete
+  let activeIdx = -1;
+  newItemEl.addEventListener('input', async ()=>{
+    const q = newItemEl.value.trim();
+    if (!q) return hideDropdown();
+    try{
+      const res = await fetch(`/api/suggest?q=${encodeURIComponent(q)}&limit=12`);
+      const data = await res.json();
+      const list = Array.isArray(data.suggestions) ? data.suggestions : [];
+      if (!list.length) return hideDropdown();
+      dropdown.innerHTML = list.map((s,i)=>(
+        `<div class="opt" data-i="${i}"><div class="left"><div class="label">${esc(s.label)}</div><div class="meta">${esc(s.canonical)} ${s.default_size? '• '+esc(s.default_size):''}</div></div><div>${s.brand? esc(s.brand):''}</div></div>`
+      )).join('');
+      dropdown.style.display = 'block';
+      activeIdx = -1;
+
+      dropdown.querySelectorAll('.opt').forEach(opt=>{
+        opt.addEventListener('click', ()=>{
+          const i = Number(opt.getAttribute('data-i'));
+          const picked = list[i];
+          if (!picked) return;
+          items.push(picked.label);
+          newItemEl.value = '';
+          hideDropdown();
+          renderChips();
+        });
+      });
+    }catch{ hideDropdown(); }
+  });
+  newItemEl.addEventListener('keydown', (e)=>{
+    if (dropdown.style.display !== 'block') return;
+    const opts = Array.from(dropdown.querySelectorAll('.opt'));
+    if (e.key === 'ArrowDown'){
+      e.preventDefault(); activeIdx = Math.min(opts.length-1, activeIdx+1); setActive(opts);
+    } else if (e.key === 'ArrowUp'){
+      e.preventDefault(); activeIdx = Math.max(0, activeIdx-1); setActive(opts);
+    } else if (e.key === 'Enter'){
+      if (activeIdx >= 0){
+        e.preventDefault(); opts[activeIdx].click();
+      }
+    } else if (e.key === 'Escape'){
+      hideDropdown();
+    }
+  });
+  function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
+  function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
+
+  // NEXT: call plan
   btnNext.addEventListener('click', async ()=>{
     if(step===1){ if(!gps && !addressEl.value.trim()) return shake(addressEl); return goto(step+1); }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); return goto(step+1); }
     if(step===3){ if(items.length===0) return shake(newItemEl); return goto(step+1); }
     if(step<4) return goto(step+1);
 
-    // Run search against /api/plan
     renderSkeleton();
     debugWrap.style.display = isDebug ? 'block' : 'none';
     debugJson.textContent = '';
@@ -289,10 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryEl.textContent = `${gps ? 'GPS' : 'כתובת: ' + (payload.address||'—')} • רדיוס: ${payload.radiusKm || payload.radius_km || ''} ק״מ • פריטים: ${items.length}`;
 
     try{
-      const res = await fetch('/api/plan', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch('/api/plan', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       const data = await res.json();
 
       loadingEl.style.display = 'none';
@@ -300,21 +337,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if(!res.ok || !data.ok){
         resultsEl.innerHTML = row(`שגיאת שרת (${res.status})`, data.error || 'לא ידוע');
-        console.error("API error", data);
         return;
       }
       const baskets = Array.isArray(data.baskets) ? data.baskets : [];
-      if(baskets.length===0){
-        resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו לדייק מותג/נפח, להגדיל רדיוס, או מיקום סמוך');
-        return;
-      }
+      if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב/לדייק'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-
     }catch(err){
       loadingEl.style.display = 'none';
       resultsEl.innerHTML = row('שגיאת רשת', err.message || String(err));
-      console.error("Network error", err);
     }
   });
 
@@ -387,13 +418,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!lat || !lng) return;
 
         const m = L.map(mapDiv).setView([lat,lng], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-          maxZoom: 19, attribution: '&copy; OpenStreetMap'
-        }).addTo(m);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(m);
         L.marker([lat,lng]).addTo(m);
         mapDiv.dataset.inited = "1";
         setTimeout(()=>m.invalidateSize(), 50);
-      }, { once:false });
+      });
     });
   }
 

@@ -1,6 +1,15 @@
 {
+  "importMap": "./import_map.json",
   "tasks": {
-    "dev": "deno run -A --watch=public/ server.ts",
-    "start": "deno run -A server.ts"
+    "build": "deno run -A server.ts",
+    "start": "deno run -A server.ts",
+    "dev": "deno run -A server.ts",
+    "generate:products": "deno run -A tools/build_products.ts"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "strict": true,
+    "lib": ["dom", "dom.iterable", "esnext"]
   }
 }
