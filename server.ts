@@ -1,16 +1,6 @@
-// server.ts — PRO+++
-// שיפורים עיקריים:
-// • SERP (Shopping + site:chp + site:pricez + site:zap + אתרים רשמיים של רשתות)
-// • וריאציות חיפוש חכמות (עברית/אנגלית, גדלים, מותגים, packs)
-// • סקרייפינג schema.org/Product לכל מועמד מוביל (GTIN/brand/price/size) + שאיבת ld+json
-// • חישוב "מחיר ליחידה" (לליטר/לק"ג) + חישוב כמות/pack
-// • סינון Outliers לפי IQR
-// • קונצנזוס בין מקורות (±5%) מעלה אמינות
-// • דירוג אמינות משודרג (CHP weight, דומיין רשת, brand/size match, GTIN, קונצנזוס, מחיר קיים)
-// • LLM structured selection (function-calling) אופציונלי: בוחר רק מבין מועמדים שסופקו (לא ממציא)
-// • GPS + כתובת; מפה בצד הלקוח
-// • קאש בזיכרון, retries, קונקרנציה
+// server.ts — עם Debug משופר + Fallback לג׳יאוקודינג (Nominatim) + אנדפוינטים לדיבוג
 
+// טעינת ENV מקומית בהרצה לא-Deploy
 if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
   try {
     const { load } = await import("https://deno.land/std@0.201.0/dotenv/mod.ts");
@@ -155,16 +145,48 @@ function detectBrand(str?: string): string | undefined {
 }
 
 /* ========= GOOGLE MAPS ========= */
-async function geocodeAddress(address: string) {
+async function geocodeAddress(address: string, includeDebug = false) {
   const ck = `geo:${address}`;
   const hit = cacheGet<any>(ck);
   if (hit) return hit;
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
-  const data = await safeJson(url, {}, 3);
-  const loc = data?.results?.[0]?.geometry?.location;
-  if (!loc) throw new Error("Address not found");
-  cacheSet(ck, loc, GEO_TTL_MS);
-  return loc; // { lat, lng }
+
+  const gUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
+  let gData: any = null;
+  let loc: any = null;
+  let provider = "google";
+
+  try {
+    gData = await safeJson(gUrl, {}, 3);
+    loc = gData?.results?.[0]?.geometry?.location;
+  } catch (_) {
+    // ננסה fallback
+  }
+
+  // Fallback ל־Nominatim אם אין תוצאה מגוגל
+  if (!loc) {
+    const nUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&addressdetails=0`;
+    try {
+      const nArr = await safeJson(nUrl, { headers: { "User-Agent": "cartcompare-ai/1.0" } }, 2);
+      const first = Array.isArray(nArr) ? nArr[0] : null;
+      if (first?.lat && first?.lon) {
+        loc = { lat: Number(first.lat), lng: Number(first.lon) };
+        provider = "nominatim";
+        gData = { nominatim: first };
+      }
+    } catch (_) { /* ignore */ }
+  }
+
+  if (!loc) {
+    const err = includeDebug
+      ? { message: "Address not found", geocode_debug: { url: gUrl, google_response_snippet: gData?.status ?? gData?.error_message ?? null } }
+      : { message: "Address not found" };
+    const e = Object.assign(new Error(err.message), { debug: (err as any).geocode_debug });
+    throw e;
+  }
+
+  const out = includeDebug ? { ...loc, _debug: { provider, google_status: gData?.status ?? null } } : loc;
+  cacheSet(ck, out, GEO_TTL_MS);
+  return out;
 }
 async function placesNearbyAllPages(lat: number, lng: number, radius: number, type: string) {
   const all: any[] = [];
@@ -235,8 +257,8 @@ async function findNearbySupermarketsByLatLng(lat: number, lng: number, radiusKm
   cacheSet(ck, result, PLACES_TTL_MS);
   return result;
 }
-async function findNearbySupermarkets(address: string, radiusKm: number) {
-  const { lat, lng } = await geocodeAddress(address);
+async function findNearbySupermarkets(address: string, radiusKm: number, includeDebug=false) {
+  const { lat, lng } = await geocodeAddress(address, includeDebug) as any;
   return findNearbySupermarketsByLatLng(lat, lng, radiusKm);
 }
 
@@ -252,7 +274,6 @@ type PriceCandidate = {
   domain?: string;
   source: "shopping" | "chp" | "web";
   product_brand?: string;
-  // העשרה
   schema_brand?: string | null;
   schema_gtin?: string | null;
   schema_name?: string | null;
@@ -261,7 +282,7 @@ type PriceCandidate = {
   unit_g?: number | null;
   unit_per_liter?: number | null;
   unit_per_kg?: number | null;
-  consensus_count?: number; // כמה מקורות שונים בטווח ±5% מהמחיר
+  consensus_count?: number;
 };
 
 function candidateFromShopping(r: any, query: string): PriceCandidate | null {
@@ -346,7 +367,6 @@ async function serpShoppingCandidates(query: string, chain?: string): Promise<Pr
     .map(r => candidateFromShopping(r, query))
     .filter(Boolean) as PriceCandidate[];
 
-  // ייחוד לפי (title+domain)
   const uniq = new Map<string, PriceCandidate>();
   for (const c of pool) {
     const key = `${(c.title||"").toLowerCase()}|${c.domain ?? ""}`;
@@ -371,24 +391,18 @@ async function serpSiteCandidates(site: string, query: string, chain?: string, l
 /* ========= SIZE & UNIT PRICE ========= */
 type ParsedSize = { unit_ml?: number; unit_g?: number; pack_qty?: number; size_text?: string };
 function parseSizeFromText(s?: string): ParsedSize {
-  // מזהה ליטרים/מיליליטר/קילוגרם/גרם ו-pack
   const out: ParsedSize = {};
   const text = (s || "").toLowerCase();
-  // pack
   const mPack = text.match(/(\d+)\s*(?:pack|x|יח'|בקבוקים|שיש(?:י|ייה))/);
   if (mPack) out.pack_qty = Number(mPack[1]);
-
-  // volume
   const mML = text.match(/(\d+(?:[.,]\d+)?)\s*ml/);
-  const mL1 = text.match(/(\d+(?:[.,]\d+)?)\s*l(?!b)/); // l not lb
+  const mL1 = text.match(/(\d+(?:[.,]\d+)?)\s*l(?!b)/);
   const mL2 = text.match(/(\d+(?:[.,]\d+)?)\s*(?:ליטר|ל׳|ל)\b/);
   if (mML) out.unit_ml = Math.round(Number(mML[1].replace(",", ".")));
   else if (mL1 || mL2) {
     const v = Number((mL1?.[1] ?? mL2?.[1] ?? "0").replace(",", "."));
     out.unit_ml = Math.round(v * 1000);
   }
-
-  // weight
   const mG = text.match(/(\d+(?:[.,]\d+)?)\s*g\b/);
   const mKG = text.match(/(\d+(?:[.,]\d+)?)\s*kg\b/);
   const mGHeb = text.match(/(\d+(?:[.,]\d+)?)\s*גר?ם/);
@@ -398,16 +412,10 @@ function parseSizeFromText(s?: string): ParsedSize {
     const v = Number((mKG?.[1] ?? mKGHeb?.[1] ?? "0").replace(",", "."));
     out.unit_g = Math.round(v * 1000);
   }
-
   if (!out.unit_ml && !out.unit_g && !out.pack_qty) {
-    // חפש 1.5 ל׳ שכיח
     const m15 = text.match(/\b1[.,]?5\b/);
-    if (m15 && /קולה|cola|water|מים|משקה|drink|soda|sparkling|mineral/.test(text)) {
-      out.unit_ml = 1500;
-    }
-    if (/פסטה|pasta/.test(text)) {
-      out.unit_g = 500;
-    }
+    if (m15 && /קולה|cola|water|מים|משקה|drink|soda|sparkling|mineral/.test(text)) out.unit_ml = 1500;
+    if (/פסטה|pasta/.test(text)) out.unit_g = 500;
   }
   out.size_text = s;
   return out;
@@ -458,12 +466,9 @@ async function scrapeSchemaOrgProduct(url?: string): Promise<{
       const size_text = prod.size ?? prod.weight ?? prod.netContent ?? null;
       return { brand, gtin, name, offers_price: price ?? null, currency, size_text };
     }
-    // חפש GTIN בטקסט העמוד אם אין ld+json
     const gtinHit = html.match(/\b(\d{13})\b/);
     if (gtinHit) return { brand: null, gtin: gtinHit[1], name: null, offers_price: null, currency: null, size_text: null };
-  } catch {
-    // ignore
-  }
+  } catch {}
   return null;
 }
 
@@ -495,20 +500,15 @@ function heuristicVariants(q: string): string[] {
   const out = new Set<string>();
   const base = q.trim();
   out.add(base);
-  // אם גנרי — הוסף דיפולטים
   if (/^קוקה.?קולה$|^coca.?cola$/i.test(base)) { out.add(`${base} 1.5L`); out.add("Coca Cola 1.5L"); }
   if (/^פסטה$/i.test(base)) { out.add("פסטה 500 גרם"); out.add("Pasta 500g"); out.add("ברילה פסטה 500 גרם"); out.add("אוסם פסטה 500 גרם"); }
   if (/מים|mineral water|נביעות|מי עדן/i.test(base) && !/l|ליטר|ml/i.test(base)) { out.add(`${base} 1.5L`); }
-
-  // תעתיקים והרחבות
   if (/(קוקה|coca)/i.test(base)) { out.add(base.replace(/קוקה.?קולה/i, "Coca Cola")); out.add("Coca Cola 1.5L"); }
   if (/(נביעות|neviot)/i.test(base)) { out.add(base.replace(/נביעות/i, "Neviot")); }
   if (/(מי עדן|mei.?eden)/i.test(base)) { out.add(base.replace(/מי.?עדן/i, "Mei Eden")); }
   if (/(ברילה|barilla)/i.test(base)) { out.add(base.replace(/ברילה/i, "Barilla")); }
   if (/מים/i.test(base)) out.add(base + " mineral water");
   if (/פסטה|pasta/i.test(base)) { out.add(base + " pasta"); out.add(base + " 500g"); }
-
-  // גדלים נפוצים
   if (!/1\.?5\s*l|1500\s*ml|500\s*g/i.test(base)) {
     if (/cola|קולה|משקה/i.test(base)) out.add(base + " 1.5L");
     if (/פסטה|pasta/i.test(base)) out.add(base + " 500g");
@@ -528,7 +528,7 @@ function iqrFilter(prices: number[]) {
 }
 function applyOutlierFilter(cands: PriceCandidate[]) {
   const vals = cands.map(c => c.price).filter((p): p is number => typeof p === "number");
-  if (vals.length < 6) return cands; // קטן מדי לסינון
+  if (vals.length < 6) return cands;
   const { low, high } = iqrFilter(vals);
   const kept = cands.filter(c => {
     if (c.price == null) return true;
@@ -564,15 +564,12 @@ function sizeTokens(q: string) {
 }
 function computeConfidence(c: PriceCandidate, query: string, chain?: string): number {
   let score = 0;
-  // מקור
   if (c.source === "chp") score += 0.35 * CHP_WEIGHT;
   else if (c.source === "shopping") score += 0.25;
   else score += 0.18;
 
-  // מחיר קיים
   if (c.price != null) score += 0.22; else score += 0.08;
 
-  // דומיין/ספק מהרשת
   if (chain && CHAIN_MAP[chain]) {
     const aliases = CHAIN_MAP[chain].map(s => s.toLowerCase());
     const d = (c.domain ?? "").toLowerCase();
@@ -580,38 +577,35 @@ function computeConfidence(c: PriceCandidate, query: string, chain?: string): nu
     if (aliases.some(a => d.includes(a) || m.includes(a))) score += 0.18;
   }
 
-  // מותג
   const qBrand = detectBrand(query);
   const brandHit = (c.product_brand || c.schema_brand || "").toLowerCase();
   if (qBrand && brandHit.includes(qBrand)) score += 0.12;
 
-  // התאמת גודל/נפח
   const tok = sizeTokens(query);
   const hay = ((c.title ?? "") + " " + (c.description ?? "") + " " + (c.size_text ?? "")).toLowerCase();
   if (tok.some(t => hay.includes(t.replace("l","")) || hay.includes(t))) score += 0.1;
 
-  // GTIN
   if (c.schema_gtin) score += 0.12;
 
-  // קונצנזוס
   if ((c.consensus_count ?? 0) >= 2) score += 0.12;
 
   score = Math.min(score, 0.99);
   return Math.round(score * 100);
 }
 
-/* ========= LLM STRUCTURED SELECTION (per item) ========= */
+/* ========= LLM (בחירה אופציונלית למועמד) ========= */
 async function llmSelectBest(query: string, chain: string | undefined, candidates: PriceCandidate[]) {
   if (!OPENAI_API_KEY || !LLM_ENABLE_SELECT || candidates.length === 0) return null;
 
-  // נשלח רק טופ 8 לפי שילוב מחיר/אמינות מקומית ראשונית
   const prelim = candidates.slice().map(c => ({ c, conf: computeConfidence(c, query, chain) }));
   prelim.sort((a,b)=>{
     const ap = a.c.price ?? Infinity, bp = b.c.price ?? Infinity;
     const aw = (a.c.source === "chp" ? CHP_WEIGHT : 1);
-    const bw = (b.c.source === "chp" ? CHP_WEIGHT : 1);
-    const ascore = (a.conf * aw) - (isFinite(ap) ? ap : 0);
-    const bscore = (b.conf * bw) - (isFinite(bp) ? bp : 0);
+    const bw = (b.c.source === "chp" ? 1.0 * CHP_WEIGHT : 1);
+    const aUnit = a.c.unit_per_liter ?? a.c.unit_per_kg ?? ap;
+    const bUnit = b.c.unit_per_liter ?? b.c.unit_per_kg ?? bp;
+    const ascore = (a.conf * aw) - (isFinite(aUnit) ? aUnit : 0);
+    const bscore = (b.conf * bw) - (isFinite(bUnit) ? bUnit : 0);
     return bscore - ascore;
   });
   const top = prelim.slice(0, 8).map(x => x.c);
@@ -691,7 +685,6 @@ type LineChoice = {
 type ChainPricing = { chain: string; items: { query: string; candidates: PriceCandidate[] }[]; };
 
 async function enrichWithSchema(cands: PriceCandidate[], maxFetch = SCHEMA_SCRAPE_MAX_PER_ITEM) {
-  // קח עד N בעלי פוטנציאל גבוה (CHP/brand/size)
   const scored = cands.slice().map(c => ({ c, s:
     (c.source === "chp" ? 2 : 1) + (c.product_brand ? 0.5 : 0) + (c.price != null ? 0.3 : 0)
   }));
@@ -709,7 +702,6 @@ async function enrichWithSchema(cands: PriceCandidate[], maxFetch = SCHEMA_SCRAP
       if (s.offers_price && !c.price) c.price = s.offers_price;
       if (s.currency && !c.currency) c.currency = s.currency!;
     }
-    // תמיד ננסה לגזור גודל/מחיר ליחידה
     const sz = parseSizeFromText([c.size_text, c.title, c.description].filter(Boolean).join(" "));
     const unit = computeUnitPrice(c.price, sz);
     c.unit_ml = sz.unit_ml ?? null;
@@ -717,7 +709,6 @@ async function enrichWithSchema(cands: PriceCandidate[], maxFetch = SCHEMA_SCRAP
     c.unit_per_liter = unit.unit_per_liter;
     c.unit_per_kg = unit.unit_per_kg;
   }
-  // לכל היתר — נסה לפחות גזירת גודל מהטקסטים
   for (const c of cands) {
     if (c.unit_per_kg != null || c.unit_per_liter != null) continue;
     const sz = parseSizeFromText([c.size_text, c.title, c.description].filter(Boolean).join(" "));
@@ -753,7 +744,6 @@ async function buildCandidates(items: string[], chains: string[]): Promise<Chain
           const pz = await serpSiteCandidates(PRICEZ_SITE, v, pack.chain, 8, "web").catch(() => []);
           const zap = await serpSiteCandidates(ZAP_SITE, v, pack.chain, 8, "web").catch(() => []);
           cands.push(...pz, ...zap);
-          // אתרי רשתות רשמיים (עדין דרך serp site:)
           if (CHAIN_MAP[pack.chain]) {
             for (const alias of CHAIN_MAP[pack.chain]) {
               if (alias.includes(".co")) {
@@ -765,7 +755,6 @@ async function buildCandidates(items: string[], chains: string[]): Promise<Chain
           await sleep(60);
         }
 
-        // דה-דופ ו-IQR ו-Schema
         const uniq = new Map<string, PriceCandidate>();
         for (const c of cands) {
           const key = `${(c.title||"").toLowerCase()}|${c.domain ?? ""}|${c.source}`;
@@ -796,11 +785,9 @@ function chooseBestLocal(query: string, chain: string | undefined, candidates: P
   }));
 
   scored.sort((a,b)=>{
-    // משלבים מחיר/יחידה/אמינות, עם משקל CHP
     const ap = a.c.price ?? Infinity, bp = b.c.price ?? Infinity;
     const aw = (a.c.source === "chp" ? CHP_WEIGHT : 1);
     const bw = (b.c.source === "chp" ? CHP_WEIGHT : 1);
-    // אם יש מחיר ליחידה — נשקלל
     const aUnit = a.c.unit_per_liter ?? a.c.unit_per_kg ?? ap;
     const bUnit = b.c.unit_per_liter ?? b.c.unit_per_kg ?? bp;
     const ascore = (a.conf * aw) - (isFinite(aUnit) ? aUnit : 0);
@@ -901,11 +888,6 @@ function localPickBaskets(nearby: NearbyShop[], multi: ChainPricing[]) {
   const baskets = multi.map((pack) => {
     const breakdown: LineChoice[] = [];
     for (const { query, candidates } of pack.items) {
-      // Optional LLM choose
-      let chosen: PriceCandidate | null = null;
-      // eslint-disable-next-line no-unsafe-finally
-      chosen = null;
-      // בחירה לוקאלית
       const local = chooseBestLocal(query, pack.chain, candidates);
       breakdown.push(local);
     }
@@ -945,37 +927,75 @@ async function handleApi(req: Request) {
       });
     }
 
+    // דיבוג: ג׳יאוקודינג
+    if (pathname === "/api/debug/geocode") {
+      const url = new URL(req.url);
+      const address = url.searchParams.get("address") || "";
+      if (!address) return json({ ok:false, error:"missing address" }, 400);
+      try {
+        const loc = await geocodeAddress(address, true);
+        return json({ ok:true, address, loc });
+      } catch (e) {
+        return json({ ok:false, error:(e as Error).message, debug: (e as any).debug ?? null }, 500);
+      }
+    }
+
+    // דיבוג: מקומות ליד
+    if (pathname === "/api/debug/places") {
+      const url = new URL(req.url);
+      const lat = Number(url.searchParams.get("lat") ?? NaN);
+      const lng = Number(url.searchParams.get("lng") ?? NaN);
+      const radiusKm = Number(url.searchParams.get("radiusKm") ?? "10");
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return json({ ok:false, error:"missing lat/lng" }, 400);
+      const places = await findNearbySupermarketsByLatLng(lat, lng, radiusKm);
+      return json({ ok:true, count: places.length, places });
+    }
+
     if (pathname === "/api/plan" && req.method === "POST") {
       const body = await req.json();
-      const { address, radiusKm = 15, items = [], lat, lng } = body ?? {};
+      const { address, radiusKm = 15, items = [], lat, lng, include_debug = false } = body ?? {};
       if ((!address && (typeof lat!=="number" || typeof lng!=="number")) || !Array.isArray(items) || items.length===0) {
         return json({ ok:false, error:"Missing address/latlng or items" }, 400);
       }
 
-      // 1) סופרים בסביבה
-      const nearby = (typeof lat==="number" && typeof lng==="number")
-        ? await findNearbySupermarketsByLatLng(lat, lng, Number(radiusKm))
-        : await findNearbySupermarkets(String(address), Number(radiusKm));
+      // 1) סופרים בסביבה (כולל דיבוג אם צריך)
+      let nearby: NearbyShop[] = [];
+      let geoDbg: any = null;
+      if (typeof lat === "number" && typeof lng === "number") {
+        nearby = await findNearbySupermarketsByLatLng(lat, lng, Number(radiusKm));
+      } else {
+        try {
+          const { lat: glat, lng: glng, _debug } = await geocodeAddress(String(address), include_debug) as any;
+          geoDbg = _debug ?? null;
+          nearby = await findNearbySupermarketsByLatLng(glat, glng, Number(radiusKm));
+        } catch (e) {
+          return json({
+            ok:false,
+            error:(e as Error).message,
+            ...(include_debug ? { debug: { geocode: (e as any).debug ?? null } } : {})
+          }, 500);
+        }
+      }
 
       const chains = Array.from(new Set(nearby.map(n => n.chain))).slice(0, MAX_SUPERMARKETS);
 
-      // 2) נירמול פריטים (LLM אופציונלי) + וריאציות היוריסטיות
+      // 2) נירמול פריטים (LLM אופציונלי)
       const normalized = await normalizeItemsWithLLM(items);
 
       // 3) איסוף מועמדים לכל פריט/רשת
       const multi = await buildCandidates(normalized, chains);
 
-      // 4) איחוד עם LLM (בחירה per-item + בניית סל) — אופציונלי
+      // 4) איחוד עם LLM (אופציונלי)
       const llm = await consolidateWithLLM(nearby, multi).catch(() => null);
       if (llm?.baskets?.length) {
         const baskets = llm.baskets.sort((a: any, b: any) => (a.total ?? Infinity) - (b.total ?? Infinity));
         const top3 = baskets.slice(0, 3);
-        return json({ ok: true, mode: "llm", top3, baskets });
+        return json({ ok: true, mode: "llm", top3, baskets, ...(include_debug ? { debug: { geocode: geoDbg } } : {}) });
       }
 
-      // 5) בחירה לוקאלית
+      // 5) בחירה מקומית
       const { baskets, top3 } = localPickBaskets(nearby, multi);
-      return json({ ok: true, mode: "local", top3, baskets });
+      return json({ ok: true, mode: "local", top3, baskets, ...(include_debug ? { debug: { geocode: geoDbg } } : {}) });
     }
 
     return json({ ok: false, error: "Not found" }, 404);

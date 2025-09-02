@@ -283,8 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
     debugJson.textContent = '';
 
     const payload = gps
-      ? { lat: gps.lat, lng: gps.lng, radiusKm: Number(radiusEl.value || 15), items }
-      : { address: addressEl.value.trim(), radiusKm: Number(radiusEl.value || 15), items };
+      ? { lat: gps.lat, lng: gps.lng, radiusKm: Number(radiusEl.value || 15), items, include_debug: isDebug }
+      : { address: addressEl.value.trim(), radiusKm: Number(radiusEl.value || 15), items, include_debug: isDebug };
 
     summaryEl.textContent = `${gps ? 'GPS' : 'כתובת: ' + (payload.address||'—')} • רדיוס: ${payload.radiusKm || payload.radius_km || ''} ק״מ • פריטים: ${items.length}`;
 
