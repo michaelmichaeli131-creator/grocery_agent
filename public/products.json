@@ -1,0 +1,8390 @@
+[
+  {
+    "id": "cocacola__bottle_1_5l",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l__dup47",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l__dup48",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml__dup49",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml__dup50",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l__dup51",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l__dup52",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml__dup53",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml__dup54",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l__dup47",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l__dup48",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml__dup49",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml__dup50",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l__dup51",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l__dup52",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml__dup53",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml__dup54",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1__dup55",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2__dup56",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3__dup57",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4__dup58",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5__dup59",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6__dup60",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7__dup61",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8__dup62",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9__dup63",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10__dup64",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11__dup65",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12__dup66",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13__dup67",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14__dup68",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15__dup69",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16__dup70",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17__dup71",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18__dup72",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19__dup73",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20__dup74",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21__dup75",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22__dup76",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23__dup77",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24__dup78",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25__dup79",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26__dup80",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27__dup81",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28__dup82",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29__dup83",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30__dup84",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31__dup85",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32__dup86",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33__dup87",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34__dup88",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35__dup89",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36__dup90",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37__dup91",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38__dup92",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39__dup93",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40__dup94",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41__dup95",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42__dup96",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43__dup97",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44__dup98",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45__dup99",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46__dup100",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l__dup47",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l__dup48",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml__dup49",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml__dup50",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l__dup51",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l__dup52",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml__dup53",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml__dup54",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1__dup55",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2__dup56",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3__dup57",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4__dup58",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5__dup59",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6__dup60",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7__dup61",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8__dup62",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9__dup63",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10__dup64",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11__dup65",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12__dup66",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13__dup67",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14__dup68",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15__dup69",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16__dup70",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17__dup71",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18__dup72",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19__dup73",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20__dup74",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21__dup75",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22__dup76",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23__dup77",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24__dup78",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25__dup79",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26__dup80",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27__dup81",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28__dup82",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29__dup83",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30__dup84",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31__dup85",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32__dup86",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33__dup87",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34__dup88",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35__dup89",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36__dup90",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37__dup91",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38__dup92",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39__dup93",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40__dup94",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41__dup95",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42__dup96",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43__dup97",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44__dup98",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45__dup99",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46__dup100",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l__dup47",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l__dup48",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml__dup49",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml__dup50",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l__dup51",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l__dup52",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml__dup53",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml__dup54",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1__dup55",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2__dup56",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3__dup57",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4__dup58",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5__dup59",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6__dup60",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7__dup61",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8__dup62",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9__dup63",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10__dup64",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11__dup65",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12__dup66",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13__dup67",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14__dup68",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15__dup69",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16__dup70",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17__dup71",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18__dup72",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19__dup73",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20__dup74",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21__dup75",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22__dup76",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23__dup77",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24__dup78",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25__dup79",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26__dup80",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27__dup81",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28__dup82",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29__dup83",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30__dup84",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31__dup85",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32__dup86",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33__dup87",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34__dup88",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35__dup89",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36__dup90",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37__dup91",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38__dup92",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39__dup93",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40__dup94",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41__dup95",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42__dup96",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43__dup97",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44__dup98",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45__dup99",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46__dup100",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1_5l__dup47",
+    "label": "קוקה קולה זירו 1.5 ליטר",
+    "canonical": "coca cola zero 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "coca_zero__bottle_1l__dup48",
+    "label": "קוקה קולה זירו 1 ליטר",
+    "canonical": "coca cola zero 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "coca_zero__can_330ml__dup49",
+    "label": "קוקה קולה זירו פחית 330 מ״ל",
+    "canonical": "coca cola zero 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "coca_zero__sixpack_can_330ml__dup50",
+    "label": "קוקה קולה זירו שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola zero 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1_5l__dup51",
+    "label": "דיאט קולה 1.5 ליטר",
+    "canonical": "diet coke 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "diet_coke__bottle_1l__dup52",
+    "label": "דיאט קולה 1 ליטר",
+    "canonical": "diet coke 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "diet_coke__can_330ml__dup53",
+    "label": "דיאט קולה פחית 330 מ״ל",
+    "canonical": "diet coke 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "diet_coke__sixpack_can_330ml__dup54",
+    "label": "דיאט קולה שישיית פחיות 330 מ״ל",
+    "canonical": "diet coke 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1_5l__dup1__dup55",
+    "label": "קוקה קולה 1.5 ליטר",
+    "canonical": "coca cola 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_2l__dup2__dup56",
+    "label": "קוקה קולה 2 ליטר",
+    "canonical": "coca cola 2l",
+    "default_size": "2L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "cocacola__bottle_1l__dup3__dup57",
+    "label": "קוקה קולה 1 ליטר",
+    "canonical": "coca cola 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "cocacola__can_330ml__dup4__dup58",
+    "label": "קוקה קולה פחית 330 מ״ל",
+    "canonical": "coca cola 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחית"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "cocacola__sixpack_can_330ml__dup5__dup59",
+    "label": "קוקה קולה שישיית פחיות 330 מ״ל",
+    "canonical": "coca cola 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "קולה",
+      "משקה תוסס",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "קוקה",
+      "קולָה",
+      "coca",
+      "cola",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1_5l__dup6__dup60",
+    "label": "ספרייט 1.5 ליטר",
+    "canonical": "sprite 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sprite__bottle_1l__dup7__dup61",
+    "label": "ספרייט 1 ליטר",
+    "canonical": "sprite 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sprite__can_330ml__dup8__dup62",
+    "label": "ספרייט פחית 330 מ״ל",
+    "canonical": "sprite 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחית"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sprite__sixpack_can_330ml__dup9__dup63",
+    "label": "ספרייט שישיית פחיות 330 מ״ל",
+    "canonical": "sprite 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "לימון ליים",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "spr",
+      "ספר",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1_5l__dup10__dup64",
+    "label": "פאנטה 1.5 ליטר",
+    "canonical": "fanta 1.5l",
+    "default_size": "1.5L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "fanta__bottle_1l__dup11__dup65",
+    "label": "פאנטה 1 ליטר",
+    "canonical": "fanta 1l",
+    "default_size": "1L",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "fanta__can_330ml__dup12__dup66",
+    "label": "פאנטה פחית 330 מ״ל",
+    "canonical": "fanta 330ml can",
+    "default_size": "330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחית"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "fanta__sixpack_can_330ml__dup13__dup67",
+    "label": "פאנטה שישיית פחיות 330 מ״ל",
+    "canonical": "fanta 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Coca-Cola",
+    "tags": [
+      "תפוז",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "fanta",
+      "פנטה",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1_5l__dup14__dup68",
+    "label": "פפסי 1.5 ליטר",
+    "canonical": "pepsi 1.5l",
+    "default_size": "1.5L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_2l__dup15__dup69",
+    "label": "פפסי 2 ליטר",
+    "canonical": "pepsi 2l",
+    "default_size": "2L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "2l",
+      "2 ל"
+    ]
+  },
+  {
+    "id": "pepsi__bottle_1l__dup16__dup70",
+    "label": "פפסי 1 ליטר",
+    "canonical": "pepsi 1l",
+    "default_size": "1L",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "pepsi__can_330ml__dup17__dup71",
+    "label": "פפסי פחית 330 מ״ל",
+    "canonical": "pepsi 330ml can",
+    "default_size": "330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחית"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "pepsi__sixpack_can_330ml__dup18__dup72",
+    "label": "פפסי שישיית פחיות 330 מ״ל",
+    "canonical": "pepsi 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "Pepsi",
+    "tags": [
+      "קולה",
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "pep",
+      "פפ",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mineral_water__water_1_5l__dup19__dup73",
+    "label": "מים מינרליים 1.5 ליטר",
+    "canonical": "mineral water 1.5l",
+    "default_size": "1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mineral_water__water_six_1_5l__dup20__dup74",
+    "label": "מים מינרליים שישיית 1.5 ליטר",
+    "canonical": "mineral water 6x1.5l",
+    "default_size": "6x1.5L",
+    "tags": [
+      "מים",
+      "מינרליים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "מים",
+      "מי",
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "neviot__water_1_5l__dup21__dup75",
+    "label": "נביעות 1.5 ליטר",
+    "canonical": "neviot 1.5l",
+    "default_size": "1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "neviot__water_six_1_5l__dup22__dup76",
+    "label": "נביעות שישיית 1.5 ליטר",
+    "canonical": "neviot 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Neviot",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mei_eden__water_1_5l__dup23__dup77",
+    "label": "מי עדן 1.5 ליטר",
+    "canonical": "mei eden 1.5l",
+    "default_size": "1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל"
+    ]
+  },
+  {
+    "id": "mei_eden__water_six_1_5l__dup24__dup78",
+    "label": "מי עדן שישיית 1.5 ליטר",
+    "canonical": "mei eden 6x1.5l",
+    "default_size": "6x1.5L",
+    "brand": "Mei Eden",
+    "tags": [
+      "מים",
+      "מים",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_500g__dup25__dup79",
+    "label": "פסטה 500 גרם",
+    "canonical": "pasta 500g",
+    "default_size": "500g",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_generic__pack_1kg__dup26__dup80",
+    "label": "פסטה 1 ק״ג",
+    "canonical": "pasta 1kg",
+    "default_size": "1kg",
+    "tags": [
+      "איטלקי",
+      "אריזה"
+    ],
+    "synonyms": [
+      "past",
+      "פסט",
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_500g__dup27__dup81",
+    "label": "פסטה ברילה 500 גרם",
+    "canonical": "barilla pasta 500g",
+    "default_size": "500g",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_barilla__pack_1kg__dup28__dup82",
+    "label": "פסטה ברילה 1 ק״ג",
+    "canonical": "barilla pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Barilla",
+    "tags": [
+      "פסטה",
+      "ברילה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_500g__dup29__dup83",
+    "label": "פסטה אוסם 500 גרם",
+    "canonical": "osem pasta 500g",
+    "default_size": "500g",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "pasta_osem__pack_1kg__dup30__dup84",
+    "label": "פסטה אוסם 1 ק״ג",
+    "canonical": "osem pasta 1kg",
+    "default_size": "1kg",
+    "brand": "Osem",
+    "tags": [
+      "פסטה",
+      "אוסם",
+      "אריזה"
+    ],
+    "synonyms": [
+      "1kg",
+      "1 קג",
+      "קילוגרם"
+    ]
+  },
+  {
+    "id": "milk_tnuva__milk_1l_3__dup31__dup85",
+    "label": "חלב תנובה 3% 1 ליטר",
+    "canonical": "milk tnuva 3% 1l",
+    "default_size": "1L",
+    "brand": "Tnuva",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "milk_yotvata__milk_1l_3__dup32__dup86",
+    "label": "חלב יטבתה 3% 1 ליטר",
+    "canonical": "milk yotvata 3% 1l",
+    "default_size": "1L",
+    "brand": "Yotvata",
+    "tags": [
+      "חלב",
+      "חלב"
+    ],
+    "synonyms": [
+      "3% 1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "butter_tnuva__butter_200g__dup33__dup87",
+    "label": "חמאה תנובה 200 גרם",
+    "canonical": "butter tnuva 200g",
+    "default_size": "200g",
+    "brand": "Tnuva",
+    "tags": [
+      "חמאה",
+      "חמאה"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_elite_turkish__jar_200g__dup34__dup88",
+    "label": "קפה טורקי עלית 200 גרם",
+    "canonical": "elite turkish coffee 200g",
+    "default_size": "200g",
+    "brand": "Elite",
+    "tags": [
+      "קפה",
+      "טורקי",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "coffee_nescafe__jar_200g__dup35__dup89",
+    "label": "נס קפה 200 גרם",
+    "canonical": "nescafe 200g",
+    "default_size": "200g",
+    "brand": "Nescafe",
+    "tags": [
+      "קפה",
+      "נס",
+      "צנצנת"
+    ],
+    "synonyms": [
+      "200g"
+    ]
+  },
+  {
+    "id": "tea_wissotzky__pack_500g__dup36__dup90",
+    "label": "תה ויסוצקי 500 גרם",
+    "canonical": "wissotzky tea 500g",
+    "default_size": "500g",
+    "brand": "Wissotzky",
+    "tags": [
+      "תה",
+      "אריזה"
+    ],
+    "synonyms": [
+      "500g",
+      "500 ג",
+      "0.5 ק\"ג"
+    ]
+  },
+  {
+    "id": "corn__can_340g__dup37__dup91",
+    "label": "תירס גלעיתים 340 גרם",
+    "canonical": "sweet corn 340g",
+    "default_size": "340g",
+    "tags": [
+      "תירס",
+      "שימורים",
+      "קופסה"
+    ],
+    "synonyms": [
+      "340g"
+    ]
+  },
+  {
+    "id": "fairy_dish_soap__bottle_750ml__dup38__dup92",
+    "label": "פיירי סבון כלים 750 מ״ל",
+    "canonical": "fairy dish soap 750ml",
+    "default_size": "750ml",
+    "brand": "Fairy",
+    "tags": [
+      "סבון כלים",
+      "בקבוק"
+    ],
+    "synonyms": [
+      "750ml"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1_5l__dup39__dup93",
+    "label": "7UP 1.5 ליטר",
+    "canonical": "7up 1.5l",
+    "default_size": "1.5L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "sevenup__bottle_1l__dup40__dup94",
+    "label": "7UP 1 ליטר",
+    "canonical": "7up 1l",
+    "default_size": "1L",
+    "brand": "7UP",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "sevenup__can_330ml__dup41__dup95",
+    "label": "7UP פחית 330 מ״ל",
+    "canonical": "7up 330ml can",
+    "default_size": "330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "sevenup__sixpack_can_330ml__dup42__dup96",
+    "label": "7UP שישיית פחיות 330 מ״ל",
+    "canonical": "7up 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "7UP",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1_5l__dup43__dup97",
+    "label": "מא운טן דיו 1.5 ליטר",
+    "canonical": "mountain dew 1.5l",
+    "default_size": "1.5L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1.5l",
+      "1.5 ל",
+      "בקבוק גדול"
+    ]
+  },
+  {
+    "id": "mountain_dew__bottle_1l__dup44__dup98",
+    "label": "מא운טן דיו 1 ליטר",
+    "canonical": "mountain dew 1l",
+    "default_size": "1L",
+    "brand": "PepsiCo",
+    "tags": [
+      "בקבוק"
+    ],
+    "synonyms": [
+      "1l",
+      "1 ל"
+    ]
+  },
+  {
+    "id": "mountain_dew__can_330ml__dup45__dup99",
+    "label": "מא운טן דיו פחית 330 מ״ל",
+    "canonical": "mountain dew 330ml can",
+    "default_size": "330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחית"
+    ],
+    "synonyms": [
+      "330ml",
+      "פחית",
+      "can"
+    ]
+  },
+  {
+    "id": "mountain_dew__sixpack_can_330ml__dup46__dup100",
+    "label": "מא운טן דיו שישיית פחיות 330 מ״ל",
+    "canonical": "mountain dew 6x330ml",
+    "default_size": "6x330ml",
+    "brand": "PepsiCo",
+    "tags": [
+      "פחיות",
+      "שישייה"
+    ],
+    "synonyms": [
+      "שישיה",
+      "6x"
+    ]
+  }
+]
