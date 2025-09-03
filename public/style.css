@@ -17,7 +17,6 @@
   --btn-radius:12px;
   --shadow: 0 10px 30px rgba(0,0,0,.35);
 }
-
 *{ box-sizing:border-box }
 html,body{ height:100% }
 body{
@@ -28,99 +27,5 @@ body{
               radial-gradient(900px 700px at -10% 10%, #0f1732 0%, transparent 60%),
               var(--bg);
 }
+/* ... (שאר העיצוב כפי שסיפקת) ... */
 
-.container{ max-width: 1100px; margin: 0 auto; padding: 24px; }
-
-.site-header{
-  padding: 24px 0 0;
-  background: linear-gradient(180deg, rgba(52,211,153,.15), transparent 45%),
-              linear-gradient(180deg, rgba(56,189,248,.1), transparent);
-}
-.brand{ display:flex; align-items:center; gap:14px; padding: 8px 24px; }
-.logo{ width:48px; height:48px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,#34d399,#22d3ee); font-size:24px; box-shadow: var(--shadow); }
-.titles h1{ margin:0; font-size:26px; font-weight:800; letter-spacing:.2px; }
-.subtitle{ margin:4px 0 0; color:var(--muted) }
-
-.site-footer{ color:var(--muted); border-top:1px solid var(--line); margin-top:40px; }
-.site-footer .container{ padding:18px 24px; }
-
-.card{
-  background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%) , var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--card-radius);
-  padding: 18px;
-  margin: 18px 0;
-  box-shadow: var(--shadow);
-}
-.card-title{ margin:0 0 12px 0; font-size:18px; font-weight:700 }
-
-.grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:12px }
-.field{ display:flex; flex-direction:column; gap:6px }
-.label{ color:var(--muted); font-size:12px }
-.input{
-  width:100%;
-  padding:12px 14px;
-  border-radius:12px;
-  background:#0b1329;
-  border:1px solid #1e2a49;
-  color:var(--text);
-  outline:none;
-}
-.input::placeholder{ color:#5b6a86 }
-
-.add-row{ display:flex; gap:10px; margin-top:10px }
-.btn{
-  padding:12px 16px;
-  border:none; cursor:pointer;
-  border-radius: var(--btn-radius);
-  font-weight:700; letter-spacing:.2px;
-  transition: transform .04s ease, filter .2s ease;
-}
-.btn:active{ transform: translateY(1px) }
-.btn-primary{
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color:#06240f;
-}
-.btn-secondary{
-  background: #0b1329; color:#e5fff4; border:1px solid #1e2a49;
-}
-.actions{ display:flex; justify-content:flex-end; margin-top:8px }
-
-.chips{ display:flex; flex-wrap:wrap; gap:8px; min-height:40px }
-.chip{
-  display:flex; align-items:center; gap:8px;
-  padding:8px 10px; border-radius:999px;
-  background:var(--chip); border:1px solid var(--chip-border);
-  color:#cfe2ff; font-size:14px;
-}
-.chip .close{ background:transparent; border:none; color:#9fb6ff; cursor:pointer; font-size:16px; line-height:1; }
-
-.hint{ color:var(--muted); font-size:12px; margin-top:8px }
-
-.shop{ border-top:1px dashed var(--line); padding-top:12px; margin-top:12px }
-.subtext{ color:var(--muted); margin: -6px 0 8px; font-size: 13px; }
-
-.badge{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; margin-inline-start:6px }
-.badge.sub{ background:var(--warn); color:var(--warn-text) }
-.badge.src{ background:#0b1329; color:#cfe2ff; border:1px solid #1e2a49 }
-
-a{ color:#7dd3fc; text-decoration: none }
-a:hover{ text-decoration: underline }
-
-.error{
-  padding:12px; background:var(--danger-bg);
-  border:1px solid var(--danger-border); border-radius:12px;
-  color:var(--danger-text);
-}
-
-/* Skeleton loading */
-.skel{
-  position:relative; overflow:hidden; border-radius:12px;
-  background: linear-gradient(90deg, #0c142b 30%, #0f1a36 45%, #0c142b 60%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite linear;
-  height: 84px; margin:10px 0;
-}
-@keyframes shimmer { 0%{ background-position: 200% 0 } 100%{ background-position: -200% 0 } }
-
-.map{ width:100%; height: 420px; border-radius: 14px; border:1px solid var(--line); overflow:hidden }

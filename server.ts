@@ -1,4 +1,5 @@
-// server.ts — "Pro" single-file server (ארוך ומודולרי)
+// server.ts — CartCompare AI (שרת מלא, כולל מאגר TSV ממוינים + חיפוש בינארי + קדימות LocalDB)
+
 ////////////////////////////////////////////////////////////////
 // 0) ENV + CONFIG
 ////////////////////////////////////////////////////////////////
@@ -11,16 +12,22 @@ if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
 
 const PORT = Number(Deno.env.get("PORT") ?? "8000");
 const GOOGLE_API_KEY = Deno.env.get("GOOGLE_API_KEY") ?? "";
-const SERPAPI_KEY   = Deno.env.get("SERPAPI_KEY")   ?? "";
-const OPENAI_API_KEY= Deno.env.get("OPENAI_API_KEY")?? "";
-const OPENAI_MODEL  = Deno.env.get("OPENAI_MODEL")  ?? "gpt-4o-mini";
+const SERPAPI_KEY    = Deno.env.get("SERPAPI_KEY")    ?? "";
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
+const OPENAI_MODEL   = Deno.env.get("OPENAI_MODEL")   ?? "gpt-4o-mini";
 
-const CACHE_TTL_MS       = Number(Deno.env.get("CACHE_TTL_MS") ?? "180000");
-const GEO_TTL_MS         = Number(Deno.env.get("GEO_TTL_MS")   ?? "900000");
-const PLACES_TTL_MS      = Number(Deno.env.get("PLACES_TTL_MS")?? "900000");
-const MAX_SUPERMARKETS   = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "20");
-const MAX_RESULTS_PER_CHAIN = Number(Deno.env.get("MAX_RESULTS_PER_CHAIN") ?? "10");
-const MOCK_MODE          = (Deno.env.get("MOCK_MODE") ?? "0") === "1"; // מאפשר הרצה ללא מפתחות — לא ממציא מחירים: מחזיר דוגמאות/ריקות
+// קבצי TSV ממוינים (UTF-8, TAB). אפשר להצביע גם ל-URL חיצוני, אבל כאן נקרא מקומי.
+const MERGED_TSV_URL = Deno.env.get("MERGED_TSV_URL") ?? "public/data/prices_merged_sorted.tsv";
+const RL_TSV_URL     = Deno.env.get("RL_TSV_URL")     ?? "public/data/rami_levy_sorted.tsv";
+the SHU_TSV_URL     = Deno.env.get("SHU_TSV_URL")    ?? "public/data/shufersal_sorted.tsv";
+const TIV_TSV_URL    = Deno.env.get("TIV_TSV_URL")    ?? "public/data/tiv_taam_sorted.tsv";
+
+const CACHE_TTL_MS         = Number(Deno.env.get("CACHE_TTL_MS") ?? "180000");
+const GEO_TTL_MS           = Number(Deno.env.get("GEO_TTL_MS")   ?? "900000");
+const PLACES_TTL_MS        = Number(Deno.env.get("PLACES_TTL_MS")?? "900000");
+const MAX_SUPERMARKETS     = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "20");
+const MAX_RESULTS_PER_CHAIN= Number(Deno.env.get("MAX_RESULTS_PER_CHAIN") ?? "10");
+const MOCK_MODE            = (Deno.env.get("MOCK_MODE") ?? "0") === "1";
 
 ////////////////////////////////////////////////////////////////
 // 1) UTILS: JSON, CORS, LOG, ID, CACHE, RATE LIMIT, NET
@@ -74,7 +81,7 @@ function cacheSet(k: string, data: unknown, ttl = CACHE_TTL_MS) {
 function meters(km: number) { return Math.max(100, Math.round(km * 1000)); }
 
 const RATE = new Map<string, { n: number; exp: number }>();
-function rateLimit(key: string, max = 60, windowMs = 60_000) {
+function rateLimit(key: string, max = 120, windowMs = 60_000) {
   const now = Date.now();
   const rec = RATE.get(key);
   if (!rec || now > rec.exp) {
@@ -112,7 +119,7 @@ async function safeJson(url: string, init?: RequestInit, tries = 3) {
 }
 
 ////////////////////////////////////////////////////////////////
-// 2) PRODUCTS: load public/products.json for autocomplete
+// 2) PRODUCTS: load public/products.json for autocomplete (משלים LocalDB)
 ////////////////////////////////////////////////////////////////
 type ProductRow = {
   id: string;
@@ -132,7 +139,7 @@ try {
 } catch { log("products.json not found"); PRODUCTS = []; }
 
 ////////////////////////////////////////////////////////////////
-// 3) TEXT NORMALIZATION + SIZE/FORM PARSING + AUTOCOMPLETE
+// 3) TEXT NORMALIZATION + SIZE/FORM PARSING + AUTOCOMPLETE BASE
 ////////////////////////////////////////////////////////////////
 function norm(s: string) {
   return (s||"")
@@ -202,7 +209,7 @@ function scoreRow(q: string, row: ProductRow) {
   }
   return s;
 }
-function suggest(q: string, limit = 12) {
+function suggestFromProductsJson(q: string, limit = 12) {
   if (!q || !q.trim() || PRODUCTS.length === 0) return [];
   const scored = PRODUCTS.map(r => ({ r, s: scoreRow(q, r) }))
     .filter(x => x.s > 0)
@@ -361,12 +368,9 @@ type FoundOffer = {
   merchant?: string;
   observed_price_text?: string;
 };
-
 function domainOf(url?: string) {
   try { return url ? new URL(url).hostname.replace(/^www\./,'') : undefined; } catch { return undefined; }
 }
-
-// SerpAPI Google Shopping
 async function providerSerpApi(query: string, hl = "he", gl = "il", num = 10): Promise<FoundOffer[]> {
   if (!SERPAPI_KEY || MOCK_MODE) return [];
   const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(query)}&hl=${hl}&gl=${gl}&num=${num}&api_key=${SERPAPI_KEY}`;
@@ -389,8 +393,6 @@ async function providerSerpApi(query: string, hl = "he", gl = "il", num = 10): P
   }
   return out;
 }
-
-// CHP (אתר השוואת מחירים) — parser עדין (עלול להחזיר ריק אם המבנה השתנה)
 async function providerCHP(query: string): Promise<FoundOffer[]> {
   if (MOCK_MODE) return [];
   const url = `https://www.chp.co.il/Search?q=${encodeURIComponent(query)}`;
@@ -416,12 +418,8 @@ async function providerCHP(query: string): Promise<FoundOffer[]> {
       if (offers.length >= MAX_RESULTS_PER_CHAIN) break;
     }
     return offers;
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
-
-// Pricez (Parser עדין) — ייתכן שינוי DOM
 async function providerPricez(query: string): Promise<FoundOffer[]> {
   if (MOCK_MODE) return [];
   const url = `https://www.pricez.co.il/search?q=${encodeURIComponent(query)}`;
@@ -447,17 +445,15 @@ async function providerPricez(query: string): Promise<FoundOffer[]> {
       if (offers.length >= MAX_RESULTS_PER_CHAIN) break;
     }
     return offers;
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 ////////////////////////////////////////////////////////////////
-// 6) LLM Consolidation: "only use provided URLs"
+// 6) LLM Consolidation
 ////////////////////////////////////////////////////////////////
 type LlmItemInput = {
-  user_item: string;           // ״קוקה קולה 1.5 ליטר״
-  candidates: FoundOffer[];    // מהרשת (SerpAPI/CHP/Pricez)
+  user_item: string;
+  candidates: FoundOffer[];
 };
 type LlmItemOut = {
   item: string;
@@ -470,15 +466,14 @@ type LlmItemOut = {
   domain?: string;
   merchant?: string;
   observed_price_text?: string;
-  confidence_pct?: number;     // 0..100
+  confidence_pct?: number;
   substitute?: boolean;
   description?: string;
   unit_per_liter?: number;
   unit_per_kg?: number;
 };
-
 async function consolidateWithOpenAI(items: LlmItemInput[]): Promise<LlmItemOut[]> {
-  if (!OPENAI_API_KEY) return []; // אין מפתח → לא נאחד
+  if (!OPENAI_API_KEY) return [];
   const sys = `
 You are a strict shopping data consolidator. Rules:
 - DO NOT invent prices or sizes.
@@ -489,9 +484,7 @@ You are a strict shopping data consolidator. Rules:
 - Output JSON array only. Fields: item, product_name, product_brand, size_text, price, currency, source_url, domain, merchant, observed_price_text, confidence_pct (0..100), substitute (bool), description, unit_per_liter, unit_per_kg.
 - If nothing fits, return entry with substitute=true and no price.
 `;
-  const user = {
-    items
-  };
+  const user = { items };
   const body = {
     model: OPENAI_MODEL,
     temperature: 0,
@@ -503,25 +496,113 @@ You are a strict shopping data consolidator. Rules:
   };
   const r = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
-    headers: {
-      "authorization": `Bearer ${OPENAI_API_KEY}`,
-      "content-type": "application/json"
-    },
+    headers: { "authorization": `Bearer ${OPENAI_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify(body)
   }).then(x=>x.json()).catch(()=>null as any);
 
   const txt = r?.choices?.[0]?.message?.content ?? "";
   try {
     const parsed = JSON.parse(txt);
-    // מצפים לשדה "items"
     return Array.isArray(parsed?.items) ? parsed.items : [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 ////////////////////////////////////////////////////////////////
-// 7) PLAN PIPELINE
+// 7) LOCAL TSV (ממוינים) + חיפוש בינארי + קדימות
+////////////////////////////////////////////////////////////////
+type LocalRow = { itemname: string; itemprice: number; size?: string; brand?: string; chain?: string };
+type LocalChainDB = { chain: string; rows: LocalRow[] }; // MUST be sorted by itemname (א-ב)
+const LOCAL: { merged?: LocalRow[]; chains: Record<string, LocalChainDB> } = { chains: {} };
+
+async function readSortedTSV(path: string): Promise<LocalRow[]> {
+  try {
+    const txt = await Deno.readTextFile(path);
+    const lines = txt.split(/\r?\n/).filter(Boolean);
+    if (!lines.length) return [];
+    const header = lines.shift()!.split("\t").map(s=>s.trim().toLowerCase());
+    const iName  = header.indexOf("itemname");
+    const iPrice = header.indexOf("itemprice");
+    const iSize  = header.indexOf("size");
+    const iBrand = header.indexOf("brand");
+    const iChain = header.indexOf("chain");
+    const out: LocalRow[] = [];
+    for (const line of lines) {
+      const cols = line.split("\t");
+      const itemname = (cols[iName]  ?? "").trim();
+      const itemprice= Number((cols[iPrice] ?? "").trim());
+      if (!itemname || !isFinite(itemprice)) continue;
+      out.push({
+        itemname,
+        itemprice,
+        size:  iSize>=0  ? (cols[iSize]  ?? "").trim() : undefined,
+        brand: iBrand>=0 ? (cols[iBrand] ?? "").trim() : undefined,
+        chain: iChain>=0 ? (cols[iChain] ?? "").trim() : undefined,
+      });
+    }
+    out.sort((a,b)=> a.itemname.localeCompare(b.itemname, "he"));
+    return out;
+  } catch { return []; }
+}
+function normQ(s: string){ return (s||"").toLowerCase().replace(/\s+/g," ").trim(); }
+function lowerBoundPrefix(arr: LocalRow[], q: string): number {
+  let lo=0, hi=arr.length;
+  while(lo<hi){
+    const mid=(lo+hi)>>1;
+    if (arr[mid].itemname.toLowerCase() < q) lo = mid+1; else hi = mid;
+  }
+  return lo;
+}
+function collectPrefix(arr: LocalRow[], prefix: string, limit=12): LocalRow[] {
+  if (!prefix) return [];
+  const q = prefix.toLowerCase();
+  let i = lowerBoundPrefix(arr, q);
+  const out: LocalRow[] = [];
+  while (i < arr.length && out.length < limit) {
+    const s = arr[i].itemname.toLowerCase();
+    if (!s.startsWith(q)) break;
+    out.push(arr[i]); i++;
+  }
+  return out;
+}
+async function loadLocalDB() {
+  const merged = await readSortedTSV(MERGED_TSV_URL);
+  LOCAL.merged = merged.length ? merged : undefined;
+
+  const rl  = await readSortedTSV(RL_TSV_URL);
+  const shu = await readSortedTSV(SHU_TSV_URL);
+  const tiv = await readSortedTSV(TIV_TSV_URL);
+  if (rl.length)  LOCAL.chains["Rami Levy"] = { chain: "Rami Levy", rows: rl };
+  if (shu.length) LOCAL.chains["Shufersal"] = { chain: "Shufersal", rows: shu };
+  if (tiv.length) LOCAL.chains["Tiv Taam"]   = { chain: "Tiv Taam", rows: tiv };
+
+  log("Local TSV loaded:", {
+    merged: LOCAL.merged?.length ?? 0,
+    rl: rl.length, shu: shu.length, tiv: tiv.length
+  });
+}
+await loadLocalDB();
+
+function pickLocalMatch(name: string): {row: LocalRow, chain?: string} | null {
+  const q = normQ(name);
+  if (LOCAL.merged?.length) {
+    const lb = lowerBoundPrefix(LOCAL.merged, q);
+    if (lb < LOCAL.merged.length && LOCAL.merged[lb].itemname.toLowerCase() === q)
+      return { row: LOCAL.merged[lb], chain: LOCAL.merged[lb].chain };
+    const pref = collectPrefix(LOCAL.merged, q, 1)[0];
+    if (pref) return { row: pref, chain: pref.chain };
+  }
+  for (const [chain, db] of Object.entries(LOCAL.chains)) {
+    const lb = lowerBoundPrefix(db.rows, q);
+    if (lb < db.rows.length && db.rows[lb].itemname.toLowerCase() === q)
+      return { row: db.rows[lb], chain };
+    const pref = collectPrefix(db.rows, q, 1)[0];
+    if (pref) return { row: pref, chain };
+  }
+  return null;
+}
+
+////////////////////////////////////////////////////////////////
+// 8) PLAN PIPELINE
 ////////////////////////////////////////////////////////////////
 type PlanReq = {
   address?: string;
@@ -531,6 +612,7 @@ type PlanReq = {
   items?: string[];
   include_debug?: boolean;
 };
+type LlmItemOutFull = LlmItemOut; // alias
 type Basket = {
   chain: string;
   shop_display_name?: string;
@@ -538,14 +620,9 @@ type Basket = {
   match_overall?: number;
   coverage?: number;
   location?: { lat: number; lng: number; address?: string };
-  breakdown: LlmItemOut[];
+  breakdown: LlmItemOutFull[];
 };
-function parseNumberSafe(s?: string) {
-  const n = Number(String(s||"").replace(/[^\d.]/g,''));
-  return isFinite(n) ? n : undefined;
-}
-function computeUnits(e: LlmItemOut) {
-  // יחשב מחיר ליחידת נפח/משקל אם אפשר
+function computeUnits(e: LlmItemOutFull) {
   const price = e.price;
   if (!price) return;
   const m = (e.size_text||"").toLowerCase();
@@ -555,13 +632,13 @@ function computeUnits(e: LlmItemOut) {
   if ((k = m.match(/(\d{2,4})\s*ml/))) liters = Number(k[1]) / 1000;
   if ((k = m.match(/(\d+(?:\.\d+)?)\s*kg/))) kg = Number(k[1]);
   if ((k = m.match(/(\d{2,4})\s*g/))) kg = Number(k[1]) / 1000;
-  if (liters>0) e.unit_per_liter = price / liters;
-  if (kg>0) e.unit_per_kg = price / kg;
+  if (liters>0) e.unit_per_liter = Number((price / liters).toFixed(2));
+  if (kg>0) e.unit_per_kg = Number((price / kg).toFixed(2));
 }
 
 async function planHandler(req: PlanReq) {
   const include_debug = !!req.include_debug;
-  // קלט/מיקום
+
   let lat = Number(req.lat || 0), lng = Number(req.lng || 0);
   let centerFrom = "gps";
   if ((!lat || !lng) && req.address) {
@@ -578,45 +655,50 @@ async function planHandler(req: PlanReq) {
   const userItems = Array.isArray(req.items) ? req.items.filter(Boolean) : [];
   if (!userItems.length) return { ok:false, error:"No items", code:"NO_ITEMS" };
 
-  // Providers per chain (פשוט: נריץ חיפוש לכל פריט)
-  // דאוג מראש: לא ממציאים כלום; רק אוספים הצעות אמיתיות מהספקים.
   const baskets: Basket[] = [];
-
   for (const s of shops) {
     const chain = s.chain || "Unknown";
-    const breakdown: LlmItemOut[] = [];
+    const breakdown: LlmItemOutFull[] = [];
 
     for (const item of userItems) {
-      const q = item; // TODO: אפשר להגיש גרסה מתוקננת יותר
+      // 1) קדימות LocalDB
+      const local = pickLocalMatch(item);
+      if (local?.row) {
+        const r = local.row;
+        const e: LlmItemOutFull = {
+          item,
+          product_name: r.itemname,
+          product_brand: r.brand || undefined,
+          size_text: r.size || undefined,
+          price: r.itemprice,
+          currency: "₪",
+          source_url: undefined,
+          domain: "localdb",
+          merchant: local.chain || r.chain || "LocalDB",
+          observed_price_text: String(r.itemprice),
+          confidence_pct: 100,
+          substitute: false
+        };
+        computeUnits(e);
+        breakdown.push(e);
+        continue;
+      }
 
+      // 2) ספקי רשת אם אין מקומי
       const offers: FoundOffer[] = [];
-      // CHP
-      try {
-        const chp = await providerCHP(q);
-        offers.push(...chp);
-      } catch {}
-      // Pricez
-      try {
-        const pr = await providerPricez(q);
-        offers.push(...pr);
-      } catch {}
-      // SerpAPI Google Shopping
-      try {
-        const sp = await providerSerpApi(q, "he", "il", MAX_RESULTS_PER_CHAIN);
-        offers.push(...sp);
-      } catch {}
+      try { offers.push(...await providerCHP(item)); } catch {}
+      try { offers.push(...await providerPricez(item)); } catch {}
+      try { offers.push(...await providerSerpApi(item, "he", "il", MAX_RESULTS_PER_CHAIN)); } catch {}
 
       if (!offers.length) {
         breakdown.push({ item, substitute: true, confidence_pct: 0 });
         continue;
       }
 
-      // העברת הקנדידטים ל-LLM כדי לבחור רק מאומתים
-      // (אם אין OPENAI_API_KEY — נדלג על LLM וניקח את ההצעה הכי “ברורה” עם מחיר)
       if (!OPENAI_API_KEY) {
         const withPrice = offers.filter(o => typeof o.price === "number");
         const chosen = withPrice[0] || offers[0];
-        const out: LlmItemOut = {
+        const outE: LlmItemOutFull = {
           item,
           product_name: chosen?.title,
           product_brand: chosen?.brand,
@@ -630,17 +712,17 @@ async function planHandler(req: PlanReq) {
           confidence_pct: typeof chosen?.price === "number" ? 65 : 30,
           substitute: false
         };
-        computeUnits(out);
-        breakdown.push(out);
+        computeUnits(outE);
+        breakdown.push(outE);
       } else {
-        const llmOut = await consolidateWithOpenAI([{ user_item: item, candidates: offers }]).catch(()=>[]) as LlmItemOut[];
+        const llmOut = await consolidateWithOpenAI([{ user_item: item, candidates: offers }]).catch(()=>[]) as LlmItemOutFull[];
         const first = llmOut?.[0];
         if (first) { computeUnits(first); breakdown.push(first); }
         else breakdown.push({ item, substitute: true, confidence_pct: 0 });
       }
     }
 
-    // חישוב סכום/כיסוי/דיוק
+    // סכום/כיסוי/דיוק
     const prices = breakdown.map(b=> b.price).filter((x): x is number => typeof x === "number" && isFinite(x));
     const total = prices.reduce((a,b)=> a+b, 0);
     const coverage = breakdown.filter(b=> typeof b.price === "number").length / breakdown.length;
@@ -657,7 +739,6 @@ async function planHandler(req: PlanReq) {
     });
   }
 
-  // מיין: קודם ע״פ total קיים, אח״כ כיסוי/דיוק
   baskets.sort((a,b)=>{
     const ta = typeof a.total === "number" ? a.total : Number.POSITIVE_INFINITY;
     const tb = typeof b.total === "number" ? b.total : Number.POSITIVE_INFINITY;
@@ -672,10 +753,9 @@ async function planHandler(req: PlanReq) {
 }
 
 ////////////////////////////////////////////////////////////////
-// 8) ROUTER: APIs + Static
+// 9) ROUTER: APIs + Static
 ////////////////////////////////////////////////////////////////
 async function handleApi(req: Request) {
-  const origin = req.headers.get("origin") || "";
   const pre = corsPreflight(req);
   if (pre) return pre;
 
@@ -684,20 +764,50 @@ async function handleApi(req: Request) {
   const key = `${ip}:${pathname}`;
   if (!rateLimit(key, 120, 60_000)) return json({ ok:false, error:"Too Many Requests" }, 429);
 
-  // health
   if (pathname === "/api/health") {
-    return json({ ok:true, status:"alive", products_loaded: PRODUCTS.length, MOCK_MODE, GOOGLE_API_KEY: !!GOOGLE_API_KEY, SERPAPI_KEY: !!SERPAPI_KEY, OPENAI_API_KEY: !!OPENAI_API_KEY });
+    return json({ ok:true, status:"alive", products_loaded: PRODUCTS.length, MOCK_MODE, has_GOOGLE_API_KEY: !!GOOGLE_API_KEY, has_SERPAPI_KEY: !!SERPAPI_KEY, has_OPENAI_API_KEY: !!OPENAI_API_KEY });
   }
 
-  // suggest
   if (pathname === "/api/suggest") {
     const q = searchParams.get("q") ?? "";
     const limit = Number(searchParams.get("limit") ?? "12");
-    const list = suggest(q, limit);
-    return json({ ok: true, suggestions: list });
+    const out: any[] = [];
+
+    // קודם LocalDB (merged אם קיים; אחרת איחוד רשתות) — חיפוש בינארי לפריפיקס
+    const sourceArrays: LocalRow[][] = LOCAL.merged
+      ? [LOCAL.merged]
+      : Object.values(LOCAL.chains).map(c=>c.rows);
+
+    const seen = new Set<string>();
+    for (const arr of sourceArrays) {
+      for (const r of collectPrefix(arr, q, limit)) {
+        const key = r.itemname.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+          id: `localdb:${key}`,
+          label: r.itemname,
+          canonical: r.itemname,
+          default_size: r.size || "",
+          brand: r.brand || "",
+          tags: ["LocalDB"]
+        });
+        if (out.length >= limit) break;
+      }
+      if (out.length >= limit) break;
+    }
+
+    // אם חסר—נשלים גם מ-products.json
+    if (out.length < limit && PRODUCTS.length) {
+      const more = suggestFromProductsJson(q, limit - out.length).map(r=>({
+        ...r,
+        tags: Array.isArray(r.tags) ? r.tags : []
+      }));
+      out.push(...more);
+    }
+    return json({ ok: true, suggestions: out.slice(0, limit) });
   }
 
-  // debug geocode
   if (pathname === "/api/debug/geocode") {
     const address = searchParams.get("address") ?? "";
     if (!address) return json({ ok:false, error:"Missing address" }, 400);
@@ -709,7 +819,6 @@ async function handleApi(req: Request) {
     }
   }
 
-  // debug places
   if (pathname === "/api/debug/places") {
     const lat = Number(searchParams.get("lat") ?? "0");
     const lng = Number(searchParams.get("lng") ?? "0");
@@ -723,7 +832,6 @@ async function handleApi(req: Request) {
     }
   }
 
-  // debug env (לא מחזיר מפתחות, רק נוכחות)
   if (pathname === "/api/debug/env") {
     return json({
       ok: true,
@@ -735,7 +843,6 @@ async function handleApi(req: Request) {
     });
   }
 
-  // plan
   if (pathname === "/api/plan" && req.method === "POST") {
     const body = await req.json().catch(() => ({})) as PlanReq;
     try {
@@ -760,6 +867,8 @@ async function serveStatic(pathname: string) {
       js: "text/javascript; charset=utf-8",
       css: "text/css; charset=utf-8",
       json: "application/json; charset=utf-8",
+      tsv: "text/tab-separated-values; charset=utf-8",
+      csv: "text/csv; charset=utf-8",
       png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", svg: "image/svg+xml",
       webp: "image/webp",
       txt: "text/plain; charset=utf-8"

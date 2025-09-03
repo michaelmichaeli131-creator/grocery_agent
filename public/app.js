@@ -1,3 +1,4 @@
+// public/app.js
 const $ = (s) => document.querySelector(s);
 
 const chips = $("#chips");
@@ -29,9 +30,9 @@ $("#addBtn").onclick = () => {
   renderChips();
 };
 
-$("#searchBtn").onclick = async () => {
-  const address = ($("#address").value || "").trim();
-  const radiusKm = Number($("#radius").value || 15);
+$("#searchBtn")?.onclick = async () => {
+  const address = ($("#address")?.value || "").trim();
+  const radiusKm = Number($("#radius")?.value || 15);
   if (!address) {
     results.innerHTML = `<div class="error">נא להזין כתובת</div>`;
     return;

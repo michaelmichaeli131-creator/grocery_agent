@@ -1,12 +1,16 @@
-
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8" />
 <title>השוואת סל קניות AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+
 <style>
 :root{ --ink:#0d1321; --muted:#6b7280; --brand:#2fb6ff; --bg:#f5f9ff; --card:#fff; --glass:#ffffffcc; --shadow:0 14px 34px rgba(15,50,90,.12) }
 *{box-sizing:border-box}
@@ -44,9 +48,9 @@ details>summary{cursor:pointer}
 .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef6ff;color:#075985;font-size:12px;font-weight:700}
 pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;border-radius:12px;direction:ltr;overflow:auto;font-size:12px}
 .small{font-size:12px}
-.good{color:#047857;font-weight:800}
-.bad{color:#b91c1c;font-weight:800}
-.toggle{display:flex;align-items:center;gap:8px}
+.conf{ font-size:12px; color:#065f46; font-weight:800 }
+.unit{ font-size:12px; color:#0b3b6a; font-weight:800 }
+.map{ width:100%; height:260px; border-radius:14px; border:1px solid #e6edf7; margin-top:10px; overflow:hidden }
 /* chips */
 .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
 .chip{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:#eef6ff; border:1px solid #e6edf7; color:#075985; font-size:14px }
@@ -64,12 +68,8 @@ pre.debug{white-space:pre-wrap;background:#0b1220;color:#e5eefb;padding:10px;bor
 .opt .left{ display:flex; flex-direction:column }
 .opt .label{ font-weight:700 }
 .opt .meta{ color:#64748b; font-size:12px }
-/* results */
 .src-badge{ display:inline-block; padding:2px 8px; border-radius:999px; background:#eef6ff; color:#075985; font-size:12px; margin-inline-start:6px }
 .desc{ color:#475569; font-size:12px }
-.conf{ font-size:12px; color:#065f46; font-weight:800 }
-.unit{ font-size:12px; color:#0b3b6a; font-weight:800 }
-.map{ width:100%; height:260px; border-radius:14px; border:1px solid #e6edf7; margin-top:10px; overflow:hidden }
 </style>
 </head>
 <body>
@@ -275,7 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const list = Array.isArray(data.suggestions) ? data.suggestions : [];
       if (!list.length) return hideDropdown();
       dropdown.innerHTML = list.map((s,i)=>(
-        `<div class="opt" data-i="${i}"><div class="left"><div class="label">${esc(s.label)}</div><div class="meta">${esc(s.canonical)} ${s.default_size? '• '+esc(s.default_size):''}</div></div><div>${s.brand? esc(s.brand):''}</div></div>`
+        `<div class="opt" data-i="${i}">
+          <div class="left">
+            <div class="label">${esc(s.label)}</div>
+            <div class="meta">${esc(s.canonical||"")}${s.default_size? ' • '+esc(s.default_size):''}${Array.isArray(s.tags)&&s.tags.includes('LocalDB')?' • מאגר מקומי':''}</div>
+          </div>
+          <div>${s.brand? esc(s.brand):''}</div>
+        </div>`
       )).join('');
       dropdown.style.display = 'block';
       activeIdx = -1;
@@ -345,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
       wireStoreMaps(baskets);
     }catch(err){
       loadingEl.style.display = 'none';
-      resultsEl.innerHTML = row('שגיאת רשת', err.message || String(err));
+      resultsEl.innerHTML = row('שגיאת רשת', err?.message || String(err));
     }
   });
 
@@ -370,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div style="height:8px"></div>
-        ${Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : ''}
+        ${(Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : '')}
       </details>`;
   }
 
