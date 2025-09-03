@@ -19,7 +19,7 @@ const OPENAI_MODEL   = Deno.env.get("OPENAI_MODEL")   ?? "gpt-4o-mini";
 // קבצי TSV ממוינים (UTF-8, TAB). אפשר להצביע גם ל-URL חיצוני, אבל כאן נקרא מקומי.
 const MERGED_TSV_URL = Deno.env.get("MERGED_TSV_URL") ?? "public/data/prices_merged_sorted.tsv";
 const RL_TSV_URL     = Deno.env.get("RL_TSV_URL")     ?? "public/data/rami_levy_sorted.tsv";
-the SHU_TSV_URL     = Deno.env.get("SHU_TSV_URL")    ?? "public/data/shufersal_sorted.tsv";
+const SHU_TSV_URL     = Deno.env.get("SHU_TSV_URL")    ?? "public/data/shufersal_sorted.tsv";
 const TIV_TSV_URL    = Deno.env.get("TIV_TSV_URL")    ?? "public/data/tiv_taam_sorted.tsv";
 
 const CACHE_TTL_MS         = Number(Deno.env.get("CACHE_TTL_MS") ?? "180000");
