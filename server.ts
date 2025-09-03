@@ -1,4 +1,4 @@
-// server.ts — שרת Deno מלא עם "נעילת רשת" + מאגר מקומי + אוטוקומפליט + חיפוש בינארי
+// server.ts — שרת Deno מלא עם "נעילת רשת" + מאגר מקומי + אוטוקומפליט + חיפוש בינארי + מרחק בק״מ
 ////////////////////////////////////////////////////////////////
 // 0) ENV + CONFIG
 ////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ const SHU_TSV_URL    = Deno.env.get("SHU_TSV_URL")    ?? "public/data/shufersal_
 const TIV_TSV_URL    = Deno.env.get("TIV_TSV_URL")    ?? "public/data/tiv_taam_sorted.tsv";
 
 ////////////////////////////////////////////////////////////////
-// 1) UTILS: JSON, CORS, LOG, ID, CACHE, RATE LIMIT, NET
+// 1) UTILS: JSON, CORS, LOG, ID, CACHE, RATE LIMIT, NET, DIST
 ////////////////////////////////////////////////////////////////
 function json(body: unknown, status = 200, extraHeaders: Record<string,string> = {}) {
   return new Response(JSON.stringify(body), {
@@ -111,6 +111,17 @@ async function safeJson(url: string, init?: RequestInit, tries = 3) {
   const r = await fetchWithRetry(url, init, tries);
   const t = await r.text();
   try { return JSON.parse(t); } catch { throw new Error(`Invalid JSON from ${url}`); }
+}
+
+// מרחק (Haversine)
+function toRad(d: number) { return (d * Math.PI) / 180; }
+function haversineKm(a: {lat:number; lng:number}, b: {lat:number; lng:number}) {
+  const R = 6371; // ק"מ
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const sa = Math.sin(dLat/2)**2 +
+             Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(sa), Math.sqrt(1-sa));
 }
 
 ////////////////////////////////////////////////////////////////
@@ -239,19 +250,15 @@ function binCollectPrefix(sorted: LocalRow[], q: string, limit=20): LocalRow[] {
   const base = binFindExactOrPrefix(sorted, q);
   if (!base) return [];
   const target = q.trim().toLowerCase();
-  // התקדמות סביב האינדקס שנמצא
-  const idx = (()=> {
-    // binary lower-bound for prefix
-    let lo=0, hi=sorted.length;
-    while (lo<hi){
-      const mid=(lo+hi)>>1;
-      if (sorted[mid].name.toLowerCase().localeCompare(target,"he")<0) lo=mid+1;
-      else hi=mid;
-    }
-    return lo;
-  })();
+  // lower bound for prefix
+  let lo=0, hi=sorted.length;
+  while (lo<hi){
+    const mid=(lo+hi)>>1;
+    if (sorted[mid].name.toLowerCase().localeCompare(target,"he")<0) lo=mid+1;
+    else hi=mid;
+  }
   const out: LocalRow[] = [];
-  for (let i=idx; i<sorted.length && out.length<limit; i++) {
+  for (let i=lo; i<sorted.length && out.length<limit; i++) {
     const n = sorted[i].name.toLowerCase();
     if (n.startsWith(target)) out.push(sorted[i]); else break;
   }
@@ -259,7 +266,7 @@ function binCollectPrefix(sorted: LocalRow[], q: string, limit=20): LocalRow[] {
 }
 
 ////////////////////////////////////////////////////////////////
-// 4) TEXT NORMALIZATION + SIZE/FORM PARSING + AUTOCOMPLETE (merge)
+// 4) TEXT NORMALIZATION + AUTOCOMPLETE (merge)
 ////////////////////////////////////////////////////////////////
 function norm(s: string) {
   return (s||"")
@@ -322,7 +329,6 @@ const CHAIN_MAP: Record<string, string[]> = {
   "Tiv Taam":    ["tivtaam.co.il","טיב טעם","tiv taam","tivtaam"],
   "Yohananof":   ["yoh.co.il","יוחננוף","yohananof"],
   "Victory":     ["victoryonline.co.il","ויקטורי","victory"],
-  "Tiv Taam Int":["tivtaam.co.il"], // שמור תאימות
 };
 function normalizeChainName(raw: string): string {
   const n = (raw || "").toLowerCase();
@@ -538,10 +544,7 @@ async function providerPricez(query: string): Promise<FoundOffer[]> {
 ////////////////////////////////////////////////////////////////
 // 7) LLM Consolidation (guarded, chain-locked)
 ////////////////////////////////////////////////////////////////
-type LlmItemInput = {
-  user_item: string;
-  candidates: FoundOffer[];
-};
+type LlmItemInput = { user_item: string; candidates: FoundOffer[]; };
 type LlmItemOut = {
   item: string;
   product_name?: string;
@@ -622,7 +625,7 @@ function filterOffersByChain(offers: FoundOffer[], chain: string): FoundOffer[] 
 }
 
 ////////////////////////////////////////////////////////////////
-// 9) PLAN PIPELINE (chain-locked)
+// 9) PLAN PIPELINE (chain-locked) + distance_km
 ////////////////////////////////////////////////////////////////
 type PlanReq = {
   address?: string;
@@ -640,6 +643,7 @@ type Basket = {
   coverage?: number;
   location?: { lat: number; lng: number; address?: string };
   breakdown: LlmItemOut[];
+  distance_km?: number; // חדש
 };
 
 async function planHandler(req: PlanReq) {
@@ -655,6 +659,7 @@ async function planHandler(req: PlanReq) {
   }
   if (!lat || !lng) throw Object.assign(new Error("Address not found"), { reason: "NO_LATLNG" });
 
+  const userLoc = { lat, lng }; // לשימוש חישוב מרחק
   const radiusKm = Number(req.radiusKm || 10);
   const shops = await findNearbySupermarketsByLatLng(lat, lng, radiusKm);
   if (!shops.length) return { ok:true, baskets: [], debug: include_debug ? { centerFrom, lat, lng } : undefined };
@@ -730,11 +735,14 @@ async function planHandler(req: PlanReq) {
       }
     }
 
-    // חישוב סכום/כיסוי/דיוק
+    // חישוב סכום/כיסוי/דיוק + מרחק
     const prices = breakdown.map(b=> b.price).filter((x): x is number => typeof x === "number" && isFinite(x));
     const total = prices.reduce((a,b)=> a+b, 0);
     const coverage = breakdown.filter(b=> typeof b.price === "number").length / breakdown.length;
     const match_overall = breakdown.reduce((a,b)=> a + (typeof b.confidence_pct === "number" ? b.confidence_pct : 50), 0) / (breakdown.length * 100);
+    const distKm = (typeof s.lat === "number" && typeof s.lng === "number")
+      ? Number(haversineKm(userLoc, { lat: s.lat, lng: s.lng }).toFixed(2))
+      : undefined;
 
     baskets.push({
       chain,
@@ -743,7 +751,8 @@ async function planHandler(req: PlanReq) {
       match_overall,
       coverage,
       location: { lat: s.lat, lng: s.lng, address: s.address },
-      breakdown
+      breakdown,
+      distance_km: distKm
     });
   }
 
@@ -772,7 +781,6 @@ async function handleApi(req: Request) {
   const key = `${ip}:${pathname}`;
   if (!rateLimit(key, 200, 60_000)) return json({ ok:false, error:"Too Many Requests" }, 429);
 
-  // health
   if (pathname === "/api/health") {
     return json({
       ok:true,
@@ -786,7 +794,6 @@ async function handleApi(req: Request) {
     });
   }
 
-  // suggest — קודם מאגר מקומי (חיפוש בינארי), אח"כ products.json
   if (pathname === "/api/suggest") {
     const q = searchParams.get("q") ?? "";
     const limit = Number(searchParams.get("limit") ?? "12");
@@ -796,7 +803,6 @@ async function handleApi(req: Request) {
     return json({ ok:true, suggestions: [...local, ...rest] });
   }
 
-  // debug geocode
   if (pathname === "/api/debug/geocode") {
     const address = searchParams.get("address") ?? "";
     if (!address) return json({ ok:false, error:"Missing address" }, 400);
@@ -808,7 +814,6 @@ async function handleApi(req: Request) {
     }
   }
 
-  // debug places
   if (pathname === "/api/debug/places") {
     const lat = Number(searchParams.get("lat") ?? "0");
     const lng = Number(searchParams.get("lng") ?? "0");
@@ -822,7 +827,6 @@ async function handleApi(req: Request) {
     }
   }
 
-  // debug env (לא מחזיר מפתחות, רק נוכחות)
   if (pathname === "/api/debug/env") {
     return json({
       ok: true,
@@ -835,7 +839,6 @@ async function handleApi(req: Request) {
     });
   }
 
-  // plan
   if (pathname === "/api/plan" && req.method === "POST") {
     const body = await req.text();
     let parsed: PlanReq = {};
