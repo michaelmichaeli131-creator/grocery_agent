@@ -20,29 +20,36 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 a{color:#9ecbff;text-decoration:none}
 .app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
-/* Header + Avatar */
-.header{
-  position:relative; padding:18px 16px 0; display:flex; align-items:center; justify-content:space-between; gap:10px;
-}
-.header-left{display:flex; align-items:center; gap:10px}
-.brand-mini{display:flex; align-items:center; gap:10px; font-weight:900}
-.brand-mini .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#22d3ee); box-shadow:0 6px 12px rgba(59,130,246,.5)}
-/* Back arrow shown ליד CartCompare */
-#backTopInline{
-  display:none; /* hidden on step 0 */
-  width:40px;height:40px;display:grid;place-items:center;
-  border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;
-}
-#backTopInline svg{width:20px;height:20px;fill:#cbd5e1}
-.ai-avatar{
-  display:flex; align-items:center; gap:12px;
-  background:var(--card); border:1px solid var(--line); border-radius:16px; padding:10px 12px;
-}
-.ai-avatar img{ width:42px; height:42px; border-radius:12px; object-fit:cover; background:#0b1220 }
-.ai-avatar .t1{ font-weight:800; }
-.ai-avatar .t2{ color:var(--muted); font-size:12px }
+/* Header + חץ חזרה */
+.header{position:relative;padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between}
+.brand-mini{display:flex;align-items:center;gap:10px;font-weight:900}
+.brand-mini .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#22d3ee);box-shadow:0 6px 12px rgba(59,130,246,.5)}
+#backTop{margin-inline-start:8px;width:38px;height:38px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+#backTop:hover{border-color:#3b82f6}
+#backTop svg{width:20px;height:20px;fill:#cbd5e1}
 
-/* Screens */
+/* אווטאר */
+.ai-avatar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 12px}
+.ai-avatar img{width:40px;height:40px;border-radius:12px;object-fit:cover;background:#0b1220}
+.ai-avatar .t1{font-weight:800}
+.ai-avatar .t2{color:var(--muted);font-size:12px}
+
+/* מסך נחיתה */
+.landing{position:relative;min-height:100dvh;padding:6px 16px 140px;display:flex;flex-direction:column;justify-content:flex-start}
+.landing-center{text-align:center;margin-top:14px}
+.hero-illustration{
+  width:200px;height:200px;margin:10px auto 6px;border-radius:24px;
+  display:grid;place-items:center;box-shadow:0 0 34px rgba(59,130,246,.35);
+  background: radial-gradient(circle at 30% 30%, rgba(96,165,250,.25), transparent 70%);
+}
+.hero-illustration img{width:200px;height:200px;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 6px 24px rgba(34,211,238,.35))}
+.hero-title{font-size:clamp(22px,5.2vw,30px);line-height:1.15;margin:6px 0;
+  background:linear-gradient(90deg,#3b82f6,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--muted);margin:.5rem 0 1.1rem}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
+
+/* תיבות */
 .screen{display:none}.screen.active{display:block}
 .page{padding:0 16px 120px}
 .box{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)}
@@ -50,21 +57,20 @@ a{color:#9ecbff;text-decoration:none}
 .input{display:flex;flex-direction:column;gap:8px}
 .input input,.input textarea{width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);outline:none;background:rgba(255,255,255,.04);color:var(--ink)}
 .input input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+.radius-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-chip{border:1px solid var(--line);border-radius:999px;padding:12px 14px;background:rgba(59,130,246,.08);color:#cfe2ff;font-weight:800;cursor:pointer}
+.btn-chip:hover{border-color:#3b82f6}
 
-/* Landing */
-.landing{position:relative;min-height:100dvh;padding:12px 16px 140px;display:flex;flex-direction:column;justify-content:flex-start}
-.landing-center{text-align:center; margin-top:20px}
-.hero-illustration{
-  width:170px; height:170px; margin:18px auto 10px; border-radius:24px; background:radial-gradient(circle at 30% 30%, rgba(96,165,250,.8), transparent 70%);
-  display:grid; place-items:center; box-shadow:0 0 34px rgba(59,130,246,.35);
-}
-.hero-title{font-size:clamp(22px,5.2vw,30px);line-height:1.15;margin:6px 0;
-  background:linear-gradient(90deg,#3b82f6,#22d3ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
-.hero-sub{color:var(--muted); margin:.5rem 0 1.1rem}
-.badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
-.badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
+/* תוצאות */
+.row{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.row+.row{margin-top:10px}.total{font-size:18px;font-weight:900}
+.small{font-size:12px}.desc{color:#b6c3d8;font-size:12px}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(59,130,246,.12);color:#bfe0ff;font-size:12px;font-weight:700}
+.conf{font-size:12px;color:#22c55e;font-weight:800}
+.unit{font-size:12px;color:#93c5fd;font-weight:800}
+.map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
-/* Chips + Dropdown */
+/* אוטוקומפליט */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe2ff;font-size:14px}
 .chip .close{background:transparent;border:none;color:#9fb6ff;cursor:pointer;font-size:16px;line-height:1}
@@ -77,76 +83,46 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* Radius */
-.radius-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-chip{border:1px solid var(--line);border-radius:999px;padding:12px 14px;background:rgba(59,130,246,.08);color:#cfe2ff;font-weight:800;cursor:pointer}
-.btn-chip:hover{border-color:#3b82f6}
-
-/* Results */
-.row{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-.row+.row{margin-top:10px}.total{font-size:18px;font-weight:900}
-.small{font-size:12px}.desc{color:#b6c3d8;font-size:12px}
-.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(59,130,246,.12);color:#bfe0ff;font-size:12px;font-weight:700}
-.conf{font-size:12px;color:#22c55e;font-weight:800}
-.unit{font-size:12px;color:#93c5fd;font-weight:800}
-.map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
-
-/* Primary Button (also for “בואו נתחיל”) */
-.btn{
-  appearance:none;border:none;border-radius:18px;padding:16px 24px;font-weight:900;cursor:pointer;
-  box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22; letter-spacing:.3px; font-size:18px;
-}
-.btn-primary{
-  background:conic-gradient(from 0deg at 50% 50%, #3b82f6, #22d3ee, #3b82f6);
-  color:#06151d; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-}
-.btn-primary .spark{
-  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
-  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
+/* כפתור “המשך” גדול — ממורכז. מוסתר בשלב 0 */
+.cta{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
+.cta.show{display:flex}
+.cta .inner{pointer-events:auto}
+.btn{appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
+     box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;letter-spacing:.3px;font-size:18px}
+.btn-primary{background:conic-gradient(from 0deg at 50% 50%, #3b82f6, #22d3ee, #3b82f6);color:#06151d;min-width:240px;display:inline-flex;align-items:center;justify-content:center;gap:10px}
 
 /* AI Loader */
 #loading{display:none;margin-top:12px;text-align:center}
 #loading .msg{color:#bcd3ff;margin-top:6px}
 .ai-loader{position:relative;width:120px;height:120px;margin:26px auto}
 .ai-loader::before,.ai-loader::after{content:"";position:absolute;border-radius:50%;inset:0}
-.ai-loader::before{
-  background: radial-gradient(circle at 30% 30%, rgba(96,165,250,.75), transparent 70%);
-  animation: ai-ring 1.6s cubic-bezier(.21,.61,.36,1) infinite; box-shadow:0 0 32px rgba(59,130,246,.55)
-}
-.ai-loader::after{
-  width:24px;height:24px;margin:auto; inset:auto 0 0 0;
-  background: radial-gradient(circle at 50% 50%, #3b82f6 0%, #22d3ee 90%);
-  animation: ai-dot 1.6s ease-in-out infinite -.4s; box-shadow:0 0 24px rgba(34,211,238,.7)
-}
+.ai-loader::before{background: radial-gradient(circle at 30% 30%, rgba(96,165,250,.75), transparent 70%);animation: ai-ring 1.6s cubic-bezier(.21,.61,.36,1) infinite;box-shadow:0 0 32px rgba(59,130,246,.55)}
+.ai-loader::after{width:24px;height:24px;margin:auto;inset:auto 0 0 0;background: radial-gradient(circle at 50% 50%, #3b82f6 0%, #22d3ee 90%);animation: ai-dot 1.6s ease-in-out infinite -.4s;box-shadow:0 0 24px rgba(34,211,238,.7)}
 @keyframes ai-ring{0%{transform:scale(.35);opacity:.95}80%,100%{opacity:0}}
 @keyframes ai-dot{0%{transform:scale(.8)}50%{transform:scale(1)}100%{transform:scale(.8)}}
 
-/* מרכז כפתור “המשך” — מוסתר בעמוד הראשון */
-.cta{
-  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-  pointer-events:none;
-}
-.cta .inner{ pointer-events:auto; }
-body[data-step="0"] .cta{ display:none; } /* לא בעמוד הראשון */
-
+/* Swipe box */
+.swipe-box{margin:12px auto 0;max-width:360px;border:1px dashed var(--line);background:rgba(255,255,255,.04);
+  border-radius:16px;padding:12px;display:flex;align-items:center;justify-content:center;gap:10px;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.swipe-box .icon{width:24px;height:24px;display:grid;place-items:center}
+.swipe-box .hint{color:var(--muted);font-weight:800;font-size:14px}
 </style>
 </head>
 
-<body data-step="0">
+<body>
 <div class="app">
-  <!-- Header with brand + back arrow ליד CartCompare -->
+
+  <!-- Header -->
   <div class="header">
-    <div class="header-left">
-      <div class="brand-mini"><div class="dot"></div><span>CartCompare <b>AI</b></span></div>
-      <button id="backTopInline" title="חזרה" aria-label="חזרה שלב">
-        <!-- arrow right -->
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button id="backTop" title="חזרה" aria-label="חזרה">
+        <!-- חץ לכיוון ימין (RTL) -->
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
       </button>
+      <div class="brand-mini"><div class="dot"></div><span>CartCompare <b>AI</b></span></div>
     </div>
     <div class="ai-avatar">
-      <img src="/ai-avatar.png" alt="AI Avatar" onerror="this.outerHTML=getBotSVG()">
+      <img src="ai_giff.gif" alt="AI Avatar" onerror="this.style.display='none'">
       <div>
         <div class="t1">Assistant</div>
         <div class="t2">Always-on smart helper</div>
@@ -157,15 +133,12 @@ body[data-step="0"] .cta{ display:none; } /* לא בעמוד הראשון */
   <!-- Screen 1 -->
   <section id="s1" class="screen active">
     <div class="landing">
-      <div class="landing-center" id="landingSwipe">
-        <div class="hero-illustration" aria-hidden="true">
-          <svg width="120" height="120" viewBox="0 0 120 120">
-            <defs><radialGradient id="g1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#22d3ee"/></radialGradient></defs>
-            <circle cx="60" cy="60" r="40" fill="url(#g1)" opacity="0.85">
-              <animate attributeName="r" values="36;44;36" dur="3s" repeatCount="indefinite"/>
-            </circle>
-          </svg>
+      <div class="landing-center">
+        <!-- מרכז: ה-GIF במקום האיור/נקודה המהבהבת -->
+        <div class="hero-illustration">
+          <img src="ai_giff.gif" alt="AI Mascot">
         </div>
+
         <h1 class="hero-title">מצא/י את סל הקניות הזול לידך</h1>
         <p class="hero-sub">מוצא את הזול במהירות באמצעות AI</p>
         <div class="badges">
@@ -174,13 +147,17 @@ body[data-step="0"] .cta{ display:none; } /* לא בעמוד הראשון */
           <span class="badge">AI 🤖</span>
         </div>
 
-        <!-- "בואו נתחיל" בצבע של המשך, מעל ה-GPS -->
-        <button id="startBtn" class="btn btn-primary" style="margin-top:12px">
-          <span class="spark" aria-hidden="true"></span>
-          בואו נתחיל
-        </button>
+        <!-- כפתורים: “בואו נתחיל” מעל GPS ובצבע של “המשך” -->
+        <button id="startBtn" class="btn btn-primary" style="margin-top:8px">בואו נתחיל</button>
         <button id="gpsBtn" class="btn btn-secondary" style="margin-top:10px">שימוש ב-GPS</button>
-        <div class="muted" style="margin-top:8px;font-size:12px">או החלק/י מימין לשמאל כדי להתחיל</div>
+
+        <!-- אזור החלקה ייעודי -->
+        <div id="swipeStart" class="swipe-box" aria-label="החלק/י מימין לשמאל כדי להתחיל">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#9fb6ff"><path d="M14 7l-5 5 5 5 1.41-1.41L12.83 12l2.58-2.59L14 7z"/></svg>
+          </div>
+          <div class="hint">החלק/י מימין לשמאל כדי להתחיל</div>
+        </div>
       </div>
     </div>
   </section>
@@ -225,12 +202,15 @@ body[data-step="0"] .cta{ display:none; } /* לא בעמוד הראשון */
       <div class="box">
         <div style="font-weight:800;font-size:20px">מה תרצה לקנות?</div>
         <div class="muted" style="margin-top:6px">הוסף מוצרים בלחיצה. “קו 1.5 ל” → קוקה קולה 1.5 ל׳, “פסטה 500” → פסטה 500 גרם…</div>
+
         <div id="chips" class="chips"></div>
+
         <div class="add-row">
           <input id="newItem" class="input" placeholder="למשל: קו 1.5 ל / פחית 330 / פסטה 500..." autocomplete="off" />
           <button id="addBtn" class="btn-secondary" type="button" title="הוסף לרשימה">+ הוסף</button>
           <div id="dropdown" class="dropdown" style="display:none"></div>
         </div>
+
         <div class="toggle" style="margin-top:12px">
           <input type="checkbox" id="verifiedOnly" checked />
           <label for="verifiedOnly">הצג רק חנויות מאומתות (ויזואלי)</label>
@@ -264,34 +244,26 @@ body[data-step="0"] .cta{ display:none; } /* לא בעמוד הראשון */
   </section>
 </div>
 
-<!-- כפתור “המשך” ממורכז — לא מוצג בעמוד הראשון -->
+<!-- CTA מרכזי (מופיע משלב 1 ומעלה בלבד) -->
 <div class="cta" id="cta">
   <div class="inner">
-    <button id="next" class="btn btn-primary" type="button">
-      <span class="spark" aria-hidden="true"></span>
-      המשך
-    </button>
+    <button id="next" class="btn btn-primary" type="button">המשך</button>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-/* Fallback SVG לאווטאר */
-function getBotSVG(){
-  return '<svg width="42" height="42" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;background:#0b1220"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="url(#lg)"><rect x="14" y="18" rx="10" ry="10" width="36" height="26"/><circle cx="24" cy="30" r="3" fill="#fff"/><circle cx="40" cy="30" r="3" fill="#fff"/><rect x="22" y="40" width="20" height="4" rx="2"/></g></svg>';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const screens = ['s1','s2','s3','s4','s5'].map(id=>document.getElementById(id));
-  let step = 0;
-  const bodyEl = document.body;
-  const btnNext = document.getElementById('next');
   const cta = document.getElementById('cta');
+  let step = 0;
+
+  const btnNext = document.getElementById('next');
+  const backTop = document.getElementById('backTop');
   const startBtn = document.getElementById('startBtn');
   const gpsBtn = document.getElementById('gpsBtn');
-  const backTopInline = document.getElementById('backTopInline');
-  const landingSwipe = document.getElementById('landingSwipe');
+  const swipeStart = document.getElementById('swipeStart');
 
   const addressEl = document.getElementById('address');
   const radiusEl = document.getElementById('radius');
@@ -311,29 +283,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setStep(n){
     step = Math.max(0, Math.min(4, n));
-    bodyEl.setAttribute('data-step', String(step));
     screens.forEach((s,i)=> s.classList.toggle('active', i===step));
-    // חץ ליד CartCompare רק אחרי צעד ראשון
-    backTopInline.style.display = step > 0 ? 'grid' : 'none';
+    cta.classList.toggle('show', step>0); // הצג CTA רק משלב 1
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   setStep(0);
 
-  // Start actions
   startBtn?.addEventListener('click', ()=> setStep(1));
-  backTopInline?.addEventListener('click', ()=> { if(step>0) setStep(step-1); });
+  backTop?.addEventListener('click', ()=> { if(step>0) setStep(step-1); });
 
-  // Swipe (מימין לשמאל כדי להתחיל) על מסך הנחיתה
-  let touchXStart = null, touchYStart = null;
-  landingSwipe?.addEventListener('touchstart', (e)=>{
-    const t = e.touches[0]; touchXStart = t.clientX; touchYStart = t.clientY;
-  }, {passive:true});
-  landingSwipe?.addEventListener('touchend', (e)=>{
-    if (touchXStart===null) return;
-    const t = e.changedTouches[0]; const dx = t.clientX - touchXStart; const dy = Math.abs((t.clientY - (touchYStart??t.clientY)));
-    // החלקה משמעותית לרוחב, כמעט ללא תזוזה אנכית, לכיוון שמאל (RTL: מימין לשמאל = dx < -50)
-    if (dx < -50 && dy < 40) setStep(1);
-    touchXStart = touchYStart = null;
+  document.querySelectorAll('[data-radius]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-radius]').forEach(x=>x.dataset.active="0");
+      b.dataset.active="1";
+      radiusEl.value = b.getAttribute('data-radius');
+      setStep(step+1);
+    });
   });
 
   // GPS
@@ -347,17 +312,18 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   });
 
-  // רדיוס מהיר
-  document.querySelectorAll('[data-radius]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      document.querySelectorAll('[data-radius]').forEach(x=>x.dataset.active="0");
-      b.dataset.active="1";
-      radiusEl.value = b.getAttribute('data-radius');
-      setStep(step+1);
-    });
+  // Swipe start (ימין→שמאל)
+  let sx=null, sy=null, t0=0;
+  function resetSwipe(){ sx = sy = null; t0 = 0; }
+  swipeStart?.addEventListener('touchstart',(e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; t0=Date.now(); },{passive:true});
+  swipeStart?.addEventListener('touchend',(e)=>{
+    if (sx==null) return;
+    const t=e.changedTouches[0]; const dx=t.clientX-sx; const dy=Math.abs(t.clientY-(sy??t.clientY)); const dt=Date.now()-t0;
+    if (dt<800 && dx<-60 && dy<40) setStep(1);
+    resetSwipe();
   });
 
-  // Chips UI
+  // chips UI
   function renderChips(){
     chipsEl.innerHTML = "";
     items.forEach((it,i)=>{
@@ -379,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderChips();
   };
 
-  // Autocomplete
+  // אוטוקומפליט
   let activeIdx = -1;
   newItemEl.addEventListener('input', async ()=>{
     const q = newItemEl.value.trim();
@@ -425,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
   function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
 
-  // כפתור המשך — אשף + /api/plan
+  // כפתור המשך – זרימה + /api/plan
   btnNext.addEventListener('click', async ()=>{
     if(step===1){ if(!gps && !addressEl.value.trim()) return shake(addressEl); return setStep(step+1); }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); return setStep(step+1); }
@@ -503,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const brandBadge = brand ? ` <span class="pill">${esc(brand)}</span>` : '';
     const unit = (typeof p.unit_per_liter === 'number') ? `<span class="unit">₪/ל׳ ${p.unit_per_liter.toFixed(2)}</span>` :
                  (typeof p.unit_per_kg === 'number') ? `<span class="unit">₪/ק״ג ${p.unit_per_kg.toFixed(2)}</span>` : '';
-    const conf = (typeof p.confidence_pct === 'number') ? `<span class="conf">${p.confidence_pct}% אמינות</span>` : '';
+    const conf = typeof p.confidence_pct === 'number' ? `<span class="conf">${p.confidence_pct}% אמינות</span>` : '';
     const title = p.product_name || p.chosen_title || p.title || p.item || '';
     const size = p.size_text ? ` <span class="pill">${esc(p.size_text)}</span>` : '';
 
@@ -520,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  function wireStoreMaps(){
+  function wireStoreMaps(baskets){
     document.querySelectorAll('details[data-idx]').forEach((det)=>{
       det.addEventListener('toggle', ()=>{
         if (!det.open) return;
@@ -544,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderLoading(on){ loadingEl.style.display = on ? 'block' : 'none'; }
   function row(title, msg){ return `<div class="row"><div><strong>${esc(title)}</strong><div class="muted small">${esc(msg)}</div></div></div>`; }
   function shake(el){ el.style.borderColor='#3b82f6'; el.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:260}); setTimeout(()=>el.style.borderColor='var(--line)',320); }
-  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c]))}
+  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
   function escAttr(s){return String(s??'').replace(/"/g,'&quot;')}
   function toPrice(v, currency){
     if (typeof v === "number") return v.toFixed(2)+" "+currency;
