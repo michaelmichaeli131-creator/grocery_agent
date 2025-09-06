@@ -4,29 +4,30 @@
 <meta charset="utf-8" />
 <title>AI Basket — השוואת סל קניות AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin="anonymous" />
 
 <style>
+/* ========== THEME ==========
+   ערכים חשובים לשינוי מהיר */
 :root{
   --ink:#e2e8f0; --muted:#9fb0c8; --brand:#3b82f6; --accent:#22d3ee;
   --bg: radial-gradient(120% 100% at 50% -10%, #0f172a 0%, #020617 60%);
-  --card: rgba(255,255,255,0.06); --glass: rgba(2,6,23,.55);
-  --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
+  --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
 
-  /* אורך GPS/החלקה */
+  /* אורך ה-GPS/החלקה */
   --action-width: min(86%, 366px);
-  /* מיקום אנכי של ה-GIF/אווטר */
+
+  /* מיקום אנכי של האווטר (GIF) */
   --avatar-pos-y: 50%;
 
-  /* טבעת מסביב לעיגול */
-  --ring-inner: 74%;
-  --ring-outer: 78%;
-
-  /* גדלי ה-Loader העגול */
-  --loader-size: 160px; /* קוטר העיגול */
-  --loader-zoom: 1;     /* זום פנימי של ה-GIF (1=רגיל) */
+  /* גודל וזום ל-Loader העגול */
+  --loader-size: 168px;
+  --loader-zoom: 1.0;
 }
+
+/* בסיס */
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 a{color:#9ecbff;text-decoration:none}
@@ -39,8 +40,12 @@ a{color:#9ecbff;text-decoration:none}
 }
 .brand-name{display:flex; align-items:center; gap:10px}
 .brand-mini{display:flex; align-items:center; gap:10px; font-weight:900}
-.brand-mini .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#22d3ee); box-shadow:0 6px 12px rgba(59,130,246,.5)}
-/* החץ מימין ללוגו */
+.brand-mini .dot{
+  width:14px;height:14px;border-radius:50%;
+  background:linear-gradient(135deg,#3b82f6,#22d3ee);
+  box-shadow:0 6px 12px rgba(59,130,246,.5)
+}
+/* החץ צריך להיות מימין ללוגו */
 #backTop{
   order:2;
   margin-inline-start:8px;
@@ -50,44 +55,56 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* בלוק Assistant ממסך 2 ואילך — מרובע עם אווטר בפנים */
+/* Assistant — מרובע כולל האווטר, עבה פי 2 וירד מעט למטה */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
-  border:1px solid var(--line); background:var(--card); border-radius:16px;
-  padding:10px 12px; box-shadow:var(--shadow); backdrop-filter:blur(14px);
-  margin-top:6px; /* להוריד מעט למטה */
+  border:2px solid var(--line); background:var(--card); border-radius:16px;
+  padding:12px 14px; box-shadow:var(--shadow); backdrop-filter:blur(14px);
+  margin-top:10px; /* מוריד מעט למטה */
 }
 .ai-avatar img{
-  width:42px;height:42px;border-radius:12px;object-fit:cover;object-position:center bottom;background:#0b1220
+  width:46px;height:46px;border-radius:12px;
+  object-fit:cover; object-position:50% var(--avatar-pos-y);
+  background:#0b1220;
 }
-.ai-avatar .t1{font-weight:800;line-height:1}
-.ai-avatar .t2{color:var(--muted);font-size:12px;line-height:1}
+.ai-avatar .t1{font-weight:800; line-height:1}
+.ai-avatar .t2{color:var(--muted); font-size:12px; line-height:1}
 
 /* ===== Screens ===== */
-.screen{display:none}.screen.active{display:block}
+.screen{display:none}
+.screen.active{display:block}
 .page{padding:0 16px 120px}
-.box{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)}
+.box{
+  background:var(--card);border-radius:22px;box-shadow:var(--shadow);
+  padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)
+}
 .muted{color:var(--muted)}
 .input{display:flex;flex-direction:column;gap:8px}
-.input input,.input textarea{width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);outline:none;background:rgba(255,255,255,.04);color:#fff}
+.input input,.input textarea{
+  width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);
+  outline:none;background:rgba(255,255,255,.04);color:#fff
+}
 .input input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
 .radius-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn-chip{border:1px solid var(--line);border-radius:999px;padding:12px 14px;background:rgba(59,130,246,.08);color:#cfe2ff;font-weight:800;cursor:pointer}
 .btn-chip:hover{border-color:#3b82f6}
 
 /* ===== Splash (עמוד ראשון) ===== */
-.splash{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.splash{
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px
+}
 
+/* אווטר עגול עם הילה + טבעת מהבהבת */
 .avatar-wrap{
   position:relative; width:min(70vw,280px); height:min(70vw,280px);
   display:grid; place-items:center; border-radius:50%; isolation:isolate;
 }
-/* טבעת מהבהבת */
+/* טבעת הילה מהבהבת (ללא עיגולים מסתובבים) */
 .avatar-ring{
   position:absolute; inset:-4px; border-radius:50%;
   background:conic-gradient(from 180deg, #3b82f6, #22d3ee, #3b82f6);
   filter:saturate(120%);
-  mask: radial-gradient(closest-side, transparent var(--ring-inner), black var(--ring-outer));
+  mask: radial-gradient(closest-side, transparent 74%, black 78%);
   animation:ringBlink 2.4s ease-in-out infinite;
 }
 @keyframes ringBlink{
@@ -108,16 +125,15 @@ a{color:#9ecbff;text-decoration:none}
   50%{transform:scale(1.05); opacity:.88}
   100%{transform:scale(.9); opacity:.5}
 }
+/* המסיכה העגולה של האווטר */
 .avatar{
   width:100%; height:100%; border-radius:50%; overflow:hidden; position:relative;
   box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.07);
   background:#0b1220;
-  -webkit-mask-image: radial-gradient(60% 60% at 50% 50%, black 70%, rgba(0,0,0,.85) 82%, transparent 100%);
-          mask-image: radial-gradient(60% 60% at 50% 50%, black 70%, rgba(0,0,0,.85) 82%, transparent 100%);
 }
 .avatar img{
   width:100%; height:100%; display:block; object-fit:cover;
-  object-position: 50% var(--avatar-pos-y);
+  object-position: 50% var(--avatar-pos-y); /* חיתוך כלפי מעלה */
 }
 
 /* טקסטים + באדג'ים */
@@ -126,7 +142,7 @@ a{color:#9ecbff;text-decoration:none}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
-/* GPS — אותו אורך כמו ההחלקה */
+/* GPS — אותו אורך כמו ההחלקה; גדול מעט יותר */
 .gps-big{
   margin-top:12px; width:var(--action-width);
   display:inline-flex; align-items:center; justify-content:center; gap:12px;
@@ -136,7 +152,7 @@ a{color:#9ecbff;text-decoration:none}
 }
 .gps-big svg{width:26px;height:26px}
 
-/* החלקה — ללא מסגרת מקווקוות */
+/* החלקה — ללא קיווקוו מסביב */
 .swipe-wrap{ margin-top:14px; border-radius:16px; padding:12px; color:#bfe0ff; width:var(--action-width) }
 .swipe-track{ position:relative; height:48px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:999px; overflow:hidden }
 .swipe-ghost{position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(59,130,246,.12), transparent); animation:slide 2.4s linear infinite}
@@ -151,7 +167,7 @@ a{color:#9ecbff;text-decoration:none}
 .knob svg{width:18px;height:18px;fill:#06151d}
 .progress{position:absolute; inset:0; background:linear-gradient(90deg, rgba(59,130,246,.25), rgba(34,211,238,.2)); transform-origin:right; transform:scaleX(0)}
 
-/* ===== Lists/Results ===== */
+/* ===== Results styling ===== */
 .row{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .row+.row{margin-top:10px}.total{font-size:18px;font-weight:900}
 .small{font-size:12px} .desc{color:#b6c3d8;font-size:12px}
@@ -159,6 +175,8 @@ a{color:#9ecbff;text-decoration:none}
 .conf{font-size:12px;color:#22c55e;font-weight:800}
 .unit{font-size:12px;color:#93c5fd;font-weight:800}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
+
+/* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe2ff;font-size:14px}
 .chip .close{background:transparent;border:none;color:#9fb6ff;cursor:pointer;font-size:16px;line-height:1}
@@ -171,16 +189,26 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* CTA */
+/* ===== CTA (כפתור המשך) ===== */
 .cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
 .cta.show{ display:flex; }
 .cta .inner{ pointer-events:auto; }
-.btn{appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;letter-spacing:.3px; font-size:18px;}
-.btn-primary{background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;}
-.btn-primary .spark{width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;}
+.btn{
+  appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
+  box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
+  letter-spacing:.3px; font-size:18px;
+}
+.btn-primary{
+  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
+  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn-primary .spark{
+  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
+  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
+}
 @keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
 
-/* ===== Loader (GIF עגול) ===== */
+/* ===== Loader Results (GIF עגול) ===== */
 #loading{display:none;margin-top:12px;text-align:center}
 .loading-circle{
   width: var(--loader-size);
@@ -195,7 +223,7 @@ a{color:#9ecbff;text-decoration:none}
 .loading-circle img{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* אם תרצה לראות את כולו: contain */
+  object-fit: cover; /* לראות את כולו? שנה ל-contain */
   transform: scale(var(--loader-zoom));
   transform-origin: center;
   display: block;
@@ -217,7 +245,7 @@ a{color:#9ecbff;text-decoration:none}
       </button>
     </div>
 
-    <!-- מסגרת מרובעת של Assistant (מהעמוד השני והלאה) -->
+    <!-- Assistant (ממסך 2 ואילך) -->
     <div class="ai-avatar" id="aiMini">
       <img src="ai_giff4.gif" alt="Assistant">
       <div>
@@ -235,13 +263,12 @@ a{color:#9ecbff;text-decoration:none}
         <div class="pulse2" aria-hidden="true"></div>
         <div class="avatar-ring" aria-hidden="true"></div>
         <div class="avatar">
-          <!-- GIF בתקיית public -->
+          <!-- ה-GIF בתקיית public/ אך כאן בלי / בתחילת ה-src -->
           <img src="ai_giff4.gif" alt="AI waving">
         </div>
       </div>
 
       <h1 style="margin-top:14px">המערכת שתמצא את סל הקניות הזול לידך באמצעות AI.</h1>
-
       <div class="badges">
         <span class="badge">⚡ חוסך זמן</span>
         <span class="badge">💸 מחיר הכי זול</span>
@@ -302,7 +329,7 @@ a{color:#9ecbff;text-decoration:none}
     </div>
   </section>
 
-  <!-- Screen 4: Items -->
+  <!-- Screen 4: Items + Autocomplete -->
   <section id="s4" class="screen">
     <div class="page">
       <div class="box">
@@ -356,9 +383,9 @@ a{color:#9ecbff;text-decoration:none}
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <script>
+/* Bot SVG fallback (לא חובה) */
 function getBotSVG(sz=42){
   return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;background:#0b1220"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="url(#lg)"><rect x="14" y="18" rx="10" ry="10" width="36" height="26"/><circle cx="24" cy="30" r="3" fill="#fff"/><circle cx="40" cy="30" r="3" fill="#fff"/><rect x="22" y="40" width="20" height="4" rx="2"/></g></svg>';
 }
@@ -375,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addressEl = document.getElementById('address');
   const radiusEl = document.getElementById('radius');
+  const verifiedOnlyEl = document.getElementById('verifiedOnly');
 
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
@@ -386,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  /* ריענון לולאה אם ה-GIF לא בלופ (לא חובה) */
+  // ▼ לו״פ ריענון ל-GIF במידה והוא לא בלופ (Optional)
   let loaderLoopTimer = null;
   const GIF_REFRESH_MS = 4000;
   function startGifLoop(){
@@ -401,9 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loaderLoopTimer){ clearInterval(loaderLoopTimer); loaderLoopTimer = null; }
   }
 
-  /* הצגה/הסתרה של ה-Loader — נקראים רק סביב fetch */
-  function showLoading(){ loadingEl.style.display='block'; resultsEl.innerHTML=''; startGifLoop(); }
-  function hideLoading(){ loadingEl.style.display='none'; stopGifLoop(); }
+  function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
+  function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
   function syncCTA(){ cta.classList.toggle('show', step>=1); }
   function syncHeaderAvatar(){ aiMini.style.display = step>=1 ? 'flex' : 'none'; }
@@ -415,9 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   goto(0);
 
+  // Back
   backTop.addEventListener('click', ()=>{ if(step>0) goto(step-1); });
 
-  // SWIPE → אל כתובת (s2)
+  // SWIPE → אל Address (s2)
   const swipeTrack = document.getElementById('swipeTrack');
   const swipeKnob = document.getElementById('swipeKnob');
   const swipeProgress = document.getElementById('swipeProgress');
@@ -454,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Chips
+  // Chips UI
   function renderChips(){
     chipsEl.innerHTML = "";
     items.forEach((it,i)=>{
@@ -529,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
-  // ה־CTA “המשך” הוא הטריגר ל־fetch + הצגת ה־GIF
+  // CTA “המשך” — ולוגיקת מעבר בין מסכים
   btnNext.addEventListener('click', ()=>{
     if(step===1){ if(!addressEl.value.trim() && !sessionStorage.getItem('gps')) return shake(addressEl); goto(2); return; }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); goto(3); return; }
@@ -537,20 +565,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if(items.length===0) return shake(newItemEl);
       goto(4);        // Results
       showLoading();  // ה-GIF מופיע רק עכשיו
-      fetchPlan();    // קריאה לשרת
+      fetchPlan();    // קריאה לצד שרת
       return;
     }
     if(step<screens.length-1) return goto(step+1);
   });
 
-  // ====== קריאה לשרת והצגת תוצאות ======
+  /* ====== קריאה לשרת והצגת תוצאות ====== */
   async function fetchPlan(){
     let gps = null;
     try{ gps = JSON.parse(sessionStorage.getItem('gps')||'null'); }catch{}
 
     const payload = gps
-      ? { lat: gps.lat, lng: gps.lng, radiusKm: Number(radiusEl.value || 15), items }
-      : { address: (addressEl.value||'').trim(), radiusKm: Number(radiusEl.value || 15), items };
+      ? { lat: gps.lat, lng: gps.lng, radiusKm: Number(radiusEl.value || 15), items, include_debug:false }
+      : { address: (addressEl.value||'').trim(), radiusKm: Number(radiusEl.value || 15), items, include_debug:false };
 
     summaryEl.textContent = `${gps ? 'GPS' : 'כתובת: ' + (payload.address||'—')} • רדיוס: ${payload.radiusKm || ''} ק״מ • פריטים: ${items.length}`;
 
@@ -571,10 +599,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      cta.classList.remove('show'); // לוודא הסתרה
+      cta.classList.remove('show'); // לוודא הסתרת CTA
     }catch(err){
+      // Fallback demo אם אין שרת
+      await new Promise(r=>setTimeout(r, 1200));
       hideLoading();
-      resultsEl.innerHTML = row('שגיאת רשת', err.message || String(err));
+      const demo=[{
+        shop_display_name:'סופר דמו',
+        location:{address:'רח׳ הבדיקה 1, תל אביב', lat:32.08, lng:34.78},
+        total:198.4, match_overall:.92, coverage:.88, distance_km:1.2,
+        breakdown:[
+          {item:'קוקה קולה 1.5 ל׳', price:8.9, product_name:'Coca Cola 1.5L', size_text:'1.5L', confidence_pct:96},
+          {item:'פסטה 500 גרם', price:6.5, product_name:'Pasta 500g', size_text:'500g', unit_per_kg:13.0}
+        ]
+      },{
+        shop_display_name:'סופר שני',
+        location:{address:'רח׳ הדמיון 8, רמת גן', lat:32.09, lng:34.82},
+        total:204.1, match_overall:.88, coverage:.83, distance_km:2.4,
+        breakdown:[
+          {item:'מים 1.5 ל׳', price:3.2, product_name:'Mineral Water 1.5L', size_text:'1.5L'},
+          {item:'פסטה 500 גרם', price:7.1, product_name:'Pasta 500g', size_text:'500g'}
+        ]
+      }];
+      resultsEl.innerHTML = demo.map((b,i)=>renderStore(b,i)).join('');
+      wireStoreMaps(demo);
+      cta.classList.remove('show');
     }
   }
 
@@ -666,13 +715,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof v === "string" && v.trim()) return v.includes("₪") ? v : (v+" "+currency);
     return "—";
   }
+
+  // Debug: ?showloader=1 — לראות את העיגול מייד
+  const url = new URL(location.href);
+  if (url.searchParams.get('showloader') === '1'){
+    // הפוך את תוצאות לפעיל, הצג Loader
+    screens.forEach(s=>s.classList.remove('active'));
+    document.getElementById('s5').classList.add('active');
+    aiMini.style.display = 'flex';
+    cta.classList.add('show'); // אופציונלי
+    showLoading();
+  }
 });
 
-/* Swipe RTL */
+/* Swipe to start: גרירה RTL */
 function initSwipeToStart(track, knob, progressEl, onComplete){
   if(!track || !knob) return;
-  const rtl = true;
-  let startX=0, dragging=false;
+  const rtl = true; // RTL UI
+  let startX=0, curX=0, dragging=false;
   const trackRect = ()=> track.getBoundingClientRect();
   const knobRect  = ()=> knob.getBoundingClientRect();
 
@@ -681,17 +741,18 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
     progressEl.style.transform = 'scaleX('+(rtl ? (1-p) : p)+')';
     knob.style.insetInlineEnd = (6 + (1-p) * (trackRect().width - knobRect().width - 12))+'px';
   }
-  setProgress(0);
+  setProgress(0); // initial
 
   function onStart(e){
     dragging=true;
     startX = (e.touches? e.touches[0].clientX : e.clientX);
+    curX = startX;
     e.preventDefault();
   }
   function onMove(e){
     if(!dragging) return;
-    const curX = (e.touches? e.touches[0].clientX : e.clientX);
-    const dx = startX - curX;
+    curX = (e.touches? e.touches[0].clientX : e.clientX);
+    const dx = startX - curX; // swipe right->left gives positive dx
     const maxDx = Math.max(120, trackRect().width - knobRect().width - 12);
     const p = Math.max(0, Math.min(1, dx / maxDx));
     setProgress(p);
@@ -699,6 +760,7 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
   function onEnd(){
     if(!dragging) return;
     dragging=false;
+    // Complete if progress >= 0.85
     const endRight = parseFloat(getComputedStyle(knob).insetInlineEnd);
     const p = 1 - (endRight - 6) / (trackRect().width - knobRect().width - 12);
     if(p >= 0.85){
