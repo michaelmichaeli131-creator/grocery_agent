@@ -176,6 +176,13 @@ a{color:#9ecbff;text-decoration:none}
 .unit{font-size:12px;color:#93c5fd;font-weight:800}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
+/* NEW: תג "מחיר מוערך" */
+.pill-est{
+  display:inline-block;padding:4px 8px;border-radius:999px;
+  background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800;
+  border:1px solid rgba(234,179,8,.35);
+}
+
 /* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe2ff;font-size:14px}
@@ -355,7 +362,7 @@ a{color:#9ecbff;text-decoration:none}
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div style="font-weight:800;font-size:20px">התוצאות</div>
-          <span class="pill">Maps + Shopping + CHP + Web</span>
+          <span class="pill">AI results</span>
         </div>
         <div id="summary" class="muted" style="margin-top:6px"></div>
 
@@ -589,13 +596,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let data = null;
       if (ct.includes('application/json')) { try { data = JSON.parse(raw); } catch {} }
 
+      hideLoading();
       if(!res.ok || !data || data.ok === false){
-        hideLoading();
         resultsEl.innerHTML = row('שגיאת שרת', (data && data.error) ? data.error : ('קוד: '+res.status+' • '+raw.slice(0,220)));
         return;
       }
       const baskets = Array.isArray(data.baskets) ? data.baskets : [];
-      hideLoading();
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
@@ -618,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         total:204.1, match_overall:.88, coverage:.83, distance_km:2.4,
         breakdown:[
           {item:'מים 1.5 ל׳', price:3.2, product_name:'Mineral Water 1.5L', size_text:'1.5L'},
-          {item:'פסטה 500 גרם', price:7.1, product_name:'Pasta 500g', size_text:'500g'}
+          {item:'פסטה 500 גרם', price:7.1, product_name:'Pasta 500g', size_text:'500g', description:'מחיר מוערך', confidence_pct:48} /* NEW demo of estimated */
         ]
       }];
       resultsEl.innerHTML = demo.map((b,i)=>renderStore(b,i)).join('');
@@ -653,8 +659,11 @@ document.addEventListener('DOMContentLoaded', () => {
       </details>`;
   }
 
+  /* NEW: "מחיר מוערך" אם server מחזיר confidence<=50 או תיאור שמכיל "מוערך" */
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
+    const isEstimated = (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
+    const estBadge = isEstimated ? ` <span class="pill-est">מחיר מוערך</span>` : '';
     const desc = p.description ? `<div class="desc">— ${esc(p.description)}</div>` : '';
     const sub = p.substitute ? ` <span class="pill">תחליף</span>` : '';
     const link = p.source_url ? ` <a href="${escAttr(p.source_url)}" target="_blank" rel="noopener">מקור</a>` : (p.link ? ` <a href="${escAttr(p.link)}" target="_blank" rel="noopener">מקור</a>` : '');
@@ -673,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return `
       <div class="row">
         <div>
-          <div><strong>${esc(p.item||'')}</strong>${sub}${brandBadge}${size}</div>
+          <div><strong>${esc(p.item||'')}</strong>${sub}${brandBadge}${size}${estBadge}</div>
           <div class="muted small">${esc(title)}</div>
           ${desc}
           <div class="small">${link}${source} ${unit} ${conf}</div>
@@ -719,7 +728,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Debug: ?showloader=1 — לראות את העיגול מייד
   const url = new URL(location.href);
   if (url.searchParams.get('showloader') === '1'){
-    // הפוך את תוצאות לפעיל, הצג Loader
     screens.forEach(s=>s.classList.remove('active'));
     document.getElementById('s5').classList.add('active');
     aiMini.style.display = 'flex';
