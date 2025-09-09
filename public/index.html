@@ -8,6 +8,10 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin="anonymous" />
 
+<!-- ספריות ליצירת PDF מתמונה (ללא ג׳יבריש) -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
 <style>
 /* ========== THEME ========== */
 :root{
@@ -15,10 +19,13 @@
   --bg: radial-gradient(120% 100% at 50% -10%, #0f172a 0%, #020617 60%);
   --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
 
+  /* אורך ה-GPS/החלקה */
   --action-width: min(86%, 366px);
+
+  /* מיקום אנכי של האווטר (GIF) */
   --avatar-pos-y: 50%;
 
-  /* Loader circle size + zoom */
+  /* גודל וזום ל-Loader העגול */
   --loader-size: 168px;
   --loader-zoom: 1.0;
 }
@@ -41,6 +48,7 @@ a{color:#9ecbff;text-decoration:none}
   background:linear-gradient(135deg,#3b82f6,#22d3ee);
   box-shadow:0 6px 12px rgba(59,130,246,.5)
 }
+/* החץ צריך להיות מימין ללוגו */
 #backTop{
   order:2;
   margin-inline-start:8px;
@@ -50,7 +58,7 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant (ממוסך שני ואילך) */
+/* Assistant — מרובע כולל האווטר, עבה פי 2 וירד מעט למטה */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
   border:2px solid var(--line); background:var(--card); border-radius:16px;
@@ -88,6 +96,8 @@ a{color:#9ecbff;text-decoration:none}
 .splash{
   min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px
 }
+
+/* אווטר עגול עם הילה + טבעת מהבהבת */
 .avatar-wrap{
   position:relative; width:min(70vw,280px); height:min(70vw,280px);
   display:grid; place-items:center; border-radius:50%; isolation:isolate;
@@ -125,12 +135,14 @@ a{color:#9ecbff;text-decoration:none}
   width:100%; height:100%; display:block; object-fit:cover;
   object-position: 50% var(--avatar-pos-y);
 }
+
+/* טקסטים + באדג'ים */
 .splash h1{margin:16px 0 6px; font-size:22px}
 .splash p{margin:0 0 14px; color:#9fb0c8}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
-/* GPS + Swipe */
+/* GPS & Swipe */
 .gps-big{
   margin-top:12px; width:var(--action-width);
   display:inline-flex; align-items:center; justify-content:center; gap:12px;
@@ -162,58 +174,25 @@ a{color:#9ecbff;text-decoration:none}
 .unit{font-size:12px;color:#93c5fd;font-weight:800}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
-/* NEW: תג "מחיר מוערך" */
+/* כפתורי הפעולות (Waze + PDF) */
+.actions{display:flex; gap:8px; flex-wrap:wrap}
+.btn-action{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 12px; border-radius:12px; border:1px solid var(--line);
+  background:rgba(255,255,255,.05); color:#e2e8f0; font-weight:800; cursor:pointer;
+  text-decoration:none;
+}
+.btn-action:hover{ border-color:#3b82f6; background:rgba(59,130,246,.08) }
+.btn-action svg{ flex:0 0 auto }
+
+/* תג "מחיר מוערך" */
 .pill-est{
   display:inline-block;padding:4px 8px;border-radius:999px;
   background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800;
   border:1px solid rgba(234,179,8,.35);
 }
 
-/* NEW: פעולות מתחת למפה */
-.actions{
-  display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;
-}
-.btn-action{
-  display:inline-flex; align-items:center; gap:8px;
-  border:1px solid var(--line); background:rgba(255,255,255,.04);
-  color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
-}
-.btn-action:hover{ border-color:#3b82f6; }
-.btn-action img{ width:18px; height:18px; display:inline-block; }
-
-/* Chips / Autocomplete */
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe2ff;font-size:14px}
-.chip .close{background:transparent;border:none;color:#9fb6ff;cursor:pointer;font-size:16px;line-height:1}
-.add-row{display:flex;gap:10px;margin-top:10px;position:relative}
-.btn-secondary{background:transparent;color:#dbeafe;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:900;cursor:pointer}
-.dropdown{position:absolute;inset-inline-start:0;top:44px;right:0;left:0;background:rgba(2,6,23,.95);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);z-index:10;max-height:280px;overflow:auto}
-.opt{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.opt:hover,.opt.active{background:rgba(59,130,246,.12)}
-.opt .left{display:flex;flex-direction:column}
-.opt .label{font-weight:700}
-.opt .meta{color:#9fb0c8;font-size:12px}
-
-/* ===== CTA ===== */
-.cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
-.cta.show{ display:flex; }
-.cta .inner{ pointer-events:auto; }
-.btn{
-  appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
-  box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
-  letter-spacing:.3px; font-size:18px;
-}
-.btn-primary{
-  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
-  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-}
-.btn-primary .spark{
-  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
-  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
-
-/* ===== Loader Results (GIF עגול) ===== */
+/* Loader Results (GIF עגול) */
 #loading{display:none;margin-top:12px;text-align:center}
 .loading-circle{
   width: var(--loader-size);
@@ -244,11 +223,13 @@ a{color:#9ecbff;text-decoration:none}
   <div class="header">
     <div class="brand-name">
       <div class="brand-mini"><div class="dot"></div><span>AI Basket</span></div>
+      <!-- החץ מימין ללוגו -->
       <button id="backTop" title="חזרה">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
       </button>
     </div>
 
+    <!-- Assistant (ממסך 2 ואילך) -->
     <div class="ai-avatar" id="aiMini">
       <img src="ai_giff4.gif" alt="Assistant">
       <div>
@@ -277,11 +258,13 @@ a{color:#9ecbff;text-decoration:none}
         <span class="badge">AI 🤖</span>
       </div>
 
+      <!-- GPS – אותו אורך כמו ההחלקה -->
       <button id="gpsBig" class="gps-big" type="button" title="שימוש ב-GPS">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.94 2.5a9 9 0 0 0-7.94-7.94V1h-2v2.06A9 9 0 0 0 3.06 11H1v2h2.06A9 9 0 0 0 11 20.94V23h2v-2.06A9 9 0 0 0 20.94 13H23v-2h-2.06ZM12 19a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" fill="currentColor"/></svg>
         שימוש ב-GPS
       </button>
 
+      <!-- Swipe to start -->
       <div class="swipe-wrap">
         <div class="swipe-track" id="swipeTrack">
           <div class="progress" id="swipeProgress"></div>
@@ -359,7 +342,7 @@ a{color:#9ecbff;text-decoration:none}
         </div>
         <div id="summary" class="muted" style="margin-top:6px"></div>
 
-        <!-- Loader GIF -->
+        <!-- Loader GIF: יופיע רק אחרי לחיצה על "המשך" -->
         <div id="loading" aria-live="polite">
           <div class="loading-circle">
             <img id="loadingGif" src="ai_loading.gif" alt="טוען תוצאות..." />
@@ -384,9 +367,6 @@ a{color:#9ecbff;text-decoration:none}
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-<!-- jsPDF -->
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
-
 <script>
 /* Bot SVG fallback (לא חובה) */
 function getBotSVG(sz=42){
@@ -410,14 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
   const dropdown = document.getElementById('dropdown');
-  let items = []; // ← ריק כברירת מחדל
+  let items = []; // ← ריק בהתחלה, בלי דיפולטים
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  // GIF refresh (למקרה שלא בלופ)
+  // ▼ ריענון GIF אם לא בלופ
   let loaderLoopTimer = null;
   const GIF_REFRESH_MS = 4000;
   function startGifLoop(){
@@ -431,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function stopGifLoop(){
     if (loaderLoopTimer){ clearInterval(loaderLoopTimer); loaderLoopTimer = null; }
   }
+
   function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
@@ -453,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const swipeProgress = document.getElementById('swipeProgress');
   initSwipeToStart(swipeTrack, swipeKnob, swipeProgress, ()=> goto(1));
 
-  // GPS בספלאש
+  // GPS בספלאש — אחרי הצלחה ↦ ישירות לרדיוס (s3)
   const gpsBtn = document.getElementById('gpsBig');
   let gps = null;
   gpsBtn?.addEventListener('click', ()=>{
@@ -559,22 +540,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
-  // CTA “המשך”
+  // CTA “המשך” — לוגיקת מעבר + טעינת תוצאות
   btnNext.addEventListener('click', ()=>{
     if(step===1){ if(!addressEl.value.trim() && !sessionStorage.getItem('gps')) return shake(addressEl); goto(2); return; }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); goto(3); return; }
     if(step===3){
       if(items.length===0) return shake(newItemEl);
-      goto(4);
-      showLoading();
-      fetchPlan();
+      goto(4);        // Results
+      showLoading();  // ה-GIF מופיע רק עכשיו
+      fetchPlan();    // קריאה לצד שרת
       return;
     }
     if(step<screens.length-1) return goto(step+1);
   });
 
   /* ====== קריאה לשרת והצגת תוצאות ====== */
-  let lastBaskets = [];
   async function fetchPlan(){
     let gps = null;
     try{ gps = JSON.parse(sessionStorage.getItem('gps')||'null'); }catch{}
@@ -598,24 +578,50 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const baskets = Array.isArray(data.baskets) ? data.baskets : [];
-      lastBaskets = baskets;
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
-      resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
-      wireStoreMaps(baskets);
-      wireActions(baskets); // ← חיווט כפתורי Waze/PDF
+
+      // שמור גרסה מצומצמת של 4 הזולים ביותר (השרת כבר מסדר; זה גיבוי לקליינט)
+      const top = baskets.slice(0,4);
+
+      resultsEl.innerHTML = top.map((b,i)=>renderStore(b,i)).join('');
+      wireStoreMaps(top);
+      // חיווט כפתורי Waze/PDF (האזנת־על)
+      wireActions();
       cta.classList.remove('show');
     }catch(err){
+      await new Promise(r=>setTimeout(r, 800));
       hideLoading();
-      resultsEl.innerHTML = row('שגיאה', 'לא ניתן להביא תוצאות כעת.');
+      resultsEl.innerHTML = row('מצב דמו', 'השרת לא זמין כרגע');
+      cta.classList.remove('show');
     }
   }
 
+  // SVG לוגו Waze (inline)
+  function wazeSVG(){
+    return `
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#00AEEF" d="M24 6c9.39 0 17 6.72 17 15 0 6.03-3.94 10.94-9.79 13.1-.64 2.3-2.73 3.9-5.21 3.9-2.31 0-4.29-1.36-5.04-3.26-1.35.16-2.74.26-4.16.26-5.38 0-9.52-1.2-11.8-3.47C2.21 29.62 2 27.52 2 26.5c0-1.2.98-2.17 2.18-2.17 1.1 0 2.03.83 2.15 1.9.23 2.06 1.51 3.73 3.3 4.9C9.23 29.96 9 28.72 9 27.5 9 16.52 15.95 6 24 6Z"/>
+      <circle cx="30" cy="22" r="3" fill="#000"/>
+      <circle cx="19" cy="22" r="3" fill="#000"/>
+      <path fill="#000" d="M28.5 33.5a1.5 1.5 0 0 1 3 0v1a1.5 1.5 0 0 1-3 0v-1Zm-6 0a1.5 1.5 0 0 1 3 0v1a1.5 1.5 0 0 1-3 0v-1Z"/>
+    </svg>`;
+  }
+
+  // רנדר של חנות + מפה + כפתורי פעולה
   function renderStore(b, idx){
     const total = toPrice(b.total, '₪');
     const addr = b.location?.address || '';
     const mo = (typeof b.match_overall === 'number') ? `${Math.round(b.match_overall*100)}%` : '—';
     const cov = (typeof b.coverage === 'number') ? `${Math.round(b.coverage*100)}%` : '—';
     const dist = (typeof b.distance_km === 'number') ? ` • מרחק ${b.distance_km} ק״מ` : '';
+
+    const actionsBar = `
+      <div class="actions" style="margin-top:8px">
+        <a class="btn-action" data-waze="${idx}" href="#">
+          ${wazeSVG()}<span>נווט ב-Waze</span>
+        </a>
+        <button class="btn-action" data-pdf="${idx}" type="button">📄 <span>הורד רשימת קניות</span></button>
+      </div>`;
 
     const hdr = `
       <div class="row">
@@ -625,33 +631,27 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="total">${total}</div>
       </div>
+      ${actionsBar}
     `;
     return hdr + `
       <details class="box" style="margin-top:10px" data-idx="${idx}">
         <summary>פירוט סל + מפה</summary>
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
-        <div class="actions">
-          <a class="btn-action" data-waze="${idx}" href="#"> <img src="waze.png" alt=""> נווט ב-Waze</a>
-          <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
-        </div>
         <div style="height:8px"></div>
         ${Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : ''}
+        <div style="height:8px"></div>
+        ${actionsBar}
       </details>`;
   }
 
-  // NEW: "מחיר מוערך" (client side)
+  // שורה בתוך הפירוט
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
     const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
     const estBadge = isEstimated ? ` <span class="pill-est">מחיר מוערך</span>` : '';
     const desc = p.description ? `<div class="desc">— ${esc(p.description)}</div>` : '';
     const sub = p.substitute ? ` <span class="pill">תחליף</span>` : '';
-    const link = p.source_url ? ` <a href="${escAttr(p.source_url)}" target="_blank" rel="noopener">מקור</a>` : (p.link ? ` <a href="${escAttr(p.link)}" target="_blank" rel="noopener">מקור</a>` : '');
-    const srcPieces = [];
-    if (p.merchant) srcPieces.push(esc(p.merchant));
-    if (p.domain) srcPieces.push(esc(p.domain));
-    const source = srcPieces.length ? ` <span class="pill">${srcPieces.join(' • ')}</span>` : '';
     const brand = p.product_brand || p.schema_brand;
     const brandBadge = brand ? ` <span class="pill">${esc(brand)}</span>` : '';
     const unit = (typeof p.unit_per_liter === 'number') ? `<span class="unit">₪/ל׳ ${p.unit_per_liter.toFixed(2)}</span>` :
@@ -666,13 +666,14 @@ document.addEventListener('DOMContentLoaded', () => {
           <div><strong>${esc(p.item||'')}</strong>${sub}${brandBadge}${size}${estBadge}</div>
           <div class="muted small">${esc(title)}</div>
           ${desc}
-          <div class="small">${link}${source} ${unit} ${conf}</div>
+          <div class="small">${unit} ${conf}</div>
         </div>
         <div class="total">${price}</div>
       </div>
     `;
   }
 
+  // חיווט מפות בעת פתיחת details
   function wireStoreMaps(baskets){
     document.querySelectorAll('details[data-idx]').forEach((det)=>{
       det.addEventListener('toggle', ()=>{
@@ -694,28 +695,121 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function wireActions(baskets){
-    // Waze
-    document.querySelectorAll('[data-waze]').forEach(a=>{
-      a.addEventListener('click', (e)=>{
+  // האזנת־על לכפתורי Waze + PDF (גם למעלה וגם בתוך details)
+  function wireActions(){
+    resultsEl.addEventListener('click', async (e)=>{
+      const a = e.target.closest('[data-waze]');
+      if (a){
         e.preventDefault();
-        const idx = Number(a.getAttribute('data-waze'));
-        const b = baskets[idx];
-        const lat = b?.location?.lat, lng = b?.location?.lng;
-        if (!lat || !lng) return;
-        const url = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes&zoom=16`;
-        window.open(url, '_blank', 'noopener');
-      });
-    });
-    // PDF per basket
-    document.querySelectorAll('[data-pdf]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const idx = Number(btn.getAttribute('data-pdf'));
-        const b = baskets[idx];
-        if (!b) return;
-        await generatePdfForBasket(b);
-      });
-    });
+        const idx = a.getAttribute('data-waze');
+        const mapDiv = document.getElementById('map-'+idx);
+        // אם המפה לא נפתחה, נשתמש בנתונים מה-HTML
+        const lat = Number(mapDiv?.getAttribute('data-lat')||0);
+        const lng = Number(mapDiv?.getAttribute('data-lng')||0);
+        // חפש כותרת החנות
+        const container = a.closest('.box') || resultsEl;
+        const titleEl = container.querySelector('.row strong');
+        const name = titleEl ? titleEl.textContent.trim() : 'הסופר';
+        openWaze(lat,lng,name);
+        return;
+      }
+      const p = e.target.closest('[data-pdf]');
+      if (p){
+        e.preventDefault();
+        const idx = p.getAttribute('data-pdf');
+        const details = resultsEl.querySelector(`details[data-idx="${idx}"]`);
+        const headerRow = details?.previousElementSibling; // ה-ROW של החנות
+        const storeName = headerRow?.querySelector('strong')?.textContent?.trim() || 'החנות';
+        const addr = headerRow?.querySelector('.muted.small')?.textContent?.trim() || '';
+        const lines = Array.from(details?.querySelectorAll('.row')||[])
+          .map(el=>{
+            const item = el.querySelector('strong')?.textContent?.trim() || '';
+            const price = el.querySelector('.total')?.textContent?.trim() || '';
+            return { item, price };
+          });
+        await downloadStorePdf(storeName, addr, lines);
+        return;
+      }
+    }, { passive:true });
+  }
+
+  function openWaze(lat, lng, name){
+    if (!lat || !lng){
+      alert('חסר מיקום לחנות הזו.');
+      return;
+    }
+    const url = `https://waze.com/ul?ll=${lat.toFixed(6)},${lng.toFixed(6)}&navigate=yes&zoom=17&q=${encodeURIComponent(name||'')}`;
+    window.open(url, '_blank', 'noopener');
+  }
+
+  // הפקת PDF ללא ג׳יבריש באמצעות html2canvas + jsPDF
+  async function downloadStorePdf(storeName, addr, lines){
+    // בנה DOM נסתר יפה
+    const wrap = document.createElement('div');
+    wrap.style.position = 'fixed';
+    wrap.style.left = '-99999px';
+    wrap.style.top = '0';
+    wrap.style.width = '800px';
+    wrap.style.padding = '24px';
+    wrap.style.background = '#ffffff';
+    wrap.style.color = '#0b1220';
+    wrap.style.fontFamily = 'Arial, Helvetica, sans-serif';
+    wrap.dir = 'rtl';
+
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div>${getBotSVG(36)}</div>
+        <div style="font-size:22px;font-weight:900">AI BASKET</div>
+      </div>
+      <div style="font-size:16px;margin-bottom:2px"><b>חנות:</b> ${esc(storeName)}</div>
+      <div style="font-size:13px;color:#333;margin-bottom:12px">${esc(addr)}</div>
+      <ol style="margin:0;padding-inline-start:22px;font-size:15px;line-height:1.6">
+        ${lines.map(l=>`<li><span>${esc(l.item)}</span> — <b>${esc(l.price)}</b></li>`).join('')}
+      </ol>
+    `;
+    document.body.appendChild(wrap);
+
+    // צילום ל-canvas
+    const canvas = await html2canvas(wrap, { scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    // הכנס ל-PDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','mm','a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    // התאמת תמונה לגודל דף
+    const imgW = pageW;
+    const imgH = (canvas.height / canvas.width) * imgW;
+    let y = 0;
+    if (imgH <= pageH){
+      pdf.addImage(imgData, 'JPEG', 0, y, imgW, imgH);
+    } else {
+      // פריסה על כמה דפים
+      let remaining = imgH;
+      let sY = 0;
+      const pxPerMm = canvas.width / imgW;
+      const pagePxH = pageH * pxPerMm;
+      while (remaining > 0){
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pagePxH, remaining);
+        const ctx = pageCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, sY, canvas.width, pageCanvas.height, 0, 0, pageCanvas.width, pageCanvas.height);
+        const pageImg = pageCanvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(pageImg, 'JPEG', 0, 0, imgW, (pageCanvas.height / pxPerMm));
+        remaining -= pagePxH;
+        sY += pagePxH;
+        if (remaining > 0) pdf.addPage();
+      }
+    }
+
+    const fname = `shopping_list_${storeName.replace(/\s+/g,'_')}.pdf`;
+    pdf.save(fname);
+
+    // ניקוי
+    document.body.removeChild(wrap);
   }
 
   function row(title, msg){ return `<div class="row"><div><strong>${esc(title)}</strong><div class="muted small">${esc(msg)}</div></div></div>`; }
@@ -730,113 +824,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return "—";
   }
 
-  // Debug: ?showloader=1
+  // Debug: ?showloader=1 — לראות את העיגול מייד
   const url = new URL(location.href);
   if (url.searchParams.get('showloader') === '1'){
     screens.forEach(s=>s.classList.remove('active'));
     document.getElementById('s5').classList.add('active');
     aiMini.style.display = 'flex';
-    cta.classList.add('show');
+    cta.classList.add('show'); // אופציונלי
     showLoading();
   }
-
-  /* ===== PDF (עברית, ממוספר, לוגו, AI BASKET) ===== */
-  async function ensureHebrewFont(doc){
-    // טוען Rubik-Regular.ttf ו-Rubik-Bold.ttf מהתיקייה /fonts
-    async function loadFont(path){
-      const res = await fetch(path);
-      const buf = await res.arrayBuffer();
-      // המרה ל-base64
-      let binary = '';
-      const bytes = new Uint8Array(buf);
-      const chunk = 0x8000;
-      for (let i=0; i<bytes.length; i+=chunk){
-        binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk));
-      }
-      return btoa(binary);
-    }
-    if (!doc.__hebrewLoaded){
-      const regularB64 = await loadFont('/fonts/Rubik-Regular.ttf');
-      doc.addFileToVFS('Rubik-Regular.ttf', regularB64);
-      doc.addFont('Rubik-Regular.ttf', 'Rubik', 'normal');
-      try {
-        const boldB64 = await loadFont('/fonts/Rubik-Bold.ttf');
-        doc.addFileToVFS('Rubik-Bold.ttf', boldB64);
-        doc.addFont('Rubik-Bold.ttf', 'Rubik', 'bold');
-      } catch {}
-      doc.__hebrewLoaded = true;
-    }
-    doc.setFont('Rubik', 'normal');
-  }
-
-  async function loadImageAsDataURL(path){
-    try{
-      const res = await fetch(path);
-      const blob = await res.blob();
-      return await new Promise((resolve,reject)=>{
-        const fr = new FileReader();
-        fr.onload = () => resolve(fr.result);
-        fr.onerror = reject;
-        fr.readAsDataURL(blob);
-      });
-    }catch{
-      return null;
-    }
-  }
-
-  async function generatePdfForBasket(b){
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:'pt', format:'a4' }); // 595 x 842pt בערך
-    await ensureHebrewFont(doc);
-
-    const margin = 54;
-    const lineH = 22;
-    let y = margin;
-
-    // לוגו (ננסה לטעון את ai_giff4.gif או ai_logo.png)
-    const logo = await loadImageAsDataURL('ai_logo.png') || await loadImageAsDataURL('ai_giff4.gif');
-    if (logo){
-      try { doc.addImage(logo, 'PNG', 595 - margin - 42, y-6, 36, 36); } catch {}
-    }
-
-    doc.setFont('Rubik','bold'); doc.setFontSize(18);
-    doc.text('AI BASKET', 595 - margin - 48, y+10, { align: 'right' });
-    y += 32;
-
-    doc.setFont('Rubik','normal'); doc.setFontSize(14);
-    const title = `${b.shop_display_name || b.chain || ''}`;
-    const addr  = b?.location?.address ? ` • ${b.location.address}` : '';
-    doc.text(`${title}${addr}`, 595 - margin, y, { align: 'right' }); y += 18;
-
-    const totalTxt = typeof b.total === 'number' ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
-    doc.text(totalTxt, 595 - margin, y, { align: 'right' }); y += 26;
-
-    doc.setFont('Rubik','bold'); doc.setFontSize(16);
-    doc.text('רשימת קניות', 595 - margin, y, { align: 'right' }); y += 18;
-    doc.setFont('Rubik','normal'); doc.setFontSize(13);
-
-    // רשימה ממוספרת, כל שורה בנפרד
-    const list = Array.isArray(b.breakdown) ? b.breakdown : [];
-    let i = 1;
-    for (const it of list){
-      const name = (it.item || it.product_name || '').trim();
-      if (!name) continue;
-      const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
-      const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
-      const line = `${i}. ${name} — ${price}${est}`;
-      doc.text(line, 595 - margin, y, { align: 'right' });
-      y += lineH;
-      i++;
-      if (y > 842 - margin){
-        doc.addPage(); y = margin;
-        await ensureHebrewFont(doc);
-      }
-    }
-
-    const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
-    doc.save(fname);
-  }
-
 });
 
 /* Swipe to start: גרירה RTL */
@@ -871,6 +867,7 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
   function onEnd(){
     if(!dragging) return;
     dragging=false;
+    // Complete if progress >= 0.85
     const endRight = parseFloat(getComputedStyle(knob).insetInlineEnd);
     const p = 1 - (endRight - 6) / (trackRect().width - knobRect().width - 12);
     if(p >= 0.85){
