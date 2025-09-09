@@ -1,4 +1,4 @@
-// server.ts — שרת Deno מלא: סטטי + API + מאגר מקומי + אוטוקומפליט בלי כפילויות + הערכת מחירים רק כשאין נתון
+// server.ts — שרת Deno מלא: סטטי + API + מאגר מקומי + אוטוקומפליט בלי כפילויות + הערכת מחירים רק כשאין נתון + Top-4
 ////////////////////////////////////////////////////////////////
 // 0) ENV + CONFIG
 ////////////////////////////////////////////////////////////////
@@ -116,6 +116,11 @@ function haversineKm(a: {lat:number; lng:number}, b: {lat:number; lng:number}) {
   const sa = Math.sin(dLat/2)**2 +
              Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(sa), Math.sqrt(1-sa));
+}
+
+// עיגול לחצי שקל
+function roundToHalf(n: number) {
+  return Math.round(n * 2) / 2;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -542,7 +547,6 @@ type LlmItemOut = {
   description?: string;
   unit_per_liter?: number;
   unit_per_kg?: number;
-  // עזר לקליינט
   estimated?: boolean; // true אם זה מחיר מוערך (אין נתון בטבלה)
 };
 function computeUnits(e: LlmItemOut) {
@@ -558,6 +562,92 @@ function computeUnits(e: LlmItemOut) {
   if (kg>0) e.unit_per_kg = price / kg;
 }
 function mean(nums: number[]) { return nums.reduce((a,b)=>a+b,0) / nums.length; }
+
+// ממוצע ידוע לפריט מכל הרשתות (ע"פ נרמול)
+function averagePriceFromAll(item: string): number | undefined {
+  const key = normName(item);
+  const arr = LOCAL_ALL_MAP.get(key) || [];
+  const nums = arr.map(x=> x.price).filter(p => typeof p === "number" && isFinite(p) && p>0);
+  if (!nums.length) return undefined;
+  return mean(nums);
+}
+
+// אומדן דטרמיניסטי (כשאין LLM או fallback), תמיד מעל הממוצע אם קיים, ועיגול לחצי
+function estimatePriceDeterministic(avg?: number): number {
+  const base = (typeof avg === 'number' && isFinite(avg)) ? avg : 10;
+  const bumped = base + Math.max(0.5, base * 0.08); // מעל הממוצע
+  return roundToHalf(bumped);
+}
+
+// אומדן במחיר עם LLM (רק כשאין נתון), ומאכפים כללים
+async function estimatePriceWithLLM(item: string, avg?: number): Promise<{ price: number; note: string }> {
+  if (!OPENAI_API_KEY) {
+    return { price: estimatePriceDeterministic(avg), note: "estimated (deterministic)" };
+  }
+  const sys = `
+You estimate realistic Israeli grocery prices in ILS.
+Rules:
+- If no explicit price is provided, output a single number (price) in NIS.
+- The price MUST NOT be below the provided average (if any).
+- Round to 0.5 increments (e.g., 7.0, 7.5, 8.0).
+- Return ONLY JSON: {"price": number, "note": "estimated"}.
+  `.trim();
+  const user = {
+    item,
+    country: "Israel",
+    currency: "ILS",
+    average_known_price: (typeof avg === 'number' && isFinite(avg)) ? avg : null
+  };
+  const body = {
+    model: OPENAI_MODEL,
+    temperature: 0.2,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: sys },
+      { role: "user", content: JSON.stringify(user) }
+    ]
+  };
+  try {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "authorization": `Bearer ${OPENAI_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(x=>x.json());
+
+    const txt = r?.choices?.[0]?.message?.content ?? "";
+    const parsed = JSON.parse(txt || "{}");
+    let price = Number(parsed?.price);
+    if (!isFinite(price) || price <= 0) price = estimatePriceDeterministic(avg);
+
+    // אכיפה מקומית: עיגול לחצי והבטחה לא לרדת מהממוצע
+    price = roundToHalf(price);
+    if (typeof avg === "number" && isFinite(avg) && price < avg) price = roundToHalf(avg + 0.5);
+
+    return { price, note: "estimated (llm)" };
+  } catch {
+    return { price: estimatePriceDeterministic(avg), note: "estimated (fallback)" };
+  }
+}
+
+// עטיפת אומדן לפריט/רשת
+async function estimatePriceForItem(item: string, chain: string): Promise<LlmItemOut> {
+  const baseAvg = averagePriceFromAll(item);
+  const { price, note } = await estimatePriceWithLLM(item, baseAvg);
+
+  const out: LlmItemOut = {
+    item,
+    product_name: item,
+    price,
+    currency: "₪",
+    merchant: chain,
+    confidence_pct: baseAvg ? 45 : 40,
+    substitute: false,
+    description: `מחיר מוערך (אין נתון בטבלה) • ${note}`,
+    estimated: true
+  };
+  computeUnits(out);
+  return out;
+}
 
 type PlanReq = {
   address?: string;
@@ -578,54 +668,6 @@ type Basket = {
   distance_km?: number;
 };
 
-async function estimatePriceForItem(item: string, chain: string): Promise<LlmItemOut> {
-  const key = normName(item);
-  const candidates = LOCAL_ALL_MAP.get(key) || [];
-  const prices = candidates.map(x=> x.price).filter(p => typeof p === "number" && isFinite(p) && p>0) as number[];
-  const baseAvg = prices.length ? mean(prices) : undefined;
-
-  // אופציונלי: לשפר בעזרת LLM — לא חובה
-  let llmGuess: number | undefined = undefined;
-  if (OPENAI_API_KEY) {
-    try {
-      const sys = "Give a single realistic retail price in ILS for the given grocery item in Israel. Numbers only.";
-      const body = {
-        model: OPENAI_MODEL, temperature: 0,
-        messages: [
-          { role: "system", content: sys },
-          { role: "user", content: `Item: ${item}\nCountry: Israel\nCurrency: ILS` }
-        ]
-      };
-      const r = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "authorization": `Bearer ${OPENAI_API_KEY}`, "content-type": "application/json" },
-        body: JSON.stringify(body)
-      }).then(x=>x.json()).catch(()=>null as any);
-      const txt = (r?.choices?.[0]?.message?.content || "").replace(/[^\d.]/g,"").trim();
-      const num = Number(txt);
-      if (isFinite(num) && num>0) llmGuess = num;
-    } catch {}
-  }
-
-  let estimated = llmGuess ?? baseAvg ?? 10;
-  if (baseAvg) estimated = Math.max(estimated, baseAvg * 1.08); // הבטחה: מעל הממוצע
-  estimated = Math.round(estimated * 100) / 100;
-
-  const out: LlmItemOut = {
-    item,
-    product_name: item,
-    price: estimated,
-    currency: "₪",
-    merchant: chain,
-    confidence_pct: baseAvg ? 45 : 40,
-    substitute: false,
-    description: "מחיר מוערך (אין נתון בטבלה)",
-    estimated: true
-  };
-  computeUnits(out);
-  return out;
-}
-
 async function planHandler(req: PlanReq) {
   const include_debug = !!req.include_debug;
 
@@ -645,7 +687,7 @@ async function planHandler(req: PlanReq) {
   if (!shops.length) return { ok:true, baskets: [], debug: include_debug ? { centerFrom, lat, lng } : undefined };
 
   const userItems = Array.isArray(req.items) ? req.items.filter(Boolean) : [];
-  if (!userItems.length) return { ok:false, error:"No items", code:"NO_ITEMS" };
+  if (!userItems.length) return json({ ok:false, error:"No items", code:"NO_ITEMS" }, 422);
 
   const baskets: Basket[] = [];
   const resolveCache = new Map<string, LlmItemOut>(); // עקביות באותה ריצה: chain|normItem → result
@@ -667,7 +709,7 @@ async function planHandler(req: PlanReq) {
         const out: LlmItemOut = {
           item,
           product_name: localHit.name,
-          price: localHit.price,
+          price: roundToHalf(localHit.price), // גם נתון קיים נציג מעוגל ל-0.5 אם תרצה עקביות
           currency: "₪",
           merchant: chain,
           confidence_pct: 100,
@@ -680,7 +722,7 @@ async function planHandler(req: PlanReq) {
         continue;
       }
 
-      // אין נתון—הערכה בלבד (LLM/ממוצע; תמיד מעל ממוצע אם קיים)
+      // אין נתון—הערכה בלבד (LLM/ממוצע; תמיד מעל ממוצע אם קיים; עיגול לחצי)
       const est = await estimatePriceForItem(item, chain);
       resolveCache.set(cacheKey, est);
       breakdown.push(est);
@@ -698,7 +740,7 @@ async function planHandler(req: PlanReq) {
     baskets.push({
       chain,
       shop_display_name: `${s.name}`,
-      total: prices.length ? Number(total.toFixed(2)) : undefined,
+      total: prices.length ? Number(roundToHalf(total).toFixed(2)) : undefined,
       match_overall,
       coverage,
       location: { lat: s.lat, lng: s.lng, address: s.address },
@@ -707,6 +749,7 @@ async function planHandler(req: PlanReq) {
     });
   }
 
+  // מיון לפי זול→כיסוי→דיוק
   baskets.sort((a,b)=>{
     const ta = typeof a.total === "number" ? a.total : Number.POSITIVE_INFINITY;
     const tb = typeof b.total === "number" ? b.total : Number.POSITIVE_INFINITY;
@@ -717,7 +760,10 @@ async function planHandler(req: PlanReq) {
     return mb - ma;
   });
 
-  return { ok: true, baskets, debug: include_debug ? { centerFrom, lat, lng, shops } : undefined };
+  // נביא רק את 4 המקומות הזולים ביותר (לבקשתך לשיפור מהירות/בהירות)
+  const top4 = baskets.slice(0, 4);
+
+  return { ok: true, baskets: top4, debug: include_debug ? { centerFrom, lat, lng, shops } : undefined };
 }
 
 ////////////////////////////////////////////////////////////////

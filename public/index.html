@@ -9,20 +9,16 @@
       crossorigin="anonymous" />
 
 <style>
-/* ========== THEME ==========
-   ערכים חשובים לשינוי מהיר */
+/* ========== THEME ========== */
 :root{
   --ink:#e2e8f0; --muted:#9fb0c8; --brand:#3b82f6; --accent:#22d3ee;
   --bg: radial-gradient(120% 100% at 50% -10%, #0f172a 0%, #020617 60%);
   --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
 
-  /* אורך ה-GPS/החלקה */
   --action-width: min(86%, 366px);
-
-  /* מיקום אנכי של האווטר (GIF) */
   --avatar-pos-y: 50%;
 
-  /* גודל וזום ל-Loader העגול */
+  /* Loader circle size + zoom */
   --loader-size: 168px;
   --loader-zoom: 1.0;
 }
@@ -45,7 +41,6 @@ a{color:#9ecbff;text-decoration:none}
   background:linear-gradient(135deg,#3b82f6,#22d3ee);
   box-shadow:0 6px 12px rgba(59,130,246,.5)
 }
-/* החץ צריך להיות מימין ללוגו */
 #backTop{
   order:2;
   margin-inline-start:8px;
@@ -55,12 +50,12 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant — מרובע כולל האווטר, עבה פי 2 וירד מעט למטה */
+/* Assistant (ממוסך שני ואילך) */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
   border:2px solid var(--line); background:var(--card); border-radius:16px;
   padding:12px 14px; box-shadow:var(--shadow); backdrop-filter:blur(14px);
-  margin-top:10px; /* מוריד מעט למטה */
+  margin-top:10px;
 }
 .ai-avatar img{
   width:46px;height:46px;border-radius:12px;
@@ -68,8 +63,7 @@ a{color:#9ecbff;text-decoration:none}
   background:#0b1220;
 }
 .ai-avatar .t1{font-weight:800; line-height:1}
-.ai-avatar .t2{color:#muted; font-size:12px; line-height:1}
-.ai-avatar .t2{color:var(--muted);}
+.ai-avatar .t2{color:var(--muted); font-size:12px; line-height:1}
 
 /* ===== Screens ===== */
 .screen{display:none}
@@ -90,17 +84,14 @@ a{color:#9ecbff;text-decoration:none}
 .btn-chip{border:1px solid var(--line);border-radius:999px;padding:12px 14px;background:rgba(59,130,246,.08);color:#cfe2ff;font-weight:800;cursor:pointer}
 .btn-chip:hover{border-color:#3b82f6}
 
-/* ===== Splash (עמוד ראשון) ===== */
+/* ===== Splash ===== */
 .splash{
   min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px
 }
-
-/* אווטר עגול עם הילה + טבעת מהבהבת */
 .avatar-wrap{
   position:relative; width:min(70vw,280px); height:min(70vw,280px);
   display:grid; place-items:center; border-radius:50%; isolation:isolate;
 }
-/* טבעת הילה מהבהבת (ללא עיגולים מסתובבים) */
 .avatar-ring{
   position:absolute; inset:-4px; border-radius:50%;
   background:conic-gradient(from 180deg, #3b82f6, #22d3ee, #3b82f6);
@@ -112,7 +103,6 @@ a{color:#9ecbff;text-decoration:none}
   0%,100%{opacity:.55; filter:saturate(110%) blur(.2px)}
   50%{opacity:.95; filter:saturate(130%) blur(.4px)}
 }
-/* הילה רכה מאחור */
 .pulse, .pulse2{
   position:absolute; inset:-10px; border-radius:50%;
   pointer-events:none; mix-blend-mode:screen;
@@ -126,7 +116,6 @@ a{color:#9ecbff;text-decoration:none}
   50%{transform:scale(1.05); opacity:.88}
   100%{transform:scale(.9); opacity:.5}
 }
-/* המסיכה העגולה של האווטר */
 .avatar{
   width:100%; height:100%; border-radius:50%; overflow:hidden; position:relative;
   box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.07);
@@ -134,16 +123,14 @@ a{color:#9ecbff;text-decoration:none}
 }
 .avatar img{
   width:100%; height:100%; display:block; object-fit:cover;
-  object-position: 50% var(--avatar-pos-y); /* חיתוך כלפי מעלה */
+  object-position: 50% var(--avatar-pos-y);
 }
-
-/* טקסטים + באדג'ים */
 .splash h1{margin:16px 0 6px; font-size:22px}
 .splash p{margin:0 0 14px; color:#9fb0c8}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
-/* GPS — אותו אורך כמו ההחלקה; גדול מעט יותר */
+/* GPS + Swipe */
 .gps-big{
   margin-top:12px; width:var(--action-width);
   display:inline-flex; align-items:center; justify-content:center; gap:12px;
@@ -152,8 +139,6 @@ a{color:#9ecbff;text-decoration:none}
   border:1px solid #425397; font-weight:900; box-shadow:0 12px 28px rgba(0,0,0,.45), inset 0 1px 0 #ffffff22;
 }
 .gps-big svg{width:26px;height:26px}
-
-/* החלקה — ללא קיווקוו מסביב */
 .swipe-wrap{ margin-top:14px; border-radius:16px; padding:12px; color:#bfe0ff; width:var(--action-width) }
 .swipe-track{ position:relative; height:48px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:999px; overflow:hidden }
 .swipe-ghost{position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(59,130,246,.12), transparent); animation:slide 2.4s linear infinite}
@@ -184,6 +169,18 @@ a{color:#9ecbff;text-decoration:none}
   border:1px solid rgba(234,179,8,.35);
 }
 
+/* NEW: פעולות מתחת למפה */
+.actions{
+  display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;
+}
+.btn-action{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--line); background:rgba(255,255,255,.04);
+  color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+}
+.btn-action:hover{ border-color:#3b82f6; }
+.btn-action img{ width:18px; height:18px; display:inline-block; }
+
 /* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe2ff;font-size:14px}
@@ -197,7 +194,7 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* ===== CTA (כפתור המשך) ===== */
+/* ===== CTA ===== */
 .cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
 .cta.show{ display:flex; }
 .cta .inner{ pointer-events:auto; }
@@ -223,7 +220,7 @@ a{color:#9ecbff;text-decoration:none}
   height: var(--loader-size);
   margin: 12px auto 6px;
   border-radius: 50%;
-  overflow: hidden; /* חותך לעיגול */
+  overflow: hidden;
   border: 3px solid rgba(255,255,255,.12);
   box-shadow: 0 10px 28px rgba(59,130,246,.25), inset 0 0 0 1px rgba(255,255,255,.06);
   background: radial-gradient(60% 60% at 50% 50%, #0b1220 0%, #08101f 60%, transparent 100%);
@@ -231,7 +228,7 @@ a{color:#9ecbff;text-decoration:none}
 .loading-circle img{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* לראות את כולו? שנה ל-contain */
+  object-fit: cover;
   transform: scale(var(--loader-zoom));
   transform-origin: center;
   display: block;
@@ -247,13 +244,11 @@ a{color:#9ecbff;text-decoration:none}
   <div class="header">
     <div class="brand-name">
       <div class="brand-mini"><div class="dot"></div><span>AI Basket</span></div>
-      <!-- החץ מימין ללוגו -->
       <button id="backTop" title="חזרה">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
       </button>
     </div>
 
-    <!-- Assistant (ממסך 2 ואילך) -->
     <div class="ai-avatar" id="aiMini">
       <img src="ai_giff4.gif" alt="Assistant">
       <div>
@@ -271,7 +266,6 @@ a{color:#9ecbff;text-decoration:none}
         <div class="pulse2" aria-hidden="true"></div>
         <div class="avatar-ring" aria-hidden="true"></div>
         <div class="avatar">
-          <!-- ה-GIF בתקיית public/ אך כאן בלי / בתחילת ה-src -->
           <img src="ai_giff4.gif" alt="AI waving">
         </div>
       </div>
@@ -283,13 +277,11 @@ a{color:#9ecbff;text-decoration:none}
         <span class="badge">AI 🤖</span>
       </div>
 
-      <!-- GPS – אותו אורך כמו ההחלקה -->
       <button id="gpsBig" class="gps-big" type="button" title="שימוש ב-GPS">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.94 2.5a9 9 0 0 0-7.94-7.94V1h-2v2.06A9 9 0 0 0 3.06 11H1v2h2.06A9 9 0 0 0 11 20.94V23h2v-2.06A9 9 0 0 0 20.94 13H23v-2h-2.06ZM12 19a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" fill="currentColor"/></svg>
         שימוש ב-GPS
       </button>
 
-      <!-- Swipe to start -->
       <div class="swipe-wrap">
         <div class="swipe-track" id="swipeTrack">
           <div class="progress" id="swipeProgress"></div>
@@ -367,7 +359,7 @@ a{color:#9ecbff;text-decoration:none}
         </div>
         <div id="summary" class="muted" style="margin-top:6px"></div>
 
-        <!-- Loader GIF: יופיע רק אחרי לחיצה על "המשך" -->
+        <!-- Loader GIF -->
         <div id="loading" aria-live="polite">
           <div class="loading-circle">
             <img id="loadingGif" src="ai_loading.gif" alt="טוען תוצאות..." />
@@ -392,6 +384,9 @@ a{color:#9ecbff;text-decoration:none}
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<!-- jsPDF -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
 <script>
 /* Bot SVG fallback (לא חובה) */
 function getBotSVG(sz=42){
@@ -415,14 +410,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
   const dropdown = document.getElementById('dropdown');
-  let items = ["קוקה קולה 1.5 ליטר", "מים מינרליים 1.5 ליטר", "פסטה 500 גרם"];
+  let items = []; // ← ריק כברירת מחדל
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  // ▼ לו״פ ריענון ל-GIF במידה והוא לא בלופ (Optional)
+  // GIF refresh (למקרה שלא בלופ)
   let loaderLoopTimer = null;
   const GIF_REFRESH_MS = 4000;
   function startGifLoop(){
@@ -436,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function stopGifLoop(){
     if (loaderLoopTimer){ clearInterval(loaderLoopTimer); loaderLoopTimer = null; }
   }
-
   function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
@@ -459,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const swipeProgress = document.getElementById('swipeProgress');
   initSwipeToStart(swipeTrack, swipeKnob, swipeProgress, ()=> goto(1));
 
-  // GPS בספלאש — אחרי הצלחה ↦ ישירות לרדיוס (s3)
+  // GPS בספלאש
   const gpsBtn = document.getElementById('gpsBig');
   let gps = null;
   gpsBtn?.addEventListener('click', ()=>{
@@ -565,21 +559,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
-  // CTA “המשך” — ולוגיקת מעבר בין מסכים
+  // CTA “המשך”
   btnNext.addEventListener('click', ()=>{
     if(step===1){ if(!addressEl.value.trim() && !sessionStorage.getItem('gps')) return shake(addressEl); goto(2); return; }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); goto(3); return; }
     if(step===3){
       if(items.length===0) return shake(newItemEl);
-      goto(4);        // Results
-      showLoading();  // ה-GIF מופיע רק עכשיו
-      fetchPlan();    // קריאה לצד שרת
+      goto(4);
+      showLoading();
+      fetchPlan();
       return;
     }
     if(step<screens.length-1) return goto(step+1);
   });
 
   /* ====== קריאה לשרת והצגת תוצאות ====== */
+  let lastBaskets = [];
   async function fetchPlan(){
     let gps = null;
     try{ gps = JSON.parse(sessionStorage.getItem('gps')||'null'); }catch{}
@@ -603,34 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const baskets = Array.isArray(data.baskets) ? data.baskets : [];
+      lastBaskets = baskets;
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      cta.classList.remove('show'); // לוודא הסתרת CTA
-    }catch(err){
-      // Fallback demo אם אין שרת
-      await new Promise(r=>setTimeout(r, 1200));
-      hideLoading();
-      const demo=[{
-        shop_display_name:'סופר דמו',
-        location:{address:'רח׳ הבדיקה 1, תל אביב', lat:32.08, lng:34.78},
-        total:198.4, match_overall:.92, coverage:.88, distance_km:1.2,
-        breakdown:[
-          {item:'קוקה קולה 1.5 ל׳', price:8.9, product_name:'Coca Cola 1.5L', size_text:'1.5L', confidence_pct:96},
-          {item:'פסטה 500 גרם', price:6.5, product_name:'Pasta 500g', size_text:'500g', unit_per_kg:13.0}
-        ]
-      },{
-        shop_display_name:'סופר שני',
-        location:{address:'רח׳ הדמיון 8, רמת גן', lat:32.09, lng:34.82},
-        total:204.1, match_overall:.88, coverage:.83, distance_km:2.4,
-        breakdown:[
-          {item:'מים 1.5 ל׳', price:3.2, product_name:'Mineral Water 1.5L', size_text:'1.5L'},
-          {item:'פסטה 500 גרם', price:7.1, product_name:'Pasta 500g', size_text:'500g', description:'מחיר מוערך', confidence_pct:48}
-        ]
-      }];
-      resultsEl.innerHTML = demo.map((b,i)=>renderStore(b,i)).join('');
-      wireStoreMaps(demo);
+      wireActions(baskets); // ← חיווט כפתורי Waze/PDF
       cta.classList.remove('show');
+    }catch(err){
+      hideLoading();
+      resultsEl.innerHTML = row('שגיאה', 'לא ניתן להביא תוצאות כעת.');
     }
   }
 
@@ -655,15 +631,19 @@ document.addEventListener('DOMContentLoaded', () => {
         <summary>פירוט סל + מפה</summary>
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
+        <div class="actions">
+          <a class="btn-action" data-waze="${idx}" href="#"> <img src="waze.png" alt=""> נווט ב-Waze</a>
+          <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
+        </div>
         <div style="height:8px"></div>
         ${Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : ''}
       </details>`;
   }
 
-  /* NEW: "מחיר מוערך" אם server מחזיר confidence<=50 או תיאור שמכיל "מוערך" */
+  // NEW: "מחיר מוערך" (client side)
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
-    const isEstimated = (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
+    const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
     const estBadge = isEstimated ? ` <span class="pill-est">מחיר מוערך</span>` : '';
     const desc = p.description ? `<div class="desc">— ${esc(p.description)}</div>` : '';
     const sub = p.substitute ? ` <span class="pill">תחליף</span>` : '';
@@ -714,6 +694,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function wireActions(baskets){
+    // Waze
+    document.querySelectorAll('[data-waze]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const idx = Number(a.getAttribute('data-waze'));
+        const b = baskets[idx];
+        const lat = b?.location?.lat, lng = b?.location?.lng;
+        if (!lat || !lng) return;
+        const url = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes&zoom=16`;
+        window.open(url, '_blank', 'noopener');
+      });
+    });
+    // PDF per basket
+    document.querySelectorAll('[data-pdf]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const idx = Number(btn.getAttribute('data-pdf'));
+        const b = baskets[idx];
+        if (!b) return;
+        await generatePdfForBasket(b);
+      });
+    });
+  }
+
   function row(title, msg){ return `<div class="row"><div><strong>${esc(title)}</strong><div class="muted small">${esc(msg)}</div></div></div>`; }
 
   // Utils
@@ -726,15 +730,113 @@ document.addEventListener('DOMContentLoaded', () => {
     return "—";
   }
 
-  // Debug: ?showloader=1 — לראות את העיגול מייד
+  // Debug: ?showloader=1
   const url = new URL(location.href);
   if (url.searchParams.get('showloader') === '1'){
     screens.forEach(s=>s.classList.remove('active'));
     document.getElementById('s5').classList.add('active');
     aiMini.style.display = 'flex';
-    cta.classList.add('show'); // אופציונלי
+    cta.classList.add('show');
     showLoading();
   }
+
+  /* ===== PDF (עברית, ממוספר, לוגו, AI BASKET) ===== */
+  async function ensureHebrewFont(doc){
+    // טוען Rubik-Regular.ttf ו-Rubik-Bold.ttf מהתיקייה /fonts
+    async function loadFont(path){
+      const res = await fetch(path);
+      const buf = await res.arrayBuffer();
+      // המרה ל-base64
+      let binary = '';
+      const bytes = new Uint8Array(buf);
+      const chunk = 0x8000;
+      for (let i=0; i<bytes.length; i+=chunk){
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk));
+      }
+      return btoa(binary);
+    }
+    if (!doc.__hebrewLoaded){
+      const regularB64 = await loadFont('/fonts/Rubik-Regular.ttf');
+      doc.addFileToVFS('Rubik-Regular.ttf', regularB64);
+      doc.addFont('Rubik-Regular.ttf', 'Rubik', 'normal');
+      try {
+        const boldB64 = await loadFont('/fonts/Rubik-Bold.ttf');
+        doc.addFileToVFS('Rubik-Bold.ttf', boldB64);
+        doc.addFont('Rubik-Bold.ttf', 'Rubik', 'bold');
+      } catch {}
+      doc.__hebrewLoaded = true;
+    }
+    doc.setFont('Rubik', 'normal');
+  }
+
+  async function loadImageAsDataURL(path){
+    try{
+      const res = await fetch(path);
+      const blob = await res.blob();
+      return await new Promise((resolve,reject)=>{
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
+    }catch{
+      return null;
+    }
+  }
+
+  async function generatePdfForBasket(b){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'pt', format:'a4' }); // 595 x 842pt בערך
+    await ensureHebrewFont(doc);
+
+    const margin = 54;
+    const lineH = 22;
+    let y = margin;
+
+    // לוגו (ננסה לטעון את ai_giff4.gif או ai_logo.png)
+    const logo = await loadImageAsDataURL('ai_logo.png') || await loadImageAsDataURL('ai_giff4.gif');
+    if (logo){
+      try { doc.addImage(logo, 'PNG', 595 - margin - 42, y-6, 36, 36); } catch {}
+    }
+
+    doc.setFont('Rubik','bold'); doc.setFontSize(18);
+    doc.text('AI BASKET', 595 - margin - 48, y+10, { align: 'right' });
+    y += 32;
+
+    doc.setFont('Rubik','normal'); doc.setFontSize(14);
+    const title = `${b.shop_display_name || b.chain || ''}`;
+    const addr  = b?.location?.address ? ` • ${b.location.address}` : '';
+    doc.text(`${title}${addr}`, 595 - margin, y, { align: 'right' }); y += 18;
+
+    const totalTxt = typeof b.total === 'number' ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
+    doc.text(totalTxt, 595 - margin, y, { align: 'right' }); y += 26;
+
+    doc.setFont('Rubik','bold'); doc.setFontSize(16);
+    doc.text('רשימת קניות', 595 - margin, y, { align: 'right' }); y += 18;
+    doc.setFont('Rubik','normal'); doc.setFontSize(13);
+
+    // רשימה ממוספרת, כל שורה בנפרד
+    const list = Array.isArray(b.breakdown) ? b.breakdown : [];
+    let i = 1;
+    for (const it of list){
+      const name = (it.item || it.product_name || '').trim();
+      if (!name) continue;
+      const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
+      const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
+      const line = `${i}. ${name} — ${price}${est}`;
+      doc.text(line, 595 - margin, y, { align: 'right' });
+      y += lineH;
+      i++;
+      if (y > 842 - margin){
+        doc.addPage(); y = margin;
+        await ensureHebrewFont(doc);
+      }
+    }
+
+    const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
+    doc.save(fname);
+  }
+
 });
 
 /* Swipe to start: גרירה RTL */
@@ -769,7 +871,6 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
   function onEnd(){
     if(!dragging) return;
     dragging=false;
-    // Complete if progress >= 0.85
     const endRight = parseFloat(getComputedStyle(knob).insetInlineEnd);
     const p = 1 - (endRight - 6) / (trackRect().width - knobRect().width - 12);
     if(p >= 0.85){
