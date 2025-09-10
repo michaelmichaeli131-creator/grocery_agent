@@ -7,7 +7,7 @@
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin="anonymous" />
-<!-- jsPDF + html2canvas (כדי לרנדר RTL כראוי) -->
+<!-- html2canvas + jsPDF (ליצוא PDF בלי דף ריק) -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
@@ -20,7 +20,6 @@
 
   --action-width: min(86%, 366px);
   --avatar-pos-y: 50%;
-
   --loader-size: 168px;
   --loader-zoom: 1.0;
 }
@@ -98,7 +97,7 @@ a{color:#9ecbff;text-decoration:none}
 }
 .avatar-ring{
   position:absolute; inset:-4px; border-radius:50%;
-  background:conic-gradient(from 180deg, #3b82f6, #22d3ee, #3b82f6);
+  background:conic-gradient(from 180deg, #3b82f6,#22d3ee,#3b82f6);
   filter:saturate(120%);
   mask: radial-gradient(closest-side, transparent 74%, black 78%);
   animation:ringBlink 2.4s ease-in-out infinite;
@@ -579,7 +578,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ====== קריאה לשרת והצגת תוצאות ====== */
-  let lastBaskets = [];
   async function fetchPlan(){
     let gps = null;
     try{ gps = JSON.parse(sessionStorage.getItem('gps')||'null'); }catch{}
@@ -603,7 +601,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const baskets = Array.isArray(data.baskets) ? data.baskets : [];
-      lastBaskets = baskets;
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
@@ -649,7 +646,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </details>`;
   }
 
-  // שורה בפרטים
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
     const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
@@ -747,33 +743,31 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading();
   }
 
-  /* ===== PDF של רשימת המשתמש (RTL, טאב חדש, בלי לכתוב למסך) ===== */
+  /* ===== PDF של רשימת המשתמש (בלי דף ריק) =====
+     פתרון: רנדור עם html2canvas לתמונה אחת, הוספה ל-jsPDF ב-Page אחד.
+     אין שימוש ב-doc.html (שהיה גורם לעיתים לדף ריק ראשון). */
   async function generateShoppingListPdf(userItems){
     if (!Array.isArray(userItems) || userItems.length===0){
       alert('אין פריטים ברשימה.');
       return;
     }
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:'pt', format:'a4' });
-
-    // ניצור מיכל מוחבא מחוץ למסך כדי ש-html2canvas יעבוד, אך לא ייראה
+    // מיכל נסתר מחוץ למסך
     const mount = document.createElement('div');
     mount.style.position = 'fixed';
-    mount.style.left = '-99999px';
+    mount.style.left = '-10000px';
     mount.style.top = '0';
-    mount.style.width = '595px';
-    mount.style.zIndex = '-1';
+    mount.style.width = '595px'; // A4 width pt ≈ 595
+    mount.style.background = '#fff';
     document.body.appendChild(mount);
 
     // תוכן ה-PDF (RTL)
-    const wrapper = document.createElement('div');
-    wrapper.style.direction = 'rtl';
-    wrapper.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
-    wrapper.style.padding = '32px 40px';
-    wrapper.style.width = '515px'; // בתוככי הדף
-    wrapper.style.color = '#111';
+    const wrap = document.createElement('div');
+    wrap.style.direction = 'rtl';
+    wrap.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
+    wrap.style.padding = '32px 40px';
+    wrap.style.width = '515px';
+    wrap.style.color = '#111';
 
-    // כותרת + לוגו קטן מימין
     const header = document.createElement('div');
     header.style.display = 'flex';
     header.style.alignItems = 'center';
@@ -786,28 +780,26 @@ document.addEventListener('DOMContentLoaded', () => {
     title.style.fontSize = '20px';
 
     const logo = document.createElement('img');
-    logo.src = 'ai_logo.png'; // שים את הקובץ הזה בתיקייה
+    logo.src = 'ai_logo.png'; // ודא שהקובץ קיים לצד ה-HTML
     logo.style.width = '24px';
     logo.style.height = '24px';
     logo.style.objectFit = 'contain';
 
     header.appendChild(title);
     header.appendChild(logo);
-    wrapper.appendChild(header);
+    wrap.appendChild(header);
 
     const sub = document.createElement('div');
     sub.textContent = 'רשימת קניות';
     sub.style.marginTop = '6px';
     sub.style.fontSize = '14px';
     sub.style.textAlign = 'right';
-    wrapper.appendChild(sub);
+    wrap.appendChild(sub);
 
-    // רווח של ~3 שורות
     const spacer = document.createElement('div');
-    spacer.style.height = '36px';
-    wrapper.appendChild(spacer);
+    spacer.style.height = '36px'; // שלוש שורות
+    wrap.appendChild(spacer);
 
-    // רשימה ממוספרת RTL
     const ol = document.createElement('ol');
     ol.style.margin = '0';
     ol.style.paddingInlineStart = '20px';
@@ -820,21 +812,33 @@ document.addEventListener('DOMContentLoaded', () => {
       li.textContent = String(it);
       ol.appendChild(li);
     });
-    wrapper.appendChild(ol);
+    wrap.appendChild(ol);
 
-    mount.appendChild(wrapper);
+    mount.appendChild(wrap);
 
-    // רינדור ל-PDF ופתיחה בטאב חדש (לא כתיבה למסך)
-    await doc.html(mount, {
-      x: 20, y: 20,
-      html2canvas: { useCORS: true, scale: 2, backgroundColor: '#ffffff' }
-    });
+    // הפקה לתמונה
+    const canvas = await html2canvas(wrap, { useCORS: true, scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
 
-    // ניקוי DOM זמני
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit:'pt', format:'a4' }); // 595x842 pt
+    const pageW = 595, pageH = 842;
+    const margin = 20;
+
+    // חישוב גודל תמונה לשימור יחס רוחב/גובה על עמוד אחד, בלי דפים מיותרים
+    const imgW = pageW - margin*2;
+    const imgH = canvas.height * (imgW / canvas.width);
+    const finalH = Math.min(imgH, pageH - margin*2); // לא לצאת מהעמוד
+    const y = margin + ((pageH - margin*2 - finalH) / 2); // ממרכז אנכית מעט (נעים לעין)
+
+    pdf.addImage(imgData, 'PNG', margin, y, imgW, finalH);
+
+    // פתיחה בטאב חדש (לא נכתב למסך, ואין דף ריק)
+    const blobUrl = pdf.output('bloburl');
+    window.open(blobUrl, '_blank', 'noopener');
+
+    // ניקוי
     document.body.removeChild(mount);
-
-    const blobUrl = doc.output('bloburl');
-    window.open(blobUrl, '_blank', 'noopener'); // יפתח בקובץ PDF בטאב חדש
   }
 
 });
