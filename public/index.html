@@ -7,9 +7,9 @@
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin="anonymous" />
-<!-- jsPDF + html plugin (ל-PDF בעברית דרך html2canvas) -->
+<!-- jsPDF + html2canvas (כדי לרנדר RTL כראוי) -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.plugin.html.min.js" crossorigin="anonymous"></script>
 
 <style>
 /* ========== THEME ========== */
@@ -21,7 +21,6 @@
   --action-width: min(86%, 366px);
   --avatar-pos-y: 50%;
 
-  /* Loader circle size + zoom */
   --loader-size: 168px;
   --loader-zoom: 1.0;
 }
@@ -53,7 +52,7 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant (ממסך שני ואילך) */
+/* Assistant */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
   border:2px solid var(--line); background:var(--card); border-radius:16px;
@@ -71,7 +70,7 @@ a{color:#9ecbff;text-decoration:none}
 /* ===== Screens ===== */
 .screen{display:none}
 .screen.active{display:block}
-/* נוסיף padding תחתון קבוע, ונגדיל כשרואים CTA כדי לא להתנגש */
+/* padding תחתון גדול כשה-CTA מוצג כדי שלא יסתיר תוכן */
 .page{padding:0 16px 120px}
 .page.with-cta{padding-bottom:180px}
 .box{
@@ -131,7 +130,6 @@ a{color:#9ecbff;text-decoration:none}
   object-position: 50% var(--avatar-pos-y);
 }
 .splash h1{margin:16px 0 6px; font-size:22px}
-.splash p{margin:0 0 14px; color:#9fb0c8}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
@@ -199,7 +197,7 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* ===== CTA (תוקן: לא מסתיר תוכן) ===== */
+/* ===== CTA (תוקן: למטה ולא מכסה תוכן) ===== */
 .cta{
   position:fixed; left:0; right:0; bottom:12px;
   display:none; align-items:center; justify-content:center; pointer-events:none;
@@ -374,7 +372,7 @@ a{color:#9ecbff;text-decoration:none}
   </section>
 </div>
 
-<!-- CTA (תוקן: קבוע בתחתית ולא מכסה תוכן) -->
+<!-- CTA (קבוע למטה ולא מכסה תוכן) -->
 <div class="cta" id="cta">
   <div class="inner">
     <button id="next" class="btn" type="button">המשך</button>
@@ -718,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(url, '_blank', 'noopener');
       });
     });
-    // PDF (רשימת המשתמש — לא פירוט רשת)
+    // PDF (רשימת המשתמש — לא פירוט הרשת)
     document.querySelectorAll('[data-pdf]').forEach(btn=>{
       btn.addEventListener('click', async ()=>{
         await generateShoppingListPdf(items);
@@ -749,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading();
   }
 
-  /* ===== PDF של רשימת המשתמש (RTL, טאב חדש, בלי היפוך) ===== */
+  /* ===== PDF של רשימת המשתמש (RTL, טאב חדש, בלי לכתוב למסך) ===== */
   async function generateShoppingListPdf(userItems){
     if (!Array.isArray(userItems) || userItems.length===0){
       alert('אין פריטים ברשימה.');
@@ -758,14 +756,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit:'pt', format:'a4' });
 
-    // בונים DOM זמני (RTL) לציור ע"י html2canvas (ימנע בעיות מראה/כיווניות)
-    const tmp = document.createElement('div');
-    tmp.style.direction = 'rtl';
-    tmp.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
-    tmp.style.padding = '32px 40px';
-    tmp.style.width = '555px'; // כדי להתאים ל-A4 פחות שוליים
+    // ניצור מיכל מוחבא מחוץ למסך כדי ש-html2canvas יעבוד, אך לא ייראה
+    const mount = document.createElement('div');
+    mount.style.position = 'fixed';
+    mount.style.left = '-99999px';
+    mount.style.top = '0';
+    mount.style.width = '595px';
+    mount.style.zIndex = '-1';
+    document.body.appendChild(mount);
 
-    // כותרת עם לוגו קטן מימין
+    // תוכן ה-PDF (RTL)
+    const wrapper = document.createElement('div');
+    wrapper.style.direction = 'rtl';
+    wrapper.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
+    wrapper.style.padding = '32px 40px';
+    wrapper.style.width = '515px'; // בתוככי הדף
+    wrapper.style.color = '#111';
+
+    // כותרת + לוגו קטן מימין
     const header = document.createElement('div');
     header.style.display = 'flex';
     header.style.alignItems = 'center';
@@ -778,31 +786,31 @@ document.addEventListener('DOMContentLoaded', () => {
     title.style.fontSize = '20px';
 
     const logo = document.createElement('img');
-    logo.src = 'ai_logo.png'; // וודא שקיים קובץ זהה בתיקייה
-    logo.style.width = '28px';
-    logo.style.height = '28px';
+    logo.src = 'ai_logo.png'; // שים את הקובץ הזה בתיקייה
+    logo.style.width = '24px';
+    logo.style.height = '24px';
     logo.style.objectFit = 'contain';
 
     header.appendChild(title);
     header.appendChild(logo);
-    tmp.appendChild(header);
+    wrapper.appendChild(header);
 
-    // תיאור קצר (אופציונלי)
     const sub = document.createElement('div');
     sub.textContent = 'רשימת קניות';
     sub.style.marginTop = '6px';
     sub.style.fontSize = '14px';
-    tmp.appendChild(sub);
+    sub.style.textAlign = 'right';
+    wrapper.appendChild(sub);
 
-    // רווח של 3 שורות (בערך ~ 36px)
+    // רווח של ~3 שורות
     const spacer = document.createElement('div');
     spacer.style.height = '36px';
-    tmp.appendChild(spacer);
+    wrapper.appendChild(spacer);
 
-    // <ol> ממוספר RTL, כל פריט בשורה נפרדת
+    // רשימה ממוספרת RTL
     const ol = document.createElement('ol');
     ol.style.margin = '0';
-    ol.style.paddingInlineStart = '20px'; // קצת רווח אחרי המספרים
+    ol.style.paddingInlineStart = '20px';
     ol.style.fontSize = '13px';
     ol.style.lineHeight = '1.7';
     ol.dir = 'rtl';
@@ -812,16 +820,21 @@ document.addEventListener('DOMContentLoaded', () => {
       li.textContent = String(it);
       ol.appendChild(li);
     });
-    tmp.appendChild(ol);
+    wrapper.appendChild(ol);
 
-    // הפעלה: doc.html (רינדור ל-canvas → תמונה → PDF), ואז פתיחה בטאב חדש
-    await doc.html(tmp, {
-      x: 20, y: 20, // שוליים
+    mount.appendChild(wrapper);
+
+    // רינדור ל-PDF ופתיחה בטאב חדש (לא כתיבה למסך)
+    await doc.html(mount, {
+      x: 20, y: 20,
       html2canvas: { useCORS: true, scale: 2, backgroundColor: '#ffffff' }
     });
 
+    // ניקוי DOM זמני
+    document.body.removeChild(mount);
+
     const blobUrl = doc.output('bloburl');
-    window.open(blobUrl, '_blank', 'noopener'); // טאב חדש
+    window.open(blobUrl, '_blank', 'noopener'); // יפתח בקובץ PDF בטאב חדש
   }
 
 });
