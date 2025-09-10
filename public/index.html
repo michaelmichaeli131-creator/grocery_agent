@@ -14,11 +14,13 @@
   --ink:#e2e8f0; --muted:#9fb0c8; --brand:#3b82f6; --accent:#22d3ee;
   --bg: radial-gradient(120% 100% at 50% -10%, #0f172a 0%, #020617 60%);
   --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
+
   --action-width: min(86%, 366px);
   --avatar-pos-y: 50%;
+
+  /* Loader circle size + zoom */
   --loader-size: 168px;
   --loader-zoom: 1.0;
-  --cta-height: 86px;
 }
 
 /* בסיס */
@@ -48,7 +50,7 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant */
+/* Assistant (ממוסך שני ואילך) */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
   border:2px solid var(--line); background:var(--card); border-radius:16px;
@@ -66,8 +68,7 @@ a{color:#9ecbff;text-decoration:none}
 /* ===== Screens ===== */
 .screen{display:none}
 .screen.active{display:block}
-.page{padding:0 16px 120px; transition:padding-bottom .2s ease;}
-.page.with-cta{ padding-bottom: calc(120px + var(--cta-height)); }
+.page{padding:0 16px 220px} /* יותר מרווח בתחתית כדי לא להתנגש ב-CTA */
 .box{
   background:var(--card);border-radius:22px;box-shadow:var(--shadow);
   padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)
@@ -161,14 +162,14 @@ a{color:#9ecbff;text-decoration:none}
 .unit{font-size:12px;color:#93c5fd;font-weight:800}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
-/* מחיר מוערך */
+/* NEW: תג "מחיר מוערך" */
 .pill-est{
   display:inline-block;padding:4px 8px;border-radius:999px;
   background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800;
   border:1px solid rgba(234,179,8,.35);
 }
 
-/* פעולות — פעם אחת מתחת למפה */
+/* NEW: פעולות מתחת למפה */
 .actions{
   display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;
 }
@@ -176,10 +177,9 @@ a{color:#9ecbff;text-decoration:none}
   display:inline-flex; align-items:center; gap:8px;
   border:1px solid var(--line); background:rgba(255,255,255,.04);
   color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
-  text-decoration:none;
 }
 .btn-action:hover{ border-color:#3b82f6; }
-.btn-action svg{ width:20px; height:20px; display:inline-block; }
+.btn-action img{ width:18px; height:18px; display:inline-block; }
 
 /* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
@@ -195,23 +195,22 @@ a{color:#9ecbff;text-decoration:none}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
 /* ===== CTA ===== */
-.cta{ position:fixed; inset:0; display:none; align-items:flex-end; justify-content:center; pointer-events:none; }
+.cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
 .cta.show{ display:flex; }
-.cta .inner{ pointer-events:auto; width:100%; max-width:520px; padding:16px; }
+.cta .inner{ pointer-events:auto; }
 .btn{
   appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
   box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
-  letter-spacing:.3px; font-size:18px; width:100%;
+  letter-spacing:.3px; font-size:18px;
 }
 .btn-primary{
   background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
-  color:#06151d;
+  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
 }
 .btn-primary .spark{
   width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
   box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
 }
-@keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
 
 /* ===== Loader Results (GIF עגול) ===== */
 #loading{display:none;margin-top:12px;text-align:center}
@@ -235,16 +234,6 @@ a{color:#9ecbff;text-decoration:none}
   image-rendering: -webkit-optimize-contrast;
 }
 #loading .msg{color:#bcd3ff;margin-top:2px}
-
-/* ===== PDF template (hidden) ===== */
-#pdf-tpl{ display:none; direction:rtl; font-family: Arial, "Rubik", sans-serif; }
-#pdf-tpl .head{ display:flex; align-items:center; gap:12px; justify-content:flex-end; }
-#pdf-tpl .head img{ width:36px; height:36px; object-fit:cover; border-radius:8px; }
-#pdf-tpl .title{ font-weight:800; font-size:18px; margin-inline-end:4px; }
-#pdf-tpl .meta{ margin-top:6px; font-size:14px; text-align:right; }
-#pdf-tpl .list-title{ font-weight:800; font-size:16px; margin-top:16px; text-align:right; }
-#pdf-tpl ol{ margin:0; padding-inline-start:0; padding-inline-end:22px; list-style-position:inside; }
-#pdf-tpl li{ margin: 10px 0; }
 </style>
 </head>
 
@@ -393,19 +382,24 @@ a{color:#9ecbff;text-decoration:none}
   </div>
 </div>
 
-<!-- Hidden PDF template -->
-<div id="pdf-tpl"></div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-<!-- jsPDF + html2canvas for proper RTL rendering -->
+<!-- jsPDF -->
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
 
 <script>
 /* Bot SVG fallback (לא חובה) */
 function getBotSVG(sz=42){
   return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;background:#0b1220"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="url(#lg)"><rect x="14" y="18" rx="10" ry="10" width="36" height="26"/><circle cx="24" cy="30" r="3" fill="#fff"/><circle cx="40" cy="30" r="3" fill="#fff"/><rect x="22" y="40" width="20" height="4" rx="2"/></g></svg>';
 }
+
+/* אייקונים מוטמעים (Base64) */
+const WAZE_ICON_DATAURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAbUlEQVQ4y2NgoBvg0aNHDaZgYGBg+P///4ZB0b9gGJQwMDA0i1k2gJgYGBj8Pz8fA0QqMIFg0g1m0Qw2HkIB4g0i8Qw2A0QwzJgkW3gYGDAZ0g0j8QyGgY0g4g8g0j4g0DkQ0g9g0zG4Cw2Q0QwQFQZqgqkQ5QWwAAL8Hn5lM1h1AAAAAElFTkSuQmCC";
+const AI_LOGO_DATAURL  = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAXVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9H7Qv2AAAAIHRSTlMAAQMEBQYICREXGiEiKjM2Q0RUXWJyc4iTqbG6vcDC1uX9Z7m2AAABGElEQVQY02WP2xKCMBRDE1wqK2y1//9YcG2mVQm0n3Ewq1b8lPqh2mJ0p3iJ4f3mQnYq0E2d9wF7nYQ6E7XyRczYp2b1yB9bqX7mQh6o5Oe8i7yY4e1z9l3m1l0Yz2YwS9pQX9b4C1Y6c8Qn4c0mB8xJdCw0QJ3uYpJ8qf8b8cQItQ3WjR7cT3g6Q7lQ6o6tq1G0s6xS8H3e4F9B0cQ8Uov2k3dVw7gCH2FQ9l3m1iGq8r8r4rH8jZ3WgJm7P3lJYVfC9g0F5mJcGmCwAAAABJRU5ErkJggg==";
+
+/* Helper: עיטוף RTL כדי שהעברית לא תתהפך */
+const RLE = "\u202B"; // Right-To-Left Embedding
+const PDF = "\u202C"; // Pop Directional Formatting
+function rtl(s){ return RLE + String(s||"") + PDF; }
 
 document.addEventListener('DOMContentLoaded', () => {
   // מסכים: 0=s0, 1=s2, 2=s3, 3=s4, 4=s5
@@ -419,23 +413,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addressEl = document.getElementById('address');
   const radiusEl = document.getElementById('radius');
+  const verifiedOnlyEl = document.getElementById('verifiedOnly');
 
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
   const dropdown = document.getElementById('dropdown');
-  let items = []; // ריק כברירת מחדל
+  let items = []; // ← ריק כברירת מחדל
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
-
-  // CTA spacing helper
-  function updateBottomInset(){
-    const page = document.querySelector('.screen.active .page');
-    if (!page) return;
-    page.classList.toggle('with-cta', cta.classList.contains('show'));
-  }
 
   // GIF refresh (למקרה שלא בלופ)
   let loaderLoopTimer = null;
@@ -454,7 +442,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
-  function syncCTA(){ cta.classList.toggle('show', step>=1); updateBottomInset(); }
+  function syncCTA(){
+    // נציג CTA רק כאשר לא על מסכי פריטים/תוצאות כדי לא להפריע
+    const show = (step === 1); // רק במסך הכתובת
+    cta.classList.toggle('show', show);
+  }
   function syncHeaderAvatar(){ aiMini.style.display = step>=1 ? 'flex' : 'none'; }
   function goto(n){
     step = Math.max(0, Math.min(screens.length-1, n));
@@ -463,8 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   goto(0);
-
-  window.addEventListener('resize', updateBottomInset);
 
   // Back
   backTop.addEventListener('click', ()=>{ if(step>0) goto(step-1); });
@@ -532,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeIdx = -1;
   newItemEl.addEventListener('input', async ()=>{
     const q = newItemEl.value.trim();
-    if (!q) return hideDropdown();
+    if (!q) { hideDropdown(); return; }
     try{
       const res = await fetch(`/api/suggest?q=${encodeURIComponent(q)}&limit=12`);
       const data = await res.json();
@@ -548,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`
       )).join('');
       dropdown.style.display = 'block';
+      cta.classList.remove('show'); // לא להסתיר את האוטוקומפליט
       activeIdx = -1;
 
       dropdown.querySelectorAll('.opt').forEach(opt=>{
@@ -572,13 +563,12 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (e.key === 'Escape'){ hideDropdown(); }
   });
   function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
-  function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
+  function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; syncCTA(); }
 
-  // כשיש תוצאות — הסתר CTA padding fix
+  // כשיש תוצאות — הסתר CTA
   const resultsObserver = new MutationObserver(() => {
     const hasResults = resultsEl.children.length > 0 || resultsEl.textContent.trim().length > 0;
     if (hasResults) cta.classList.remove('show');
-    updateBottomInset();
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
@@ -625,9 +615,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      wireActions(baskets);
+      wireActions(baskets); // ← חיווט כפתורי Waze/PDF
       cta.classList.remove('show');
-      updateBottomInset();
     }catch(err){
       hideLoading();
       resultsEl.innerHTML = row('שגיאה', 'לא ניתן להביא תוצאות כעת.');
@@ -656,24 +645,17 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div class="actions">
-          <a class="btn-action" data-waze="${idx}" href="#" title="נווט ב-Waze">
-            <!-- Inline Waze SVG -->
-            <svg viewBox="0 0 256 256" aria-hidden="true">
-              <path fill="#00AEEF" d="M128 32c50.7 0 92 36.3 92 81 0 33.2-21.3 60.2-52.9 72.1-3.2 12.6-15.1 21.9-29 21.9-12.8 0-23.7-7.6-27.8-18.3a248 248 0 0 1-22.9 1c-29.7 0-52.4-6.6-65-19-8.3-8.2-9.6-18.6-9.6-24.7 0-6.3 5.2-11.4 11.5-11.4 5.8 0 10.7 4.4 11.3 10.1 1.2 11 8 20 17.9 26.3-2.7-6.4-4.3-13.5-4.3-20.9 0-45.7 41.4-89.1 78.8-89.1Z"/>
-              <circle cx="156" cy="118" r="12" fill="#000"/>
-              <circle cx="104" cy="118" r="12" fill="#000"/>
-              <rect x="136" y="170" width="18" height="26" rx="9" fill="#000"/>
-              <rect x="106" y="170" width="18" height="26" rx="9" fill="#000"/>
-            </svg>
-            נווט ב-Waze
+          <a class="btn-action" data-waze="${idx}" href="#">
+            <img src="${WAZE_ICON_DATAURL}" alt="Waze"> נווט ב-Waze
           </a>
-          <button class="btn-action" data-pdf="${idx}" type="button" title="הורד רשימת קניות">📄 הורד רשימת קניות</button>
+          <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
         </div>
         <div style="height:8px"></div>
         ${Array.isArray(b.breakdown) ? b.breakdown.map(renderLine).join('') : ''}
       </details>`;
   }
 
+  // NEW: "מחיר מוערך" (client side)
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
     const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
@@ -735,9 +717,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const idx = Number(a.getAttribute('data-waze'));
         const b = baskets[idx];
         const lat = b?.location?.lat, lng = b?.location?.lng;
-        const name = (b?.shop_display_name || b?.chain || 'החנות');
-        if (!lat || !lng) return alert('חסר מיקום לחנות הזו.');
-        const url = `https://waze.com/ul?ll=${lat.toFixed(6)},${lng.toFixed(6)}&navigate=yes&zoom=17&q=${encodeURIComponent(name)}`;
+        if (!lat || !lng) return;
+        const url = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes&zoom=16`;
         window.open(url, '_blank', 'noopener');
       });
     });
@@ -772,66 +753,114 @@ document.addEventListener('DOMContentLoaded', () => {
     aiMini.style.display = 'flex';
     cta.classList.add('show');
     showLoading();
-    updateBottomInset();
   }
 
-  /* ===== PDF (RTL תקין, לוגו GIF, רווח, שם חנות) ===== */
-  function buildPdfTemplate(b){
-    // בונה HTML נסתר ב-RTL שיומר לתמונה ויוכנס ל-PDF
-    const wrap = document.getElementById('pdf-tpl');
-    wrap.innerHTML = `
-      <div class="pdf" style="width:595pt; padding:54pt; font-size:13pt; color:#0b1220; background:#fff; direction:rtl;">
-        <div class="head" style="justify-content:flex-end; align-items:center;">
-          <div class="title">AI BASKET</div>
-          <img src="ai_giff4.gif" alt="AI" />
-        </div>
+  /* ===== PDF (עברית, ממוספר, לוגו קטן, AI BASKET) ===== */
+  async function ensureHebrewFont(doc){
+    // טוען Rubik-Regular.ttf ו-Rubik-Bold.ttf מ-/fonts אם קיימים.
+    async function loadFont(path){
+      const res = await fetch(path);
+      const buf = await res.arrayBuffer();
+      // המרה ל-base64
+      let binary = '';
+      const bytes = new Uint8Array(buf);
+      const chunk = 0x8000;
+      for (let i=0; i<bytes.length; i+=chunk){
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk));
+      }
+      return btoa(binary);
+    }
+    if (!doc.__hebrewLoaded){
+      try {
+        const regularB64 = await loadFont('/fonts/Rubik-Regular.ttf');
+        doc.addFileToVFS('Rubik-Regular.ttf', regularB64);
+        doc.addFont('Rubik-Regular.ttf', 'Rubik', 'normal');
+        try {
+          const boldB64 = await loadFont('/fonts/Rubik-Bold.ttf');
+          doc.addFileToVFS('Rubik-Bold.ttf', boldB64);
+          doc.addFont('Rubik-Bold.ttf', 'Rubik', 'bold');
+        } catch {}
+        doc.__hebrewLoaded = true;
+      } catch {
+        // אם אין פונטים, נמשיך עם ברירת מחדל—אבל ההמלצה להוסיף את הפונטים
+      }
+    }
+    if (doc.__hebrewLoaded) doc.setFont('Rubik', 'normal');
+  }
 
-        <div class="meta">
-          <div>${esc(b.shop_display_name || b.chain || '')}${b?.location?.address ? ' • '+esc(b.location.address) : ''}</div>
-          <div>${typeof b.total==='number' ? 'סה״כ: '+b.total.toFixed(2)+' ₪' : 'סה״כ: —'}</div>
-        </div>
-
-        <div class="list-title">רשימת קניות</div>
-
-        <!-- רווח של 3 שורות -->
-        <div style="height:66px"></div>
-
-        <ol>
-          ${
-            (Array.isArray(b.breakdown)? b.breakdown:[])
-            .map((it,i)=>{
-              const name = esc((it.item||it.product_name||'').trim());
-              if (!name) return '';
-              const price = (typeof it.price==='number') ? it.price.toFixed(2)+' ₪' : '—';
-              const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
-              return `<li>${name} — ${price}${est}</li>`;
-            })
-            .join('')
-          }
-        </ol>
-      </div>
-    `;
-    return wrap.firstElementChild;
+  async function loadImageAsDataURL(path){
+    try{
+      const res = await fetch(path);
+      const blob = await res.blob();
+      return await new Promise((resolve,reject)=>{
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
+    }catch{
+      return null;
+    }
   }
 
   async function generatePdfForBasket(b){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit:'pt', format:'a4' }); // ~595 x 842pt
-    const node = buildPdfTemplate(b);
+    await ensureHebrewFont(doc);
 
-    await doc.html(node, {
-      x: 0, y: 0,
-      autoPaging: 'text',
-      callback: function (doc2) {
-        const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
-        doc2.save(fname);
-      },
-      html2canvas: {
-        scale: 2, // חדות טובה
-        useCORS: true,
-        backgroundColor: '#ffffff'
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 54;
+    const lineH = 22;
+    let y = margin;
+
+    // לוגו קטן ליד הכותרת (מימין). נעדיף את המוטמע; אם יש ai_logo.png נטען ממנו.
+    let logo = AI_LOGO_DATAURL;
+    const extLogo = await loadImageAsDataURL('ai_logo.png');
+    if (extLogo) logo = extLogo;
+    try { doc.addImage(logo, 'PNG', pageW - margin - 26, y-4, 20, 20); } catch {}
+
+    // כותרת
+    doc.setFont('Rubik','bold'); doc.setFontSize(18);
+    doc.text(rtl('AI BASKET'), pageW - margin - 32, y+10, { align: 'right' });
+    y += 28;
+
+    // שם החנות + כתובת
+    doc.setFont('Rubik','normal'); doc.setFontSize(14);
+    const title = `${b.shop_display_name || b.chain || ''}`;
+    const addr  = b?.location?.address ? ` • ${b.location.address}` : '';
+    doc.text(rtl(`${title}${addr}`), pageW - margin, y, { align: 'right' }); y += 18;
+
+    // סה"כ
+    const totalTxt = typeof b.total === 'number' ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
+    doc.text(rtl(totalTxt), pageW - margin, y, { align: 'right' }); y += 26;
+
+    // מרווח 3 שורות לפני רשימת הקניות
+    y += (lineH * 1.5);
+
+    doc.setFont('Rubik','bold'); doc.setFontSize(16);
+    doc.text(rtl('רשימת קניות'), pageW - margin, y, { align: 'right' }); y += 18;
+    doc.setFont('Rubik','normal'); doc.setFontSize(13);
+
+    // רשימה ממוספרת, שורה לכל פריט
+    const list = Array.isArray(b.breakdown) ? b.breakdown : [];
+    let i = 1;
+    for (const it of list){
+      const name = (it.item || it.product_name || '').trim();
+      if (!name) continue;
+      const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
+      const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
+      const line = `${i}. ${name} — ${price}${est}`;
+      doc.text(rtl(line), pageW - margin, y, { align: 'right' });
+      y += lineH;
+      i++;
+      if (y > (doc.internal.pageSize.getHeight() - margin)){
+        doc.addPage(); y = margin;
+        await ensureHebrewFont(doc);
       }
-    });
+    }
+
+    const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
+    doc.save(fname);
   }
 
 });
@@ -888,6 +917,12 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
   window.addEventListener('mouseup', onEnd);
   window.addEventListener('touchend', onEnd);
 }
+
+/* ===== עזר כללי ===== */
+function row(title, msg){ return `<div class="row"><div><strong>${esc(title)}</strong><div class="muted small">${esc(msg)}</div></div></div>`; }
+function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
+function escAttr(s){return String(s??'').replace(/"/g,'&quot;')}
+function toPrice(v, currency){ if (typeof v === "number") return v.toFixed(2)+" "+currency; if (typeof v === "string" && v.trim()) return v.includes("₪") ? v : (v+" "+currency); return "—"; }
 </script>
 </body>
 </html>
