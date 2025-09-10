@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
     title.style.fontSize = '20px';
 
     const logo = document.createElement('img');
-    logo.src = 'ai_logo.png'; // ודא שהקובץ קיים לצד ה-HTML
+    logo.src = 'ai_logo.png';        // ודא שהקובץ קיים תקין באותה תקייה
     logo.style.width = '24px';
     logo.style.height = '24px';
     logo.style.objectFit = 'contain';
@@ -797,7 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wrap.appendChild(sub);
 
     const spacer = document.createElement('div');
-    spacer.style.height = '36px'; // שלוש שורות
+    spacer.style.height = '36px'; // שלוש שורות רווח מתחת ללוגו
     wrap.appendChild(spacer);
 
     const ol = document.createElement('ol');
@@ -813,10 +813,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ol.appendChild(li);
     });
     wrap.appendChild(ol);
-
     mount.appendChild(wrap);
 
-    // הפקה לתמונה
+    // רנדר לתמונה
     const canvas = await html2canvas(wrap, { useCORS: true, scale: 2, backgroundColor: '#ffffff' });
     const imgData = canvas.toDataURL('image/png');
 
@@ -824,24 +823,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdf = new jsPDF({ unit:'pt', format:'a4' }); // 595x842 pt
     const pageW = 595, pageH = 842;
     const margin = 20;
-
-    // חישוב גודל תמונה לשימור יחס רוחב/גובה על עמוד אחד, בלי דפים מיותרים
     const imgW = pageW - margin*2;
     const imgH = canvas.height * (imgW / canvas.width);
-    const finalH = Math.min(imgH, pageH - margin*2); // לא לצאת מהעמוד
-    const y = margin + ((pageH - margin*2 - finalH) / 2); // ממרכז אנכית מעט (נעים לעין)
+    const finalH = Math.min(imgH, pageH - margin*2);
+    const y = margin + ((pageH - margin*2 - finalH) / 2);
 
     pdf.addImage(imgData, 'PNG', margin, y, imgW, finalH);
 
-    // פתיחה בטאב חדש (לא נכתב למסך, ואין דף ריק)
-    const blobUrl = pdf.output('bloburl');
-    window.open(blobUrl, '_blank', 'noopener');
+    // === התאמה לניידים ===
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const filename = 'AI_BASKET_List.pdf';
+
+    if (isIOS || isAndroid) {
+      // בניידים: או לשמור ישירות (מוריד/פותח ב־viewer המובנה),
+      // או לנווט לאותו דף blob במקום חלון חדש – זה עובר מסנן פופאפים.
+      try {
+        pdf.save(filename); // הכי אמין במובייל
+      } catch {
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        location.href = url; // פותח באותה הלשונית
+        setTimeout(()=>URL.revokeObjectURL(url), 60000);
+      }
+    } else {
+      // בדסקטופ: לפתוח בטאב חדש כרגיל
+      const blob = pdf.output('blob');
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank', 'noopener'); // יעבוד בלי חסימה
+      setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    }
 
     // ניקוי
     document.body.removeChild(mount);
   }
 
-});
 
 /* Swipe to start: גרירה RTL */
 function initSwipeToStart(track, knob, progressEl, onComplete){
