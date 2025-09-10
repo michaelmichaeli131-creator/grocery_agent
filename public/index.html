@@ -7,6 +7,9 @@
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin="anonymous" />
+<!-- jsPDF + html plugin (ל-PDF בעברית דרך html2canvas) -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.plugin.html.min.js" crossorigin="anonymous"></script>
 
 <style>
 /* ========== THEME ========== */
@@ -68,7 +71,9 @@ a{color:#9ecbff;text-decoration:none}
 /* ===== Screens ===== */
 .screen{display:none}
 .screen.active{display:block}
-.page{padding:0 16px 180px} /* ← ריפוד תחתון כדי שה-CTA לא יסתיר תוכן */
+/* נוסיף padding תחתון קבוע, ונגדיל כשרואים CTA כדי לא להתנגש */
+.page{padding:0 16px 120px}
+.page.with-cta{padding-bottom:180px}
 .box{
   background:var(--card);border-radius:22px;box-shadow:var(--shadow);
   padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)
@@ -194,24 +199,20 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* ===== CTA ===== */
-.cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
+/* ===== CTA (תוקן: לא מסתיר תוכן) ===== */
+.cta{
+  position:fixed; left:0; right:0; bottom:12px;
+  display:none; align-items:center; justify-content:center; pointer-events:none;
+  z-index:50;
+}
 .cta.show{ display:flex; }
 .cta .inner{ pointer-events:auto; }
 .btn{
-  appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
+  appearance:none;border:none;border-radius:18px;padding:14px 22px;font-weight:900;cursor:pointer;
   box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
   letter-spacing:.3px; font-size:18px;
+  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6); color:#06151d;
 }
-.btn-primary{
-  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
-  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-}
-.btn-primary .spark{
-  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
-  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
 
 /* ===== Loader Results (GIF עגול) ===== */
 #loading{display:none;margin-top:12px;text-align:center}
@@ -235,26 +236,6 @@ a{color:#9ecbff;text-decoration:none}
   image-rendering: -webkit-optimize-contrast;
 }
 #loading .msg{color:#bcd3ff;margin-top:2px}
-
-/* ===== Hidden PDF template ===== */
-#pdf-root{ position:fixed; inset:-9999px; width:0; height:0; overflow:hidden; }
-.pdf-card{
-  direction: rtl; font-family: "Rubik", Arial, sans-serif;
-  color:#111; width:750px; padding:28px; box-sizing:border-box;
-}
-.pdf-head{
-  display:flex; flex-direction:row-reverse; align-items:center; justify-content:space-between; gap:12px;
-  border-bottom:1px solid #e5e7eb; padding-bottom:10px; margin-bottom:12px;
-}
-.pdf-title{
-  font-weight:800; font-size:20px; color:#111; display:flex; flex-direction:row-reverse; align-items:center; gap:8px;
-}
-.pdf-sub{ color:#374151; font-size:13px; }
-.pdf-logo{ width:28px; height:28px; border-radius:6px; object-fit:cover; }
-.pdf-total{ font-size:14px; font-weight:700; color:#111; margin-bottom:8px; }
-.pdf-list{ margin-top:18px; }
-.pdf-list ol{ margin:0; padding:0 24px 0 0; }
-.pdf-list li{ margin:8px 0; font-size:13px; }
 </style>
 </head>
 
@@ -393,29 +374,23 @@ a{color:#9ecbff;text-decoration:none}
   </section>
 </div>
 
-<!-- CTA -->
+<!-- CTA (תוקן: קבוע בתחתית ולא מכסה תוכן) -->
 <div class="cta" id="cta">
   <div class="inner">
-    <button id="next" class="btn btn-primary" type="button">
-      <span class="spark" aria-hidden="true"></span>
-      המשך
-    </button>
+    <button id="next" class="btn" type="button">המשך</button>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-<!-- jsPDF -->
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
-
-<!-- Hidden PDF container -->
-<div id="pdf-root" aria-hidden="true"></div>
 
 <script>
+/* Bot SVG fallback (לא חובה) */
 function getBotSVG(sz=42){
   return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;background:#0b1220"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="url(#lg)"><rect x="14" y="18" rx="10" ry="10" width="36" height="26"/><circle cx="24" cy="30" r="3" fill="#fff"/><circle cx="40" cy="30" r="3" fill="#fff"/><rect x="22" y="40" width="20" height="4" rx="2"/></g></svg>';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // מסכים: 0=s0, 1=s2, 2=s3, 3=s4, 4=s5
   const screens = ['s0','s2','s3','s4','s5'].map(id=>document.getElementById(id));
   const cta = document.getElementById('cta');
   const aiMini = document.getElementById('aiMini');
@@ -426,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addressEl = document.getElementById('address');
   const radiusEl = document.getElementById('radius');
-  const verifiedOnlyEl = document.getElementById('verifiedOnly');
 
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
@@ -438,7 +412,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  // GIF refresh
+  // עדכון padding תחתון כשה-CTA גלוי כדי שלא יכסה תוכן
+  function refreshBottomPadding(){
+    const show = cta.classList.contains('show');
+    document.querySelectorAll('.page').forEach(p=>{
+      p.classList.toggle('with-cta', show);
+    });
+  }
+
+  // GIF refresh (למקרה שלא בלופ)
   let loaderLoopTimer = null;
   const GIF_REFRESH_MS = 4000;
   function startGifLoop(){
@@ -455,7 +437,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
-  function syncCTA(){ cta.classList.toggle('show', step>=1); }
+  function syncCTA(){
+    cta.classList.toggle('show', step>=1);
+    refreshBottomPadding();
+  }
   function syncHeaderAvatar(){ aiMini.style.display = step>=1 ? 'flex' : 'none'; }
   function goto(n){
     step = Math.max(0, Math.min(screens.length-1, n));
@@ -573,10 +558,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
   function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
 
-  // כשיש תוצאות — הסתר CTA
+  // כשיש תוצאות — הסתר CTA (ואז החזר padding)
   const resultsObserver = new MutationObserver(() => {
     const hasResults = resultsEl.children.length > 0 || resultsEl.textContent.trim().length > 0;
     if (hasResults) cta.classList.remove('show');
+    refreshBottomPadding();
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
@@ -623,11 +609,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      wireActions(baskets); // ← Waze + PDF
+      wireActions(baskets); // Waze + PDF (רשימת המשתמש)
       cta.classList.remove('show');
+      refreshBottomPadding();
     }catch(err){
       hideLoading();
       resultsEl.innerHTML = row('שגיאה', 'לא ניתן להביא תוצאות כעת.');
+      refreshBottomPadding();
     }
   }
 
@@ -653,7 +641,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div class="actions">
-          <a class="btn-action" data-waze="${idx}" href="#"><img src="waze.png" alt="Waze"> נווט ב-Waze</a>
+          <a class="btn-action" data-waze="${idx}" href="#">
+            <img src="waze.png" alt="Waze"> נווט ב-Waze
+          </a>
           <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
         </div>
         <div style="height:8px"></div>
@@ -661,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </details>`;
   }
 
+  // שורה בפרטים
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
     const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
@@ -727,13 +718,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(url, '_blank', 'noopener');
       });
     });
-    // PDF per basket
+    // PDF (רשימת המשתמש — לא פירוט רשת)
     document.querySelectorAll('[data-pdf]').forEach(btn=>{
       btn.addEventListener('click', async ()=>{
-        const idx = Number(btn.getAttribute('data-pdf'));
-        const b = baskets[idx];
-        if (!b) return;
-        await generatePdfForBasket(b);
+        await generateShoppingListPdf(items);
       });
     });
   }
@@ -742,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Utils
   function shake(el){ el.style.borderColor='#3b82f6'; el.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:260}); setTimeout(()=>el.style.borderColor='var(--line)',320); }
-  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;","&gt;":">","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
+  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
   function escAttr(s){return String(s??'').replace(/"/g,'&quot;')}
   function toPrice(v, currency){
     if (typeof v === "number") return v.toFixed(2)+" "+currency;
@@ -757,91 +745,83 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('s5').classList.add('active');
     aiMini.style.display = 'flex';
     cta.classList.add('show');
+    refreshBottomPadding();
     showLoading();
   }
 
-  /* ===== PDF (RTL תקין + לוגו קטן + רשימה ממוספרת) ===== */
-  async function generatePdfForBasket(b){
+  /* ===== PDF של רשימת המשתמש (RTL, טאב חדש, בלי היפוך) ===== */
+  async function generateShoppingListPdf(userItems){
+    if (!Array.isArray(userItems) || userItems.length===0){
+      alert('אין פריטים ברשימה.');
+      return;
+    }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit:'pt', format:'a4' });
 
-    // נבנה HTML RTL נסתר ונרנדר אותו ל-PDF כדי לשמור על כיוון אותיות נכון
-    const root = document.getElementById('pdf-root');
-    root.innerHTML = ""; // נקה קודם
+    // בונים DOM זמני (RTL) לציור ע"י html2canvas (ימנע בעיות מראה/כיווניות)
+    const tmp = document.createElement('div');
+    tmp.style.direction = 'rtl';
+    tmp.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
+    tmp.style.padding = '32px 40px';
+    tmp.style.width = '555px'; // כדי להתאים ל-A4 פחות שוליים
 
-    const card = document.createElement('div');
-    card.className = 'pdf-card';
+    // כותרת עם לוגו קטן מימין
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.alignItems = 'center';
+    header.style.gap = '10px';
+    header.style.justifyContent = 'flex-end';
 
-    const head = document.createElement('div');
-    head.className = 'pdf-head';
-
-    const titleWrap = document.createElement('div');
-    titleWrap.className = 'pdf-title';
-    const logo = document.createElement('img');
-    logo.src = 'ai_logo.png';            // ← תמונת לוגו (PNG קטנה) ליד הכותרת
-    logo.className = 'pdf-logo';
-
-    const title = document.createElement('span');
+    const title = document.createElement('div');
     title.textContent = 'AI BASKET';
+    title.style.fontWeight = '800';
+    title.style.fontSize = '20px';
 
-    titleWrap.appendChild(logo);
-    titleWrap.appendChild(title);
+    const logo = document.createElement('img');
+    logo.src = 'ai_logo.png'; // וודא שקיים קובץ זהה בתיקייה
+    logo.style.width = '28px';
+    logo.style.height = '28px';
+    logo.style.objectFit = 'contain';
 
+    header.appendChild(title);
+    header.appendChild(logo);
+    tmp.appendChild(header);
+
+    // תיאור קצר (אופציונלי)
     const sub = document.createElement('div');
-    sub.className = 'pdf-sub';
-    const addr = b?.location?.address ? ` • ${b.location.address}` : '';
-    sub.textContent = `${b.shop_display_name || b.chain || ''}${addr}`;
+    sub.textContent = 'רשימת קניות';
+    sub.style.marginTop = '6px';
+    sub.style.fontSize = '14px';
+    tmp.appendChild(sub);
 
-    head.appendChild(titleWrap);
-    head.appendChild(sub);
+    // רווח של 3 שורות (בערך ~ 36px)
+    const spacer = document.createElement('div');
+    spacer.style.height = '36px';
+    tmp.appendChild(spacer);
 
-    const total = document.createElement('div');
-    total.className = 'pdf-total';
-    total.textContent = (typeof b.total === 'number') ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
-
-    const listWrap = document.createElement('div');
-    listWrap.className = 'pdf-list';
-    const hList = document.createElement('div');
-    hList.textContent = 'רשימת קניות';
-    hList.style.fontWeight = '800';
-    hList.style.marginBottom = '8px';
-
-    // ריווח של “3 שורות” אחרי הראש כדי לא לדרוס לוגו
-    listWrap.style.marginTop = '18px';
-
+    // <ol> ממוספר RTL, כל פריט בשורה נפרדת
     const ol = document.createElement('ol');
-    const list = Array.isArray(b.breakdown) ? b.breakdown : [];
-    let i = 1;
-    for (const it of list){
-      const name = (it.item || it.product_name || '').trim();
-      if (!name) continue;
-      const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
-      const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
+    ol.style.margin = '0';
+    ol.style.paddingInlineStart = '20px'; // קצת רווח אחרי המספרים
+    ol.style.fontSize = '13px';
+    ol.style.lineHeight = '1.7';
+    ol.dir = 'rtl';
+
+    userItems.forEach((it) => {
       const li = document.createElement('li');
-      li.textContent = `${name} — ${price}${est}`;
+      li.textContent = String(it);
       ol.appendChild(li);
-      i++;
-    }
+    });
+    tmp.appendChild(ol);
 
-    listWrap.appendChild(hList);
-    listWrap.appendChild(ol);
-
-    card.appendChild(head);
-    card.appendChild(total);
-    card.appendChild(listWrap);
-    root.appendChild(card);
-
-    // רינדור ל-PDF עם RTL תקין
-    await doc.html(card, {
-      x: 40,
-      y: 40,
-      width: 515,      // ~595-2*40
-      windowWidth: 800,
-      html2canvas: { scale: 2, useCORS: true }
+    // הפעלה: doc.html (רינדור ל-canvas → תמונה → PDF), ואז פתיחה בטאב חדש
+    await doc.html(tmp, {
+      x: 20, y: 20, // שוליים
+      html2canvas: { useCORS: true, scale: 2, backgroundColor: '#ffffff' }
     });
 
-    const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
-    doc.save(fname);
+    const blobUrl = doc.output('bloburl');
+    window.open(blobUrl, '_blank', 'noopener'); // טאב חדש
   }
 
 });
