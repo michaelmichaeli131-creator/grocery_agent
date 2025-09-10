@@ -180,7 +180,7 @@ a{color:#9ecbff;text-decoration:none}
   text-decoration:none;
 }
 .btn-action:hover{ border-color:#3b82f6; }
-.btn-action svg{ width:18px; height:18px; display:inline-block; }
+.btn-action img{ width:20px; height:20px; display:inline-block; }
 
 /* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
@@ -394,16 +394,15 @@ function getBotSVG(sz=42){
   return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px;background:#0b1220"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="url(#lg)"><rect x="14" y="18" rx="10" ry="10" width="36" height="26"/><circle cx="24" cy="30" r="3" fill="#fff"/><circle cx="40" cy="30" r="3" fill="#fff"/><rect x="22" y="40" width="20" height="4" rx="2"/></g></svg>';
 }
 
-/* לוגו Waze אמיתי (SVG inline) */
-function wazeSVG(){
-  return `
-  <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
-    <path fill="#00AEEF" d="M24 6c9.39 0 17 6.72 17 15 0 6.03-3.94 10.94-9.79 13.1-.64 2.3-2.73 3.9-5.21 3.9-2.31 0-4.29-1.36-5.04-3.26-1.35.16-2.74.26-4.16.26-5.38 0-9.52-1.2-11.8-3.47C2.21 29.62 2 27.52 2 26.5c0-1.2.98-2.17 2.18-2.17 1.1 0 2.03.83 2.15 1.9.23 2.06 1.51 3.73 3.3 4.9C9.23 29.96 9 28.72 9 27.5 9 16.52 15.95 6 24 6Z"/>
-    <circle cx="30" cy="22" r="3" fill="#000"/>
-    <circle cx="19" cy="22" r="3" fill="#000"/>
-    <path fill="#000" d="M28.5 33.5a1.5 1.5 0 0 1 3 0v1a1.5 1.5 0 0 1-3 0v-1Zm-6 0a1.5 1.5 0 0 1 3 0v1a1.5 1.5 0 0 1-3 0v-1Z"/>
-  </svg>`;
-}
+/* לוגו Waze — תמונת SVG כ-data URI (נראה תמיד) */
+const WAZE_DATA_URI = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+ <path fill="#00AEEF" d="M128 32c50.7 0 92 36.3 92 81 0 33.2-21.3 60.2-52.9 72.1-3.2 12.6-15.1 21.9-29 21.9-12.8 0-23.7-7.6-27.8-18.3a248 248 0 0 1-22.9 1c-29.7 0-52.4-6.6-65-19-8.3-8.2-9.6-18.6-9.6-24.7 0-6.3 5.2-11.4 11.5-11.4 5.8 0 10.7 4.4 11.3 10.1 1.2 11 8 20 17.9 26.3-2.7-6.4-4.3-13.5-4.3-20.9 0-45.7 41.4-89.1 78.8-89.1Z"/>
+ <circle cx="156" cy="118" r="12" fill="#000"/>
+ <circle cx="104" cy="118" r="12" fill="#000"/>
+ <rect x="136" y="170" width="18" height="26" rx="9" fill="#000"/>
+ <rect x="106" y="170" width="18" height="26" rx="9" fill="#000"/>
+</svg>`);
 
 document.addEventListener('DOMContentLoaded', () => {
   // מסכים: 0=s0, 1=s2, 2=s3, 3=s4, 4=s5
@@ -614,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      wireActions(baskets); // ← Waze + PDF פעם אחת מתחת למפה
+      wireActions(baskets); // Waze + PDF
       cta.classList.remove('show');
     }catch(err){
       hideLoading();
@@ -645,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div class="actions">
           <a class="btn-action" data-waze="${idx}" href="#">
-            ${wazeSVG()} נווט ב-Waze
+            <img src="${WAZE_DATA_URI}" alt="Waze"> נווט ב-Waze
           </a>
           <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
         </div>
@@ -654,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </details>`;
   }
 
-  // NEW: "מחיר מוערך" (client side)
+  // "מחיר מוערך"
   function renderLine(p){
     const price = (p.price==null || Number.isNaN(p.price)) ? '—' : toPrice(p.price,'₪');
     const isEstimated = !!p.estimated || (typeof p.confidence_pct === 'number' && p.confidence_pct <= 50) || /מוערך|estimated/i.test(p.description||'');
@@ -755,12 +754,17 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading();
   }
 
-  /* ===== PDF (עברית, ממוספר, לוגו GIF, שם חנות) ===== */
+  /* ===== PDF (עברית, RTL, רווח לפני רשימה, לוגו GIF, שם חנות) ===== */
+  // עטיפת RTL: סימני כיווניות כדי שהאותיות לא יתהפכו
+  const RLE = '\u202B', PDFm = '\u202C';
+  const RLM = '\u200F';
+  function rtlWrap(s){ return RLE + (s||'') + PDFm; }
+  function rtlText(doc, s, x, y, opts){ doc.text(rtlWrap(String(s)), x, y, { ...opts, align:'right' }); }
+
   async function ensureHebrewFont(doc){
     async function loadFont(path){
       const res = await fetch(path);
       const buf = await res.arrayBuffer();
-      // המרה ל-base64 (chunked למנוע עומס)
       let binary = '';
       const bytes = new Uint8Array(buf);
       const chunk = 0x8000;
@@ -809,28 +813,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineH = 22;
     let y = margin;
 
-    // לוגו — מנסה את ה-GIF של הרובוט (יומר אוטומטית לתמונה)
+    // לוגו — GIF רובוט (ואם לא, PNG חלופי)
     const logo = await loadImageAsDataURL('ai_giff4.gif') || await loadImageAsDataURL('ai_logo.png');
     if (logo){
       try { doc.addImage(logo, 'PNG', 595 - margin - 42, y-6, 36, 36); } catch {}
     }
 
-    doc.setFont('Rubik','bold'); doc.setFontSize(18);
-    doc.text('AI BASKET', 595 - margin - 48, y+10, { align: 'right' });
+    // כותרת
+    try{ doc.setFont('Rubik','bold'); }catch{}
+    doc.setFontSize(18);
+    rtlText(doc, 'AI BASKET', 595 - margin - 48, y+10, {});
     y += 32;
 
     // שם החנות + כתובת + סה"כ
-    doc.setFont('Rubik','normal'); doc.setFontSize(14);
-    const title = `${b.shop_display_name || b.chain || ''}`;
+    try{ doc.setFont('Rubik','normal'); }catch{}
+    doc.setFontSize(14);
+    const title = (b.shop_display_name || b.chain || '');
     const addr  = b?.location?.address ? ` • ${b.location.address}` : '';
-    doc.text(`${title}${addr}`, 595 - margin, y, { align: 'right' }); y += 18;
-    const totalTxt = typeof b.total === 'number' ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
-    doc.text(totalTxt, 595 - margin, y, { align: 'right' }); y += 26;
+    rtlText(doc, `${title}${addr}`, 595 - margin, y, {}); y += 18;
+    const totalTxt = (typeof b.total === 'number') ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
+    rtlText(doc, totalTxt, 595 - margin, y, {}); y += 26;
 
-    // רשימה ממוספרת
-    doc.setFont('Rubik','bold'); doc.setFontSize(16);
-    doc.text('רשימת קניות', 595 - margin, y, { align: 'right' }); y += 18;
-    doc.setFont('Rubik','normal'); doc.setFontSize(13);
+    // כותרת רשימה
+    try{ doc.setFont('Rubik','bold'); }catch{}
+    doc.setFontSize(16);
+    rtlText(doc, 'רשימת קניות', 595 - margin, y, {}); 
+    y += 18;
+
+    // *** רווח של 3 שורות לפני פריטים כדי לא לגעת בלוגו ***
+    y += 3 * lineH;
+
+    // פריטים ממוספרים
+    try{ doc.setFont('Rubik','normal'); }catch{}
+    doc.setFontSize(13);
 
     const list = Array.isArray(b.breakdown) ? b.breakdown : [];
     let i = 1;
@@ -840,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
       const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
       const line = `${i}. ${name} — ${price}${est}`;
-      doc.text(line, 595 - margin, y, { align: 'right' });
+      rtlText(doc, line, 595 - margin, y, {});
       y += lineH; i++;
       if (y > 842 - margin){
         doc.addPage(); y = margin;
