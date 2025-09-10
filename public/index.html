@@ -4,16 +4,23 @@
 <meta charset="utf-8" />
 <title>AI Basket — השוואת סל קניות AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin="anonymous" />
 
 <style>
+/* ========== THEME ========== */
 :root{
   --ink:#e2e8f0; --muted:#9fb0c8; --brand:#3b82f6; --accent:#22d3ee;
   --bg: radial-gradient(120% 100% at 50% -10%, #0f172a 0%, #020617 60%);
   --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,.12); --shadow: 0 14px 34px rgba(0,0,0,.35);
+
   --action-width: min(86%, 366px);
   --avatar-pos-y: 50%;
-  --loader-size: 168px; --loader-zoom: 1.0;
+
+  /* Loader circle size + zoom */
+  --loader-size: 168px;
+  --loader-zoom: 1.0;
 }
 
 /* בסיס */
@@ -22,64 +29,131 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 a{color:#9ecbff;text-decoration:none}
 .app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
-/* Header */
-.header{position:relative; padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between; gap:12px}
+/* ===== Header ===== */
+.header{
+  position:relative; padding:14px 16px 0;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
 .brand-name{display:flex; align-items:center; gap:10px}
 .brand-mini{display:flex; align-items:center; gap:10px; font-weight:900}
-.brand-mini .dot{ width:14px;height:14px;border-radius:50%; background:linear-gradient(135deg,#3b82f6,#22d3ee); box-shadow:0 6px 12px rgba(59,130,246,.5)}
-#backTop{order:2; margin-inline-start:8px; width:36px;height:36px;display:grid;place-items:center; border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.brand-mini .dot{
+  width:14px;height:14px;border-radius:50%;
+  background:linear-gradient(135deg,#3b82f6,#22d3ee);
+  box-shadow:0 6px 12px rgba(59,130,246,.5)
+}
+#backTop{
+  order:2;
+  margin-inline-start:8px;
+  width:36px;height:36px;display:grid;place-items:center;
+  border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer
+}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant */
-.ai-avatar{ display:none; align-items:center; gap:12px; border:2px solid var(--line); background:var(--card); border-radius:16px; padding:12px 14px; box-shadow:var(--shadow); backdrop-filter:blur(14px); margin-top:10px }
-.ai-avatar img{ width:46px;height:46px;border-radius:12px; object-fit:cover; object-position:50% var(--avatar-pos-y); background:#0b1220 }
+/* Assistant (ממסך שני ואילך) */
+.ai-avatar{
+  display:none; align-items:center; gap:12px;
+  border:2px solid var(--line); background:var(--card); border-radius:16px;
+  padding:12px 14px; box-shadow:var(--shadow); backdrop-filter:blur(14px);
+  margin-top:10px;
+}
+.ai-avatar img{
+  width:46px;height:46px;border-radius:12px;
+  object-fit:cover; object-position:50% var(--avatar-pos-y);
+  background:#0b1220;
+}
 .ai-avatar .t1{font-weight:800; line-height:1}
 .ai-avatar .t2{color:var(--muted); font-size:12px; line-height:1}
 
-/* Screens */
+/* ===== Screens ===== */
 .screen{display:none}
 .screen.active{display:block}
-.page{padding:0 16px 200px} /* ריווח גדול כדי שכפתור המשך לא יכסה טקסט */
-.box{ background:var(--card);border-radius:22px;box-shadow:var(--shadow); padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px) }
+.page{padding:0 16px 180px} /* ← ריפוד תחתון כדי שה-CTA לא יסתיר תוכן */
+.box{
+  background:var(--card);border-radius:22px;box-shadow:var(--shadow);
+  padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)
+}
 .muted{color:var(--muted)}
 .input{display:flex;flex-direction:column;gap:8px}
-.input input,.input textarea{ width:100%;padding:14px;border-radius:16px;border:1px solid var(--line); outline:none;background:rgba(255,255,255,.04);color:#fff }
+.input input,.input textarea{
+  width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);
+  outline:none;background:rgba(255,255,255,.04);color:#fff
+}
 .input input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25)}
 .radius-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn-chip{border:1px solid var(--line);border-radius:999px;padding:12px 14px;background:rgba(59,130,246,.08);color:#cfe2ff;font-weight:800;cursor:pointer}
 .btn-chip:hover{border-color:#3b82f6}
 
-/* Splash */
-.splash{ min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px }
-.avatar-wrap{ position:relative; width:min(70vw,280px); height:min(70vw,280px); display:grid; place-items:center; border-radius:50%; isolation:isolate }
-.avatar-ring{ position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(from 180deg, #3b82f6, #22d3ee, #3b82f6); filter:saturate(120%); mask: radial-gradient(closest-side, transparent 74%, black 78%); animation:ringBlink 2.4s ease-in-out infinite }
-@keyframes ringBlink{ 0%,100%{opacity:.55; filter:saturate(110%) blur(.2px)} 50%{opacity:.95; filter:saturate(130%) blur(.4px)} }
-.pulse,.pulse2{ position:absolute; inset:-10px; border-radius:50%; pointer-events:none; mix-blend-mode:screen;
-  background:radial-gradient(circle at 50% 50%, rgba(59,130,246,.35), rgba(34,211,238,.15) 45%, transparent 70%); filter:blur(12px) }
-.pulse{animation:pulse 2.2s ease-in-out infinite} .pulse2{animation:pulse 2.2s ease-in-out infinite .9s}
-@keyframes pulse{ 0%{transform:scale(.9); opacity:.5} 50%{transform:scale(1.05); opacity:.88} 100%{transform:scale(.9); opacity:.5} }
-.avatar{ width:100%; height:100%; border-radius:50%; overflow:hidden; position:relative; box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.07); background:#0b1220 }
-.avatar img{ width:100%; height:100%; display:block; object-fit:cover; object-position: 50% var(--avatar-pos-y) }
+/* ===== Splash ===== */
+.splash{
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px
+}
+.avatar-wrap{
+  position:relative; width:min(70vw,280px); height:min(70vw,280px);
+  display:grid; place-items:center; border-radius:50%; isolation:isolate;
+}
+.avatar-ring{
+  position:absolute; inset:-4px; border-radius:50%;
+  background:conic-gradient(from 180deg, #3b82f6, #22d3ee, #3b82f6);
+  filter:saturate(120%);
+  mask: radial-gradient(closest-side, transparent 74%, black 78%);
+  animation:ringBlink 2.4s ease-in-out infinite;
+}
+@keyframes ringBlink{
+  0%,100%{opacity:.55; filter:saturate(110%) blur(.2px)}
+  50%{opacity:.95; filter:saturate(130%) blur(.4px)}
+}
+.pulse, .pulse2{
+  position:absolute; inset:-10px; border-radius:50%;
+  pointer-events:none; mix-blend-mode:screen;
+  background:radial-gradient(circle at 50% 50%, rgba(59,130,246,.35), rgba(34,211,238,.15) 45%, transparent 70%);
+  filter:blur(12px);
+}
+.pulse{animation:pulse 2.2s ease-in-out infinite}
+.pulse2{animation:pulse 2.2s ease-in-out infinite .9s}
+@keyframes pulse{
+  0%{transform:scale(.9); opacity:.5}
+  50%{transform:scale(1.05); opacity:.88}
+  100%{transform:scale(.9); opacity:.5}
+}
+.avatar{
+  width:100%; height:100%; border-radius:50%; overflow:hidden; position:relative;
+  box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.07);
+  background:#0b1220;
+}
+.avatar img{
+  width:100%; height:100%; display:block; object-fit:cover;
+  object-position: 50% var(--avatar-pos-y);
+}
 .splash h1{margin:16px 0 6px; font-size:22px}
 .splash p{margin:0 0 14px; color:#9fb0c8}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
 /* GPS + Swipe */
-.gps-big{ margin-top:12px; width:var(--action-width); display:inline-flex; align-items:center; justify-content:center; gap:12px; padding:14px 20px; border-radius:18px; cursor:pointer; background:linear-gradient(135deg,#2a3867,#1f2a4d); color:#eaf0ff; border:1px solid #425397; font-weight:900; box-shadow:0 12px 28px rgba(0,0,0,.45), inset 0 1px 0 #ffffff22 }
+.gps-big{
+  margin-top:12px; width:var(--action-width);
+  display:inline-flex; align-items:center; justify-content:center; gap:12px;
+  padding:14px 20px; border-radius:18px; cursor:pointer;
+  background:linear-gradient(135deg,#2a3867,#1f2a4d); color:#eaf0ff;
+  border:1px solid #425397; font-weight:900; box-shadow:0 12px 28px rgba(0,0,0,.45), inset 0 1px 0 #ffffff22;
+}
 .gps-big svg{width:26px;height:26px}
 .swipe-wrap{ margin-top:14px; border-radius:16px; padding:12px; color:#bfe0ff; width:var(--action-width) }
 .swipe-track{ position:relative; height:48px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:999px; overflow:hidden }
 .swipe-ghost{position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(59,130,246,.12), transparent); animation:slide 2.4s linear infinite}
 @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 .swipe-hint{font-size:12px; color:#9fb0c8; margin-top:6px}
-.knob{ position:absolute; top:4px; inset-inline-end:6px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:linear-gradient(135deg,#3b82f6,#22d3ee); color:#06151d; font-weight:900; box-shadow:0 10px 24px rgba(59,130,246,.4); touch-action:none; user-select:none; cursor:grab }
+.knob{
+  position:absolute; top:4px; inset-inline-end:6px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center;
+  background:linear-gradient(135deg,#3b82f6,#22d3ee); color:#06151d; font-weight:900; box-shadow:0 10px 24px rgba(59,130,246,.4);
+  touch-action:none; user-select:none; cursor:grab;
+}
 .knob:active{cursor:grabbing}
 .knob svg{width:18px;height:18px;fill:#06151d}
 .progress{position:absolute; inset:0; background:linear-gradient(90deg, rgba(59,130,246,.25), rgba(34,211,238,.2)); transform-origin:right; transform:scaleX(0)}
 
-/* Results */
+/* ===== Results styling ===== */
 .row{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .row+.row{margin-top:10px}.total{font-size:18px;font-weight:900}
 .small{font-size:12px} .desc{color:#b6c3d8;font-size:12px}
@@ -89,13 +163,23 @@ a{color:#9ecbff;text-decoration:none}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
 /* תג "מחיר מוערך" */
-.pill-est{ display:inline-block;padding:4px 8px;border-radius:999px; background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800; border:1px solid rgba(234,179,8,.35) }
+.pill-est{
+  display:inline-block;padding:4px 8px;border-radius:999px;
+  background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800;
+  border:1px solid rgba(234,179,8,.35);
+}
 
 /* פעולות מתחת למפה */
-.actions{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap }
-.btn-action{ display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer }
-.btn-action:hover{ border-color:#3b82f6 }
-.btn-action img{ width:18px; height:18px; display:inline-block }
+.actions{
+  display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;
+}
+.btn-action{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--line); background:rgba(255,255,255,.04);
+  color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+}
+.btn-action:hover{ border-color:#3b82f6; }
+.btn-action img{ width:18px; height:18px; display:inline-block; }
 
 /* Chips / Autocomplete */
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
@@ -110,21 +194,67 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* CTA */
-.cta{ position:fixed; inset:0; display:none; align-items:flex-end; justify-content:center; pointer-events:none; padding-bottom:16px }
-.cta.show{ display:flex }
-.cta .inner{ pointer-events:auto }
-.btn{ appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer; box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22; letter-spacing:.3px; font-size:18px; }
-.btn-primary{ background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6); color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px }
-.btn-primary .spark{ width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent); box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite }
+/* ===== CTA ===== */
+.cta{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; pointer-events:none; }
+.cta.show{ display:flex; }
+.cta .inner{ pointer-events:auto; }
+.btn{
+  appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
+  box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
+  letter-spacing:.3px; font-size:18px;
+}
+.btn-primary{
+  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
+  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn-primary .spark{
+  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
+  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
+}
 @keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
 
-/* Loader */
+/* ===== Loader Results (GIF עגול) ===== */
 #loading{display:none;margin-top:12px;text-align:center}
-.loading-circle{ width: var(--loader-size); height: var(--loader-size); margin: 12px auto 6px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(255,255,255,.12); box-shadow: 0 10px 28px rgba(59,130,246,.25), inset 0 0 0 1px rgba(255,255,255,.06);
-  background: radial-gradient(60% 60% at 50% 50%, #0b1220 0%, #08101f 60%, transparent 100%) }
-.loading-circle img{ width: 100%; height: 100%; object-fit: cover; transform: scale(var(--loader-zoom)); transform-origin: center; display: block; image-rendering: -webkit-optimize-contrast }
+.loading-circle{
+  width: var(--loader-size);
+  height: var(--loader-size);
+  margin: 12px auto 6px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 28px rgba(59,130,246,.25), inset 0 0 0 1px rgba(255,255,255,.06);
+  background: radial-gradient(60% 60% at 50% 50%, #0b1220 0%, #08101f 60%, transparent 100%);
+}
+.loading-circle img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(var(--loader-zoom));
+  transform-origin: center;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+}
 #loading .msg{color:#bcd3ff;margin-top:2px}
+
+/* ===== Hidden PDF template ===== */
+#pdf-root{ position:fixed; inset:-9999px; width:0; height:0; overflow:hidden; }
+.pdf-card{
+  direction: rtl; font-family: "Rubik", Arial, sans-serif;
+  color:#111; width:750px; padding:28px; box-sizing:border-box;
+}
+.pdf-head{
+  display:flex; flex-direction:row-reverse; align-items:center; justify-content:space-between; gap:12px;
+  border-bottom:1px solid #e5e7eb; padding-bottom:10px; margin-bottom:12px;
+}
+.pdf-title{
+  font-weight:800; font-size:20px; color:#111; display:flex; flex-direction:row-reverse; align-items:center; gap:8px;
+}
+.pdf-sub{ color:#374151; font-size:13px; }
+.pdf-logo{ width:28px; height:28px; border-radius:6px; object-fit:cover; }
+.pdf-total{ font-size:14px; font-weight:700; color:#111; margin-bottom:8px; }
+.pdf-list{ margin-top:18px; }
+.pdf-list ol{ margin:0; padding:0 24px 0 0; }
+.pdf-list li{ margin:8px 0; font-size:13px; }
 </style>
 </head>
 
@@ -249,6 +379,7 @@ a{color:#9ecbff;text-decoration:none}
         </div>
         <div id="summary" class="muted" style="margin-top:6px"></div>
 
+        <!-- Loader GIF -->
         <div id="loading" aria-live="polite">
           <div class="loading-circle">
             <img id="loadingGif" src="ai_loading.gif" alt="טוען תוצאות..." />
@@ -273,7 +404,11 @@ a{color:#9ecbff;text-decoration:none}
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<!-- jsPDF -->
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
+<!-- Hidden PDF container -->
+<div id="pdf-root" aria-hidden="true"></div>
 
 <script>
 function getBotSVG(sz=42){
@@ -296,14 +431,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
   const dropdown = document.getElementById('dropdown');
-  let items = []; // ריק כברירת מחדל
+  let items = []; // ← ריק כברירת מחדל
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  // Loader GIF refresh
+  // GIF refresh
   let loaderLoopTimer = null;
   const GIF_REFRESH_MS = 4000;
   function startGifLoop(){
@@ -314,7 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
       loadingGif.setAttribute('src', base + '?t=' + Date.now());
     }, GIF_REFRESH_MS);
   }
-  function stopGifLoop(){ if (loaderLoopTimer){ clearInterval(loaderLoopTimer); loaderLoopTimer = null; } }
+  function stopGifLoop(){
+    if (loaderLoopTimer){ clearInterval(loaderLoopTimer); loaderLoopTimer = null; }
+  }
   function showLoading(){ loadingEl.style.display = 'block'; resultsEl.innerHTML = ''; startGifLoop(); }
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
@@ -331,13 +468,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Back
   backTop.addEventListener('click', ()=>{ if(step>0) goto(step-1); });
 
-  // SWIPE
+  // SWIPE → אל Address (s2)
   const swipeTrack = document.getElementById('swipeTrack');
   const swipeKnob = document.getElementById('swipeKnob');
   const swipeProgress = document.getElementById('swipeProgress');
   initSwipeToStart(swipeTrack, swipeKnob, swipeProgress, ()=> goto(1));
 
-  // GPS
+  // GPS בספלאש
   const gpsBtn = document.getElementById('gpsBig');
   let gps = null;
   gpsBtn?.addEventListener('click', ()=>{
@@ -368,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Chips
+  // Chips UI
   function renderChips(){
     chipsEl.innerHTML = "";
     items.forEach((it,i)=>{
@@ -443,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
-  // CTA
+  // CTA “המשך”
   btnNext.addEventListener('click', ()=>{
     if(step===1){ if(!addressEl.value.trim() && !sessionStorage.getItem('gps')) return shake(addressEl); goto(2); return; }
     if(step===2){ if(!radiusEl.value) return shake(radiusEl); goto(3); return; }
@@ -457,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(step<screens.length-1) return goto(step+1);
   });
 
-  /* ====== API ====== */
+  /* ====== קריאה לשרת והצגת תוצאות ====== */
   let lastBaskets = [];
   async function fetchPlan(){
     let gps = null;
@@ -486,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      wireActions(baskets);
+      wireActions(baskets); // ← Waze + PDF
       cta.classList.remove('show');
     }catch(err){
       hideLoading();
@@ -516,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div class="actions">
-          <a class="btn-action" data-waze="${idx}" href="#"><img src="waze.png" alt="Waze">נווט ב-Waze</a>
+          <a class="btn-action" data-waze="${idx}" href="#"><img src="waze.png" alt="Waze"> נווט ב-Waze</a>
           <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
         </div>
         <div style="height:8px"></div>
@@ -590,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(url, '_blank', 'noopener');
       });
     });
-    // PDF
+    // PDF per basket
     document.querySelectorAll('[data-pdf]').forEach(btn=>{
       btn.addEventListener('click', async ()=>{
         const idx = Number(btn.getAttribute('data-pdf'));
@@ -605,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Utils
   function shake(el){ el.style.borderColor='#3b82f6'; el.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:260}); setTimeout(()=>el.style.borderColor='var(--line)',320); }
-  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
+  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;","&gt;":">","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
   function escAttr(s){return String(s??'').replace(/"/g,'&quot;')}
   function toPrice(v, currency){
     if (typeof v === "number") return v.toFixed(2)+" "+currency;
@@ -623,71 +760,56 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading();
   }
 
-  /* ===== PDF (עברית, ממוספר, לוגו רובוט קטן, שם חנות) ===== */
-  async function ensureHebrewFont(doc){
-    async function loadFont(path){
-      const res = await fetch(path);
-      const buf = await res.arrayBuffer();
-      let binary = ''; const bytes = new Uint8Array(buf); const chunk = 0x8000;
-      for (let i=0; i<bytes.length; i+=chunk){ binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk)); }
-      return btoa(binary);
-    }
-    if (!doc.__hebrewLoaded){
-      const regularB64 = await loadFont('/fonts/Rubik-Regular.ttf');
-      doc.addFileToVFS('Rubik-Regular.ttf', regularB64);
-      doc.addFont('Rubik-Regular.ttf', 'Rubik', 'normal');
-      try {
-        const boldB64 = await loadFont('/fonts/Rubik-Bold.ttf');
-        doc.addFileToVFS('Rubik-Bold.ttf', boldB64);
-        doc.addFont('Rubik-Bold.ttf', 'Rubik', 'bold');
-      } catch {}
-      doc.__hebrewLoaded = true;
-    }
-    doc.setFont('Rubik', 'normal');
-  }
-
-  async function loadImageAsDataURL(path){
-    try{
-      const res = await fetch(path);
-      const blob = await res.blob();
-      return await new Promise((resolve,reject)=>{
-        const fr = new FileReader();
-        fr.onload = () => resolve(fr.result);
-        fr.onerror = reject;
-        fr.readAsDataURL(blob);
-      });
-    }catch{ return null; }
-  }
-
+  /* ===== PDF (RTL תקין + לוגו קטן + רשימה ממוספרת) ===== */
   async function generatePdfForBasket(b){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit:'pt', format:'a4' });
-    await ensureHebrewFont(doc);
 
-    const W = 595; const H = 842;
-    const margin = 54; const lineH = 22;
-    let y = margin;
+    // נבנה HTML RTL נסתר ונרנדר אותו ל-PDF כדי לשמור על כיוון אותיות נכון
+    const root = document.getElementById('pdf-root');
+    root.innerHTML = ""; // נקה קודם
 
-    // לוגו רובוט קטן ליד הכותרת (PNG קטן, לא GIF)
-    const logo = await loadImageAsDataURL('ai_logo.png');
-    doc.setFont('Rubik','bold'); doc.setFontSize(18);
-    // כותרת "AI BASKET" + לוגו קטן מימין
-    const titleX = W - margin - 48;
-    doc.text('AI BASKET', titleX, y+12, { align: 'right', isInputRtl: true });
-    if (logo){ try { doc.addImage(logo, 'PNG', W - margin - 24, y-6, 20, 20); } catch {} }
-    y += 32;
+    const card = document.createElement('div');
+    card.className = 'pdf-card';
 
-    doc.setFont('Rubik','normal'); doc.setFontSize(14);
-    const storeLine = `${b.shop_display_name || b.chain || ''}${b?.location?.address ? ' • ' + b.location.address : ''}`;
-    doc.text(storeLine, W - margin, y, { align: 'right', isInputRtl: true }); y += 18;
+    const head = document.createElement('div');
+    head.className = 'pdf-head';
 
-    const totalTxt = typeof b.total === 'number' ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
-    doc.text(totalTxt, W - margin, y, { align: 'right', isInputRtl: true }); y += 26;
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'pdf-title';
+    const logo = document.createElement('img');
+    logo.src = 'ai_logo.png';            // ← תמונת לוגו (PNG קטנה) ליד הכותרת
+    logo.className = 'pdf-logo';
 
-    doc.setFont('Rubik','bold'); doc.setFontSize(16);
-    doc.text('רשימת קניות', W - margin, y, { align: 'right', isInputRtl: true }); y += (lineH * 3); // ↓↓ מרווח 3 שורות כדי לא לגעת בלוגו
-    doc.setFont('Rubik','normal'); doc.setFontSize(13);
+    const title = document.createElement('span');
+    title.textContent = 'AI BASKET';
 
+    titleWrap.appendChild(logo);
+    titleWrap.appendChild(title);
+
+    const sub = document.createElement('div');
+    sub.className = 'pdf-sub';
+    const addr = b?.location?.address ? ` • ${b.location.address}` : '';
+    sub.textContent = `${b.shop_display_name || b.chain || ''}${addr}`;
+
+    head.appendChild(titleWrap);
+    head.appendChild(sub);
+
+    const total = document.createElement('div');
+    total.className = 'pdf-total';
+    total.textContent = (typeof b.total === 'number') ? `סה״כ: ${b.total.toFixed(2)} ₪` : 'סה״כ: —';
+
+    const listWrap = document.createElement('div');
+    listWrap.className = 'pdf-list';
+    const hList = document.createElement('div');
+    hList.textContent = 'רשימת קניות';
+    hList.style.fontWeight = '800';
+    hList.style.marginBottom = '8px';
+
+    // ריווח של “3 שורות” אחרי הראש כדי לא לדרוס לוגו
+    listWrap.style.marginTop = '18px';
+
+    const ol = document.createElement('ol');
     const list = Array.isArray(b.breakdown) ? b.breakdown : [];
     let i = 1;
     for (const it of list){
@@ -695,13 +817,28 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!name) continue;
       const price = (typeof it.price === 'number') ? `${it.price.toFixed(2)} ₪` : '—';
       const est = (it.estimated || (typeof it.confidence_pct==='number' && it.confidence_pct<=50)) ? ' (מוערך)' : '';
-      const line = `${i}. ${name} — ${price}${est}`;
-      doc.text(line, W - margin, y, { align: 'right', isInputRtl: true }); // RTL נכון
-      y += lineH; i++;
-      if (y > H - margin){
-        doc.addPage(); y = margin; await ensureHebrewFont(doc);
-      }
+      const li = document.createElement('li');
+      li.textContent = `${name} — ${price}${est}`;
+      ol.appendChild(li);
+      i++;
     }
+
+    listWrap.appendChild(hList);
+    listWrap.appendChild(ol);
+
+    card.appendChild(head);
+    card.appendChild(total);
+    card.appendChild(listWrap);
+    root.appendChild(card);
+
+    // רינדור ל-PDF עם RTL תקין
+    await doc.html(card, {
+      x: 40,
+      y: 40,
+      width: 515,      // ~595-2*40
+      windowWidth: 800,
+      html2canvas: { scale: 2, useCORS: true }
+    });
 
     const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
     doc.save(fname);
@@ -709,10 +846,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-/* Swipe RTL */
+/* Swipe to start: גרירה RTL */
 function initSwipeToStart(track, knob, progressEl, onComplete){
   if(!track || !knob) return;
-  const rtl = true; let startX=0, curX=0, dragging=false;
+  const rtl = true; // RTL UI
+  let startX=0, curX=0, dragging=false;
   const trackRect = ()=> track.getBoundingClientRect();
   const knobRect  = ()=> knob.getBoundingClientRect();
 
@@ -721,23 +859,37 @@ function initSwipeToStart(track, knob, progressEl, onComplete){
     progressEl.style.transform = 'scaleX('+(rtl ? (1-p) : p)+')';
     knob.style.insetInlineEnd = (6 + (1-p) * (trackRect().width - knobRect().width - 12))+'px';
   }
-  setProgress(0);
+  setProgress(0); // initial
 
-  function onStart(e){ dragging=true; startX = (e.touches? e.touches[0].clientX : e.clientX); curX = startX; e.preventDefault(); }
+  function onStart(e){
+    dragging=true;
+    startX = (e.touches? e.touches[0].clientX : e.clientX);
+    curX = startX;
+    e.preventDefault();
+  }
   function onMove(e){
     if(!dragging) return;
     curX = (e.touches? e.touches[0].clientX : e.clientX);
-    const dx = startX - curX;
+    const dx = startX - curX; // swipe right->left gives positive dx
     const maxDx = Math.max(120, trackRect().width - knobRect().width - 12);
     const p = Math.max(0, Math.min(1, dx / maxDx));
     setProgress(p);
   }
   function onEnd(){
-    if(!dragging) return; dragging=false;
+    if(!dragging) return;
+    dragging=false;
     const endRight = parseFloat(getComputedStyle(knob).insetInlineEnd);
     const p = 1 - (endRight - 6) / (trackRect().width - knobRect().width - 12);
-    if(p >= 0.85){ track.style.pointerEvents='none'; knob.style.transition='transform .25s ease'; knob.style.transform='scale(.9)'; setTimeout(onComplete, 120); }
-    else{ knob.style.transition='inset-inline-end .25s ease'; setProgress(0); setTimeout(()=> knob.style.transition='', 260); }
+    if(p >= 0.85){
+      track.style.pointerEvents='none';
+      knob.style.transition='transform .25s ease';
+      knob.style.transform='scale(.9)';
+      setTimeout(onComplete, 120);
+    }else{
+      knob.style.transition='inset-inline-end .25s ease';
+      setProgress(0);
+      setTimeout(()=> knob.style.transition='', 260);
+    }
   }
   knob.addEventListener('mousedown', onStart);
   knob.addEventListener('touchstart', onStart, {passive:false});
