@@ -7,9 +7,6 @@
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin="anonymous" />
-<!-- html2canvas + jsPDF (ליצוא PDF בלי דף ריק) -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
 /* ========== THEME ========== */
@@ -20,6 +17,8 @@
 
   --action-width: min(86%, 366px);
   --avatar-pos-y: 50%;
+
+  /* Loader circle size + zoom */
   --loader-size: 168px;
   --loader-zoom: 1.0;
 }
@@ -51,7 +50,7 @@ a{color:#9ecbff;text-decoration:none}
 #backTop svg{width:18px;height:18px;fill:#cbd5e1}
 #backTop:hover{border-color:#3b82f6}
 
-/* Assistant */
+/* Assistant (ממסך שני ואילך) */
 .ai-avatar{
   display:none; align-items:center; gap:12px;
   border:2px solid var(--line); background:var(--card); border-radius:16px;
@@ -69,9 +68,8 @@ a{color:#9ecbff;text-decoration:none}
 /* ===== Screens ===== */
 .screen{display:none}
 .screen.active{display:block}
-/* padding תחתון גדול כשה-CTA מוצג כדי שלא יסתיר תוכן */
 .page{padding:0 16px 120px}
-.page.with-cta{padding-bottom:180px}
+.page.pad-bottom{padding-bottom:180px} /* כש-CTA גלוי שלא יכסה את הטקסט */
 .box{
   background:var(--card);border-radius:22px;box-shadow:var(--shadow);
   padding:16px;border:1px solid var(--line);backdrop-filter:blur(14px)
@@ -97,7 +95,7 @@ a{color:#9ecbff;text-decoration:none}
 }
 .avatar-ring{
   position:absolute; inset:-4px; border-radius:50%;
-  background:conic-gradient(from 180deg, #3b82f6,#22d3ee,#3b82f6);
+  background:conic-gradient(from 180deg, #3b82f6, #22d3ee,#3b82f6);
   filter:saturate(120%);
   mask: radial-gradient(closest-side, transparent 74%, black 78%);
   animation:ringBlink 2.4s ease-in-out infinite;
@@ -129,6 +127,7 @@ a{color:#9ecbff;text-decoration:none}
   object-position: 50% var(--avatar-pos-y);
 }
 .splash h1{margin:16px 0 6px; font-size:22px}
+.splash p{margin:0 0 14px; color:#9fb0c8}
 .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
 .badge{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-weight:700}
 
@@ -164,14 +163,14 @@ a{color:#9ecbff;text-decoration:none}
 .unit{font-size:12px;color:#93c5fd;font-weight:800}
 .map{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-top:10px;overflow:hidden}
 
-/* תג "מחיר מוערך" */
+/* NEW: תג "מחיר מוערך" */
 .pill-est{
   display:inline-block;padding:4px 8px;border-radius:999px;
   background:rgba(234,179,8,.15); color:#fde68a; font-size:12px; font-weight:800;
   border:1px solid rgba(234,179,8,.35);
 }
 
-/* פעולות מתחת למפה */
+/* NEW: פעולות מתחת למפה */
 .actions{
   display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;
 }
@@ -179,6 +178,7 @@ a{color:#9ecbff;text-decoration:none}
   display:inline-flex; align-items:center; gap:8px;
   border:1px solid var(--line); background:rgba(255,255,255,.04);
   color:#e5f0ff; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  text-decoration:none;
 }
 .btn-action:hover{ border-color:#3b82f6; }
 .btn-action img{ width:18px; height:18px; display:inline-block; }
@@ -196,20 +196,24 @@ a{color:#9ecbff;text-decoration:none}
 .opt .label{font-weight:700}
 .opt .meta{color:#9fb0c8;font-size:12px}
 
-/* ===== CTA (תוקן: למטה ולא מכסה תוכן) ===== */
-.cta{
-  position:fixed; left:0; right:0; bottom:12px;
-  display:none; align-items:center; justify-content:center; pointer-events:none;
-  z-index:50;
-}
+/* ===== CTA ===== */
+.cta{ position:fixed; left:0; right:0; bottom:12px; display:none; align-items:center; justify-content:center; pointer-events:none; z-index:20; }
 .cta.show{ display:flex; }
 .cta .inner{ pointer-events:auto; }
 .btn{
-  appearance:none;border:none;border-radius:18px;padding:14px 22px;font-weight:900;cursor:pointer;
+  appearance:none;border:none;border-radius:18px;padding:18px 28px;font-weight:900;cursor:pointer;
   box-shadow:0 14px 34px rgba(59,130,246,.35), inset 0 0 0 1px #ffffff22;
   letter-spacing:.3px; font-size:18px;
-  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6); color:#06151d;
 }
+.btn-primary{
+  background:conic-gradient(from 0deg at 50% 50%, #3b82f6,#22d3ee,#3b82f6);
+  color:#06151d; min-width:240px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn-primary .spark{
+  width:12px; height:12px; border-radius:999px; background:radial-gradient(circle at 50% 50%, #fff, #bfe0ff 70%, transparent);
+  box-shadow:0 0 18px #bfe0ff; animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{0%{transform:scale(.8);opacity:.8}50%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:.8}}
 
 /* ===== Loader Results (GIF עגול) ===== */
 #loading{display:none;margin-top:12px;text-align:center}
@@ -371,14 +375,20 @@ a{color:#9ecbff;text-decoration:none}
   </section>
 </div>
 
-<!-- CTA (קבוע למטה ולא מכסה תוכן) -->
+<!-- CTA -->
 <div class="cta" id="cta">
   <div class="inner">
-    <button id="next" class="btn" type="button">המשך</button>
+    <button id="next" class="btn btn-primary" type="button">
+      <span class="spark" aria-hidden="true"></span>
+      המשך
+    </button>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<!-- html2canvas + jsPDF -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
 <script>
 /* Bot SVG fallback (לא חובה) */
@@ -398,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addressEl = document.getElementById('address');
   const radiusEl = document.getElementById('radius');
+  const verifiedOnlyEl = document.getElementById('verifiedOnly');
 
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
@@ -409,11 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingGif = document.getElementById('loadingGif');
   const summaryEl = document.getElementById('summary');
 
-  // עדכון padding תחתון כשה-CTA גלוי כדי שלא יכסה תוכן
-  function refreshBottomPadding(){
-    const show = cta.classList.contains('show');
-    document.querySelectorAll('.page').forEach(p=>{
-      p.classList.toggle('with-cta', show);
+  // ensure CTA padding so it won't cover content
+  function setPagesPaddingBottom(on){
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.toggle('pad-bottom', !!on);
     });
   }
 
@@ -435,8 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideLoading(){ loadingEl.style.display = 'none'; stopGifLoop(); }
 
   function syncCTA(){
-    cta.classList.toggle('show', step>=1);
-    refreshBottomPadding();
+    const show = step>=1;
+    cta.classList.toggle('show', show);
+    setPagesPaddingBottom(show);
   }
   function syncHeaderAvatar(){ aiMini.style.display = step>=1 ? 'flex' : 'none'; }
   function goto(n){
@@ -519,15 +530,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       const list = Array.isArray(data.suggestions) ? data.suggestions : [];
       if (!list.length) return hideDropdown();
-      dropdown.innerHTML = list.map((s,i)=>(
-        `<div class="opt" data-i="${i}">
+      dropdown.innerHTML = list.map((s,i)=>(`
+        <div class="opt" data-i="${i}">
           <div class="left">
             <div class="label">${esc(s.label)}</div>
             <div class="meta">${esc(s.canonical)} ${s.default_size? '• '+esc(s.default_size):''}${(s.tags||[]).includes('LocalDB')?' • מאגר מקומי':''}</div>
           </div>
           <div>${s.brand? esc(s.brand):''}</div>
-        </div>`
-      )).join('');
+        </div>`)).join('');
       dropdown.style.display = 'block';
       activeIdx = -1;
 
@@ -555,11 +565,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
   function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
 
-  // כשיש תוצאות — הסתר CTA (ואז החזר padding)
+  // כשיש תוצאות — הסתר CTA (ונשאיר padding)
   const resultsObserver = new MutationObserver(() => {
     const hasResults = resultsEl.children.length > 0 || resultsEl.textContent.trim().length > 0;
-    if (hasResults) cta.classList.remove('show');
-    refreshBottomPadding();
+    if (hasResults) cta.classList.remove('show'); // נסיר את הכפתור אחרי תוצאות
+    // padding נשאר בדפים הקודמים; לדף תוצאות כבר אין צורך כי הכפתור הוסר
+    setPagesPaddingBottom(false);
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
 
@@ -604,13 +615,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if(baskets.length===0){ resultsEl.innerHTML = row('לא נמצאו תוצאות', 'נסו להרחיב את הרדיוס או לדייק פריטים'); return; }
       resultsEl.innerHTML = baskets.map((b,i)=>renderStore(b,i)).join('');
       wireStoreMaps(baskets);
-      wireActions(baskets); // Waze + PDF (רשימת המשתמש)
+      wireActions(baskets); // Waze + PDF
       cta.classList.remove('show');
-      refreshBottomPadding();
+      setPagesPaddingBottom(false);
     }catch(err){
       hideLoading();
       resultsEl.innerHTML = row('שגיאה', 'לא ניתן להביא תוצאות כעת.');
-      refreshBottomPadding();
+      console.error(err);
     }
   }
 
@@ -636,9 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="height:8px"></div>
         <div class="map" id="map-${idx}" data-lat="${b.location?.lat??''}" data-lng="${b.location?.lng??''}"></div>
         <div class="actions">
-          <a class="btn-action" data-waze="${idx}" href="#">
-            <img src="waze.png" alt="Waze"> נווט ב-Waze
-          </a>
+          <a class="btn-action" data-waze="${idx}" href="#"><img src="waze.png" alt="Waze"> נווט ב-Waze</a>
           <button class="btn-action" data-pdf="${idx}" type="button">📄 הורד רשימת קניות</button>
         </div>
         <div style="height:8px"></div>
@@ -712,10 +721,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(url, '_blank', 'noopener');
       });
     });
-    // PDF (רשימת המשתמש — לא פירוט הרשת)
+    // PDF per basket
     document.querySelectorAll('[data-pdf]').forEach(btn=>{
       btn.addEventListener('click', async ()=>{
-        await generateShoppingListPdf(items);
+        const idx = Number(btn.getAttribute('data-pdf'));
+        const b = baskets[idx];
+        if (!b) return;
+        await generateShoppingListPdf(b);
       });
     });
   }
@@ -724,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Utils
   function shake(el){ el.style.borderColor='#3b82f6'; el.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:260}); setTimeout(()=>el.style.borderColor='var(--line)',320); }
-  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
+  function esc(s){return String(s??'').replace(/[&<>"'`=\/]/g,c=>({"&":"&amp;","<":"&lt;"," >":"&gt;","\"":"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;"}[c]))}
   function escAttr(s){return String(s??'').replace(/"/g,'&quot;')}
   function toPrice(v, currency){
     if (typeof v === "number") return v.toFixed(2)+" "+currency;
@@ -739,19 +751,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('s5').classList.add('active');
     aiMini.style.display = 'flex';
     cta.classList.add('show');
-    refreshBottomPadding();
+    setPagesPaddingBottom(true);
     showLoading();
   }
 
-  /* ===== PDF של רשימת המשתמש (בלי דף ריק) =====
-     פתרון: רנדור עם html2canvas לתמונה אחת, הוספה ל-jsPDF ב-Page אחד.
-     אין שימוש ב-doc.html (שהיה גורם לעיתים לדף ריק ראשון). */
-  async function generateShoppingListPdf(userItems){
-    if (!Array.isArray(userItems) || userItems.length===0){
-      alert('אין פריטים ברשימה.');
-      return;
-    }
-    // מיכל נסתר מחוץ למסך
+  /* ===== PDF (תמונה מ־HTML כדי לשמור עברית תקינה, עם לוגו קטן ורווח) ===== */
+  async function generateShoppingListPdf(b){
+    const items = Array.isArray(b.breakdown) ? b.breakdown : [];
+    const neat = items
+      .map((it,i)=>`${i+1}. ${(it.item || it.product_name || '').trim()} — ${typeof it.price==='number'? it.price.toFixed(2)+' ₪':'—'}${(it.estimated || (it.confidence_pct<=50))?' (מוערך)':''}`)
+      .filter(Boolean);
+
+    if (neat.length===0){ alert('אין פריטים ברשימה.'); return; }
+
+    // container offscreen
     const mount = document.createElement('div');
     mount.style.position = 'fixed';
     mount.style.left = '-10000px';
@@ -760,46 +773,65 @@ document.addEventListener('DOMContentLoaded', () => {
     mount.style.background = '#fff';
     document.body.appendChild(mount);
 
-    // תוכן ה-PDF (RTL)
     const wrap = document.createElement('div');
     wrap.style.direction = 'rtl';
     wrap.style.fontFamily = 'Arial, "Noto Sans Hebrew", "Rubik", sans-serif';
     wrap.style.padding = '32px 40px';
     wrap.style.width = '515px';
     wrap.style.color = '#111';
+    wrap.style.background = '#fff';
 
     const header = document.createElement('div');
     header.style.display = 'flex';
     header.style.alignItems = 'center';
-    header.style.gap = '10px';
+    header.style.gap = '8px';
     header.style.justifyContent = 'flex-end';
 
     const title = document.createElement('div');
     title.textContent = 'AI BASKET';
     title.style.fontWeight = '800';
-    title.style.fontSize = '20px';
+    title.style.fontSize = '18px';
 
     const logo = document.createElement('img');
-    logo.src = 'ai_logo.png';        // ודא שהקובץ קיים תקין באותה תקייה
-    logo.style.width = '24px';
-    logo.style.height = '24px';
+    logo.src = 'ai_logo.png';
+    logo.alt = 'AI Basket';
+    logo.style.width = '22px';
+    logo.style.height = '22px';
     logo.style.objectFit = 'contain';
 
     header.appendChild(title);
     header.appendChild(logo);
     wrap.appendChild(header);
 
+    // store line
+    const storeLine = document.createElement('div');
+    storeLine.style.marginTop = '6px';
+    storeLine.style.fontSize = '13px';
+    storeLine.style.textAlign = 'right';
+    storeLine.textContent = `${b.shop_display_name || b.chain || ''}${b?.location?.address ? ' • ' + b.location.address : ''}`;
+    wrap.appendChild(storeLine);
+
+    const total = document.createElement('div');
+    total.style.marginTop = '2px';
+    total.style.fontSize = '13px';
+    total.style.textAlign = 'right';
+    total.textContent = `סה״כ: ${typeof b.total==='number'? b.total.toFixed(2) : '—'} ₪`;
+    wrap.appendChild(total);
+
     const sub = document.createElement('div');
     sub.textContent = 'רשימת קניות';
-    sub.style.marginTop = '6px';
-    sub.style.fontSize = '14px';
+    sub.style.marginTop = '8px';
+    sub.style.fontSize = '15px';
     sub.style.textAlign = 'right';
+    sub.style.fontWeight = '700';
     wrap.appendChild(sub);
 
+    // spacer (3 rows)
     const spacer = document.createElement('div');
-    spacer.style.height = '36px'; // שלוש שורות רווח מתחת ללוגו
+    spacer.style.height = '36px';
     wrap.appendChild(spacer);
 
+    // ordered list, true RTL in DOM
     const ol = document.createElement('ol');
     ol.style.margin = '0';
     ol.style.paddingInlineStart = '20px';
@@ -807,20 +839,20 @@ document.addEventListener('DOMContentLoaded', () => {
     ol.style.lineHeight = '1.7';
     ol.dir = 'rtl';
 
-    userItems.forEach((it) => {
+    neat.forEach(line=>{
       const li = document.createElement('li');
-      li.textContent = String(it);
+      li.textContent = line.replace(/^\d+\.\s*/, ''); // האלגוריה תוצג דרך ol
       ol.appendChild(li);
     });
     wrap.appendChild(ol);
     mount.appendChild(wrap);
 
-    // רנדר לתמונה
+    // render → image
     const canvas = await html2canvas(wrap, { useCORS: true, scale: 2, backgroundColor: '#ffffff' });
     const imgData = canvas.toDataURL('image/png');
 
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit:'pt', format:'a4' }); // 595x842 pt
+    const pdf = new jsPDF({ unit:'pt', format:'a4' }); // 595x842
     const pageW = 595, pageH = 842;
     const margin = 20;
     const imgW = pageW - margin*2;
@@ -830,34 +862,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pdf.addImage(imgData, 'PNG', margin, y, imgW, finalH);
 
-    // === התאמה לניידים ===
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isAndroid = /Android/i.test(navigator.userAgent);
-    const filename = 'AI_BASKET_List.pdf';
+    const fname = `AI_BASKET_${(b.shop_display_name||b.chain||'store').replace(/[^\p{L}\p{N}_-]+/gu,'_')}.pdf`;
 
-    if (isIOS || isAndroid) {
-      // בניידים: או לשמור ישירות (מוריד/פותח ב־viewer המובנה),
-      // או לנווט לאותו דף blob במקום חלון חדש – זה עובר מסנן פופאפים.
-      try {
-        pdf.save(filename); // הכי אמין במובייל
-      } catch {
+    try {
+      if (isIOS || isAndroid) {
+        pdf.save(fname);
+      } else {
         const blob = pdf.output('blob');
         const url = URL.createObjectURL(blob);
-        location.href = url; // פותח באותה הלשונית
+        window.open(url, '_blank', 'noopener');
         setTimeout(()=>URL.revokeObjectURL(url), 60000);
       }
-    } else {
-      // בדסקטופ: לפתוח בטאב חדש כרגיל
-      const blob = pdf.output('blob');
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank', 'noopener'); // יעבוד בלי חסימה
-      setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    } finally {
+      document.body.removeChild(mount);
     }
-
-    // ניקוי
-    document.body.removeChild(mount);
   }
 
+});
 
 /* Swipe to start: גרירה RTL */
 function initSwipeToStart(track, knob, progressEl, onComplete){
