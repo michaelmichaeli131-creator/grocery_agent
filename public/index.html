@@ -189,7 +189,14 @@ a{color:#9ecbff;text-decoration:none}
 .chip .close{background:transparent;border:none;color:#9fb6ff;cursor:pointer;font-size:16px;line-height:1}
 .add-row{display:flex;gap:10px;margin-top:10px;position:relative}
 .btn-secondary{background:transparent;color:#dbeafe;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:900;cursor:pointer}
-.dropdown{position:absolute;inset-inline-start:0;top:44px;right:0;left:0;background:rgba(2,6,23,.95);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);z-index:10;max-height:280px;overflow:auto}
+
+/* Dropdown של האוטוקומפליט */
+.dropdown{
+  position:absolute; inset-inline-start:0; top:44px; right:0; left:0;
+  background:rgba(2,6,23,.95); border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow); z-index:10; max-height:280px; overflow:auto;
+  display:none;
+}
 .opt{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .opt:hover,.opt.active{background:rgba(59,130,246,.12)}
 .opt .left{display:flex;flex-direction:column}
@@ -336,13 +343,16 @@ a{color:#9ecbff;text-decoration:none}
     <div class="page">
       <div class="box">
         <div style="font-weight:800;font-size:20px">מה תרצה לקנות?</div>
-        <div class="muted" style="margin-top:6px">הוסף מוצרים בלחיצה. “קו 1.5 ל” → קוקה קולה 1.5 ל׳, “פסטה 500” → פסטה 500 גרם…</div>
+        <div class="muted" style="margin-top:6px">מוסיפים רק מהמאגרים (אוטוקומפליט). חיפוש חכם עובד גם מהאמצע.</div>
         <div id="chips" class="chips"></div>
+
         <div class="add-row">
           <input id="newItem" class="input" placeholder="למשל: קו 1.5 ל / פחית 330 / פסטה 500..." autocomplete="off" />
           <button id="addBtn" class="btn-secondary" type="button" title="הוסף לרשימה">+ הוסף</button>
-          <div id="dropdown" class="dropdown" style="display:none"></div>
+          <!-- חשוב: תיבת ההצעות שאותה הסקריפט ממלא -->
+          <div id="dropdown" class="dropdown"></div>
         </div>
+
         <div class="toggle" style="margin-top:12px">
           <input type="checkbox" id="verifiedOnly" checked />
           <label for="verifiedOnly">הצג רק חנויות מאומתות (ויזואלי)</label>
@@ -413,7 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const chipsEl = document.getElementById('chips');
   const newItemEl = document.getElementById('newItem');
   const dropdown = document.getElementById('dropdown');
-  let items = []; // ← ריק כברירת מחדל
+
+  // מאגר הפריטים שנבחרו (רק מתוצאות הצעה!)
+  let items = []; // array of labels שנבחרו מהצעות בלבד
 
   const resultsEl = document.getElementById('results');
   const loadingEl = document.getElementById('loading');
@@ -498,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Chips UI
+  // ====== Chips UI ======
   function renderChips(){
     chipsEl.innerHTML = "";
     items.forEach((it,i)=>{
@@ -511,65 +523,90 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderChips();
 
-  document.getElementById('addBtn').onclick = ()=>{
-    const v = (newItemEl.value||'').trim();
-    if(!v) return shake(newItemEl);
-    items.push(v);
+  // ====== Autocomplete (רק ממאגר; אין הוספה חופשית) ======
+  let currentSuggestions = [];
+  let activeIdx = -1;
+
+  async function fetchSuggestions(q){
+    const url = `/api/suggest?q=${encodeURIComponent(q)}&limit=12`;
+    const res = await fetch(url);
+    if(!res.ok) return [];
+    const data = await res.json().catch(()=>({}));
+    return Array.isArray(data.suggestions) ? data.suggestions : [];
+  }
+
+  function showDropdown(list){
+    currentSuggestions = list;
+    if (!list.length){ hideDropdown(); return; }
+    dropdown.innerHTML = list.map((s,i)=>(`
+      <div class="opt" data-i="${i}">
+        <div class="left">
+          <div class="label">${esc(s.label)}</div>
+          <div class="meta">${esc(s.canonical||'')} ${s.default_size? '• '+esc(s.default_size):''}${(s.tags||[]).includes('LocalDB')?' • מאגר מקומי':''}</div>
+        </div>
+        <div>${s.brand? esc(s.brand):''}</div>
+      </div>
+    `)).join('');
+    dropdown.style.display = 'block';
+    activeIdx = -1;
+
+    dropdown.querySelectorAll('.opt').forEach(opt=>{
+      opt.addEventListener('click', ()=>{
+        const i = Number(opt.getAttribute('data-i'));
+        addSuggestionByIndex(i);
+      });
+    });
+  }
+
+  function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
+  function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; currentSuggestions=[]; }
+
+  function addSuggestionByIndex(i){
+    const picked = currentSuggestions[i];
+    if(!picked) return;
+    items.push(picked.label); // שומרים רק label לבקשה /api/plan
     newItemEl.value = '';
     hideDropdown();
     renderChips();
-  };
+  }
 
-  // Autocomplete
-  let activeIdx = -1;
   newItemEl.addEventListener('input', async ()=>{
     const q = newItemEl.value.trim();
-    if (!q) return hideDropdown();
+    if (!q){ hideDropdown(); return; }
     try{
-      const res = await fetch(`/api/suggest?q=${encodeURIComponent(q)}&limit=12`);
-      const data = await res.json();
-      const list = Array.isArray(data.suggestions) ? data.suggestions : [];
-      if (!list.length) return hideDropdown();
-      dropdown.innerHTML = list.map((s,i)=>(`
-        <div class="opt" data-i="${i}">
-          <div class="left">
-            <div class="label">${esc(s.label)}</div>
-            <div class="meta">${esc(s.canonical)} ${s.default_size? '• '+esc(s.default_size):''}${(s.tags||[]).includes('LocalDB')?' • מאגר מקומי':''}</div>
-          </div>
-          <div>${s.brand? esc(s.brand):''}</div>
-        </div>`)).join('');
-      dropdown.style.display = 'block';
-      activeIdx = -1;
-
-      dropdown.querySelectorAll('.opt').forEach(opt=>{
-        opt.addEventListener('click', ()=>{
-          const i = Number(opt.getAttribute('data-i'));
-          const picked = list[i];
-          if (!picked) return;
-          items.push(picked.label);
-          newItemEl.value = '';
-          hideDropdown();
-          renderChips();
-        });
-      });
+      const list = await fetchSuggestions(q);
+      showDropdown(list);
     }catch{ hideDropdown(); }
   });
+
+  // אין הוספה חופשית! Enter/כפתור מוסיפים הצעה בלבד
   newItemEl.addEventListener('keydown', (e)=>{
     if (dropdown.style.display !== 'block') return;
     const opts = Array.from(dropdown.querySelectorAll('.opt'));
     if (e.key === 'ArrowDown'){ e.preventDefault(); activeIdx = Math.min(opts.length-1, activeIdx+1); setActive(opts); }
     else if (e.key === 'ArrowUp'){ e.preventDefault(); activeIdx = Math.max(0, activeIdx-1); setActive(opts); }
-    else if (e.key === 'Enter'){ if (activeIdx >= 0){ e.preventDefault(); opts[activeIdx].click(); } }
-    else if (e.key === 'Escape'){ hideDropdown(); }
+    else if (e.key === 'Enter'){
+      e.preventDefault();
+      if (activeIdx >= 0) addSuggestionByIndex(activeIdx);
+      else if (opts.length) addSuggestionByIndex(0);
+    } else if (e.key === 'Escape'){ hideDropdown(); }
   });
-  function setActive(opts){ opts.forEach((el,i)=> el.classList.toggle('active', i===activeIdx)); }
-  function hideDropdown(){ dropdown.style.display='none'; dropdown.innerHTML=''; activeIdx=-1; }
+
+  // כפתור “+ הוסף” — יבחר את ההצעה הראשונה אם קיימת, אחרת ניעור
+  document.getElementById('addBtn').onclick = ()=>{
+    if (currentSuggestions.length){ addSuggestionByIndex(Math.max(0, activeIdx)); }
+    else shake(newItemEl);
+  };
+
+  // סגירת dropdown בלחיצה בחוץ
+  document.addEventListener('click', (e)=>{
+    if (!dropdown.contains(e.target) && e.target !== newItemEl) hideDropdown();
+  });
 
   // כשיש תוצאות — הסתר CTA (ונשאיר padding)
   const resultsObserver = new MutationObserver(() => {
     const hasResults = resultsEl.children.length > 0 || resultsEl.textContent.trim().length > 0;
-    if (hasResults) cta.classList.remove('show'); // נסיר את הכפתור אחרי תוצאות
-    // padding נשאר בדפים הקודמים; לדף תוצאות כבר אין צורך כי הכפתור הוסר
+    if (hasResults) cta.classList.remove('show');
     setPagesPaddingBottom(false);
   });
   resultsObserver.observe(resultsEl, { childList:true, subtree:true, characterData:true });
@@ -755,7 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading();
   }
 
-  /* ===== PDF (תמונה מ־HTML כדי לשמור עברית תקינה, עם לוגו קטן ורווח) ===== */
+  /* ===== PDF (תמונה מ־HTML כדי לשמור עברית תקינה) ===== */
   async function generateShoppingListPdf(b){
     const items = Array.isArray(b.breakdown) ? b.breakdown : [];
     const neat = items

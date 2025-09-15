@@ -5,7 +5,48 @@ const chips = $("#chips");
 const newItem = $("#newItem");
 const results = $("#results");
 
+// --- Strict add: only allow items from autocomplete (server-backed) ---
+async function fetchSuggestions(q, limit=12){
+  const r = await fetch(`/api/suggest?q=${encodeURIComponent(q)}&limit=${limit}`);
+  const j = await r.json();
+  return (j && j.ok && Array.isArray(j.suggestions)) ? j.suggestions : [];
+}
+function tokensOf(s){
+  return (s||"").toLowerCase().replace(/[\"'`״׳.,()\-–—_/]/g," ").replace(/\s+/g," ").trim().split(" ").filter(Boolean);
+}
+function scoreTokens(query, candidate){
+  const tq = new Set(tokensOf(query));
+  const tc = new Set(tokensOf(candidate));
+  if (!tc.size) return 0;
+  let inter = 0;
+  for (const t of tq) if (tc.has(t)) inter++;
+  const jacc = inter / (tq.size + tc.size - inter || 1);
+  const str = candidate.toLowerCase(), ql = (query||"").toLowerCase();
+  const bonus = (str.includes(ql) ? 0.1 : 0);
+  return jacc + bonus;
+}
+// Validate or map to best suggestion; returns null if none.
+async function validateOrMapItem(inputText){
+  const suggs = await fetchSuggestions(inputText, 12);
+  if (!suggs.length) return null;
+  let best = suggs[0], bestScore = -1;
+  for (const s of suggs){
+    const label = typeof s === "string" ? s : (s.label || s.canonical || "");
+    const sc = scoreTokens(inputText, label);
+    if (sc > bestScore){ bestScore = sc; best = s; }
+  }
+  if (bestScore < 0.25) return null;
+  return typeof best === "string" ? best : (best.label || best.canonical || best.id || null);
+}
+
+// ברירת מחדל (אפשר למחוק אם רוצים להתחיל מרשימה ריקה)
 let items = ["קוקה קולה 1.5 ליטר", "מים מינרלים 1.5 ליטר", "פסטה"];
+
+function escapeHtml(s) {
+  return (s ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
 
 function renderChips() {
   chips.innerHTML = "";
@@ -20,40 +61,81 @@ function renderChips() {
     chips.appendChild(chip);
   });
 }
-renderChips();
 
-$("#addBtn").onclick = () => {
-  const v = (newItem.value || "").trim();
-  if (!v) return;
-  items.push(v);
+const dropdown = $("#dropdown");
+let dropdownItems = [];
+
+async function updateDropdown(q) {
+  if (!q.trim()) {
+    dropdown.style.display = "none";
+    return;
+  }
+  try {
+    const data = await fetch(`/api/suggest?q=${encodeURIComponent(q)}&limit=12`).then(r=>r.json());
+    if (!data.ok) throw new Error("suggest failed");
+    dropdownItems = data.suggestions.map(s => typeof s === "string" ? s : (s.label || s.canonical || s.id || ""));
+    if (!dropdownItems.length) {
+      dropdown.style.display = "none";
+      return;
+    }
+    dropdown.innerHTML = dropdownItems.map(it => `<div class="opt">${escapeHtml(it)}</div>`).join("");
+    dropdown.querySelectorAll(".opt").forEach((el) => {
+      el.onclick = () => {
+        const label = el.textContent.trim();
+        if (label && !items.includes(label)) {
+          items.push(label);
+          renderChips();
+        }
+        newItem.value = "";
+        dropdown.style.display = "none";
+      };
+    });
+    const rect = newItem.getBoundingClientRect();
+    dropdown.style.left = rect.left + "px";
+    dropdown.style.top = (rect.bottom + window.scrollY) + "px";
+    dropdown.style.width = rect.width + "px";
+    dropdown.style.display = "block";
+  } catch {
+    dropdown.style.display = "none";
+  }
+}
+
+// הוספה – קפדנית (רק ערכים שמגיעים מהצעות השרת)
+const addBtn = $("#addBtn");
+addBtn.onclick = async () => {
+  const toAddRaw = newItem.value.trim();
+  if (!toAddRaw) return;
+  const mapped = await validateOrMapItem(toAddRaw);
+  if (!mapped){
+    alert("המוצר לא נמצא במאגר. בחר/י הצעה מאוטוקומפליט.");
+    return;
+  }
+  if (!items.includes(mapped)) items.push(mapped);
   newItem.value = "";
+  dropdown.style.display = "none";
   renderChips();
 };
 
-$("#searchBtn")?.onclick = async () => {
-  const address = ($("#address")?.value || "").trim();
-  const radiusKm = Number($("#radius")?.value || 15);
-  if (!address) {
-    results.innerHTML = `<div class="error">נא להזין כתובת</div>`;
-    return;
-  }
-  showSkeleton();
+newItem.addEventListener("input", (e) => {
+  updateDropdown(newItem.value);
+});
 
-  try {
-    const res = await fetch("/api/plan", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ address, radiusKm, items }),
-    });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "Internal Error");
-
-    renderResults(data.baskets);
-    renderMap(data.baskets);
-  } catch (e) {
-    results.innerHTML = `<div class="error">שגיאה: ${escapeHtml(e.message || String(e))}</div>`;
+newItem.addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter'){
+    e.preventDefault();
+    const toAddRaw = newItem.value.trim();
+    if (!toAddRaw) return;
+    const mapped = await validateOrMapItem(toAddRaw);
+    if (!mapped){
+      alert("המוצר לא נמצא במאגר. בחר/י הצעה מאוטוקומפליט.");
+      return;
+    }
+    if (!items.includes(mapped)) items.push(mapped);
+    newItem.value = "";
+    dropdown.style.display = "none";
+    renderChips();
   }
-};
+});
 
 function showSkeleton() {
   results.innerHTML = `
@@ -65,76 +147,84 @@ function showSkeleton() {
 
 function renderResults(baskets) {
   if (!baskets?.length) {
-    results.innerHTML = `<div class="error">לא נמצאו תוצאות</div>`;
+    results.innerHTML = `<div class="error">
+      לא נמצאו תוצאות בסביבה/פריטים שנבחרו. נסה/י להגדיל רדיוס או לשנות פריטים.
+    </div>`;
     return;
   }
-  let html = "";
-  baskets.forEach((b, i) => {
-    const addr = b.location?.address ? `<div class="subtext">${escapeHtml(b.location.address)}</div>` : "";
-    html += `
-      <section class="shop">
-        <h3>#${i + 1} ${escapeHtml(b.shop_display_name)} — ${fmt(b.total)} ₪</h3>
-        ${addr}
-        <details ${i === 0 ? "open" : ""}>
-          <summary>סל מלא</summary>
-          <ul>
-            ${b.breakdown.map(renderLine).join("")}
-          </ul>
-        </details>
-      </section>
+
+  const cards = baskets.map((b, i) => {
+    const itemsHtml = (b.breakdown || []).map(item => `
+      <div class="row">
+        <div class="name">${escapeHtml(item.label || item.name || "")}${item.substitute ? ' <span class="pill pill-sub">תחליף קרוב</span>' : ''}</div>
+        <div class="price">${typeof item.price === "number" ? (item.price.toFixed(1) + " ₪") : "-"}</div>
+        ${item.size_text ? `<div class="size">${escapeHtml(item.size_text)}</div>` : ""}
+      </div>
+    `).join("");
+
+    const mapId = `map-${i}`;
+    const mapHtml = (typeof b.lat==="number" && typeof b.lng==="number") ? `<div id="${mapId}" class="mini-map"></div>` : '';
+
+    return `
+      <div class="card">
+        <div class="card-head">
+          <div class="title">${escapeHtml(b.chain || "רשת")}</div>
+          <div class="meta">
+            <span class="pill">${typeof b.total==="number" ? (b.total.toFixed(1) + " ₪") : "-"}</span>
+            ${typeof b.distKm==="number" ? `<span class="pill">${b.distKm} ק״מ</span>` : ""}
+            ${typeof b.coverage==="number" ? `<span class="pill">${Math.round(b.coverage*100)}% כיסוי</span>` : ""}
+          </div>
+        </div>
+        <div class="card-body">
+          ${itemsHtml}
+          ${mapHtml}
+        </div>
+      </div>
     `;
-  });
-  results.innerHTML = html;
-}
+  }).join("");
 
-function renderLine(p) {
-  const price = p.price == null || Number.isNaN(p.price) ? "—" : fmt(p.price);
-  const desc = p.description ? `<span class="subtext"> — ${escapeHtml(p.description)}</span>` : "";
-  const sub = p.substitute ? ` <span class="badge sub">תחליף</span>` : "";
-  const link = p.link ? ` <a href="${p.link}" target="_blank" rel="noopener">קישור</a>` : "";
-  const srcPieces = [];
-  if (p.merchant) srcPieces.push(escapeHtml(p.merchant));
-  if (p.domain) srcPieces.push(escapeHtml(p.domain));
-  const source = srcPieces.length ? ` <span class="badge src">${srcPieces.join(" • ")}</span>` : "";
+  results.innerHTML = cards;
 
-  return `<li>
-    <b>${escapeHtml(p.item)}</b>: ${escapeHtml(p.chosen_title || p.item)}${desc}${sub}
-    — ${price} ${p.currency || ""}${link}${source}
-  </li>`;
-}
-
-/* ---------- Map (Leaflet + OSM) ---------- */
-let map, markersLayer;
-function ensureMap() {
-  if (map) return map;
-  map = L.map("map");
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; OpenStreetMap',
-    maxZoom: 19,
-  }).addTo(map);
-  markersLayer = L.layerGroup().addTo(map);
-  return map;
-}
-
-function renderMap(baskets) {
-  ensureMap();
-  markersLayer.clearLayers();
-  const bounds = [];
-
+  // מפות זעירות
   baskets.forEach((b, i) => {
-    const loc = b.location || {};
-    if (typeof loc.lat !== "number" || typeof loc.lng !== "number") return;
-    const m = L.marker([loc.lat, loc.lng]).addTo(markersLayer);
-    const addr = loc.address ? ` — ${escapeHtml(loc.address)}` : "";
-    m.bindPopup(`<b>#${i + 1} ${escapeHtml(b.shop_display_name)}</b>${addr}<br/>סה״כ: ${fmt(b.total)} ₪`);
-    bounds.push([loc.lat, loc.lng]);
+    if (typeof b.lat==="number" && typeof b.lng==="number") {
+      const map = L.map(`map-${i}`, { attributionControl:false, zoomControl:false }).setView([b.lat, b.lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+      L.marker([b.lat, b.lng]).addTo(map);
+    }
   });
-
-  if (bounds.length) map.fitBounds(bounds, { padding: [24, 24] });
 }
 
-/* ---------- Helpers ---------- */
-function fmt(n){ return Number(n).toFixed(2) }
-function escapeHtml(s){
-  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-}
+async function buildPlan() {
+  const address = $("#address")?.value?.trim() || "";
+  const verifiedOnly = $("#verifiedOnly")?.checked ?? true;
+  const radius = Number($("#radius")?.value || 10);
+  showSkeleton();
+  try {
+    const body = {
+      address,
+      radiusKm: radius,
+      items: items.map(n => ({ name: n })),
+      verifiedOnly
+    };
+    const res = await fetch("/api/plan", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(r => r.json());
+
+    if (!res.ok) throw new Error(res.error || "plan failed");
+    renderResults(res.baskets || []);
+  } catch (e) {
+    results.innerHTML = `<div class="error">שגיאה: ${escapeHtml(e.message || String(e))}</div>`;
+  }
+};
+
+$("#next")?.addEventListener("click", buildPlan);
+$("#cta")?.addEventListener("click", () => {
+  document.querySelector("#s0")?.classList.remove("active");
+  document.querySelector("#s2")?.classList.add("active");
+});
+
+renderChips();
+ss

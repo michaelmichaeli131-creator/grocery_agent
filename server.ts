@@ -1,4 +1,4 @@
-// server.ts — שרת Deno מלא: סטטי + API + מאגר מקומי + אוטוקומפליט בלי כפילויות + הערכת מחירים רק כשאין נתון + Top-4
+// server.ts — שרת Deno מלא: סטטי + API + מאגר מקומי + אוטוקומפליט "מהאמצע" + התאמות דומות + אומדן מחיר רק כשאין נתון
 ////////////////////////////////////////////////////////////////
 // 0) ENV + CONFIG
 ////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@ if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
 
 const PORT = Number(Deno.env.get("PORT") ?? "8000");
 const GOOGLE_API_KEY   = Deno.env.get("GOOGLE_API_KEY")   ?? "";
-const SERPAPI_KEY      = Deno.env.get("SERPAPI_KEY")      ?? ""; // לא משתמשים יותר, נשאר תאימות
+const SERPAPI_KEY      = Deno.env.get("SERPAPI_KEY")      ?? ""; // תאימות לאחור (לא בשימוש)
 const OPENAI_API_KEY   = Deno.env.get("OPENAI_API_KEY")   ?? "";
 const OPENAI_MODEL     = Deno.env.get("OPENAI_MODEL")     ?? "gpt-4o-mini";
 
@@ -21,6 +21,7 @@ const PLACES_TTL_MS    = Number(Deno.env.get("PLACES_TTL_MS")?? "900000");
 const MAX_SUPERMARKETS = Number(Deno.env.get("MAX_SUPERMARKETS") ?? "20");
 const MAX_RESULTS_PER_CHAIN = Number(Deno.env.get("MAX_RESULTS_PER_CHAIN") ?? "10");
 const MOCK_MODE        = (Deno.env.get("MOCK_MODE") ?? "0") === "1";
+const ALLOW_PRODUCTS_JSON = (Deno.env.get("ALLOW_PRODUCTS_JSON") ?? "0") === "1"; // לא חובה
 
 ////////////////////////////////////////////////////////////////
 // 1) UTILS: JSON, CORS, LOG, ID, CACHE, RATE LIMIT, NET, DIST
@@ -119,9 +120,7 @@ function haversineKm(a: {lat:number; lng:number}, b: {lat:number; lng:number}) {
 }
 
 // עיגול לחצי שקל
-function roundToHalf(n: number) {
-  return Math.round(n * 2) / 2;
-}
+function roundToHalf(n: number) { return Math.round(n * 2) / 2; }
 
 ////////////////////////////////////////////////////////////////
 // 2) PRODUCTS fallback (products.json) — לא חובה
@@ -148,9 +147,7 @@ try {
 ////////////////////////////////////////////////////////////////
 type LocalRow = { name: string; price: number; size?: string; brand?: string; chain?: string };
 
-function stripBOM(s: string) {
-  return s.charCodeAt(0) === 0xFEFF ? s.slice(1) : s;
-}
+function stripBOM(s: string) { return s.charCodeAt(0) === 0xFEFF ? s.slice(1) : s; }
 function detectDelimiter(line: string) {
   if (line.includes("\t")) return "\t";
   if (line.includes(",")) return ",";
@@ -168,9 +165,7 @@ function smartSplit(line: string, delim: string): string[] {
   out.push(cur);
   return out.map(s=>s.trim());
 }
-function normalizeKey(s: string) {
-  return s.trim().toLowerCase().replace(/\s+/g," ");
-}
+function normalizeKey(s: string) { return s.trim().toLowerCase().replace(/\s+/g," "); }
 function pickIndex(headers: string[], candidates: string[]) {
   const norm = headers.map(normalizeKey);
   for (const c of candidates) {
@@ -194,7 +189,7 @@ async function readLocalTSV(path: string, chainHint?: string): Promise<LocalRow[
     let iPrice = pickIndex(headers, ["itemprice","price","מחיר"]);
     let iSize  = pickIndex(headers, ["size","גודל","נפח","משקל"]);
     let iBrand = pickIndex(headers, ["brand","מותג"]);
-    if (iName < 0) { iName = 0; } // no header → col 0 is name
+    if (iName < 0) { iName = 0; }
     const out: LocalRow[] = [];
     for (let i=1;i<lines.length;i++){
       const cols = smartSplit(lines[i], delim);
@@ -204,7 +199,7 @@ async function readLocalTSV(path: string, chainHint?: string): Promise<LocalRow[
       const price = isFinite(priceNum) ? priceNum : NaN;
       out.push({
         name,
-        price: price,
+        price,
         size:  iSize>=0  ? (cols[iSize]  ?? "").trim() : undefined,
         brand: iBrand>=0 ? (cols[iBrand] ?? "").trim() : undefined,
         chain: chainHint
@@ -212,9 +207,7 @@ async function readLocalTSV(path: string, chainHint?: string): Promise<LocalRow[
     }
     out.sort((a,b)=> a.name.localeCompare(b.name,"he"));
     return out;
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 // ==== מיפוי רשתות (aliases) ====
@@ -269,7 +262,7 @@ for await (const f of Deno.readDir("public/data")) {
 // ==== אינדקס כולל לכל הרשתות ====
 const LOCAL_ALL: LocalRow[] = Object.values(LOCAL_DB).flat().sort((a,b)=> a.name.localeCompare(b.name,"he"));
 
-// ==== פונקציות binsearch על מערך ממוין ====
+// ==== binsearch על מערך ממוין (prefix only) ====
 function binFindExactOrPrefix(sorted: LocalRow[], q: string): LocalRow | null {
   if (!sorted?.length || !q) return null;
   const target = q.trim().toLowerCase();
@@ -287,7 +280,6 @@ function binCollectPrefix(sorted: LocalRow[], q: string, limit=20): LocalRow[] {
   const base = binFindExactOrPrefix(sorted, q);
   if (!base) return [];
   const target = q.trim().toLowerCase();
-  // lower bound for prefix
   let lo=0, hi=sorted.length;
   while (lo<hi){
     const mid=(lo+hi)>>1;
@@ -330,7 +322,7 @@ for (const r of LOCAL_ALL) {
 }
 
 ////////////////////////////////////////////////////////////////
-// 4) TEXT NORMALIZATION + AUTOCOMPLETE (dedup)
+// 4) TEXT NORMALIZATION + SIMILARITY + AUTOCOMPLETE
 ////////////////////////////////////////////////////////////////
 function norm(s: string) {
   return (s||"")
@@ -340,6 +332,107 @@ function norm(s: string) {
     .replace(/[^\p{L}\p{N}\s.×x%–-]/gu," ")
     .replace(/\s+/g," ")
     .trim();
+}
+function trigramsText(s: string): Set<string> {
+  const n = norm(s).replace(/\s+/g, " ");
+  const out = new Set<string>();
+  if (n.length <= 3) { if (n) out.add(n); return out; }
+  for (let i=0; i<=n.length-3; i++) out.add(n.slice(i, i+3));
+  return out;
+}
+function jaccardSet(a: Set<string>, b: Set<string>) {
+  const inter = [...a].filter(x=>b.has(x)).length;
+  const uni = new Set([...a, ...b]).size || 1;
+  return inter/uni;
+}
+function tokens(s: string){ return norm(s).split(" ").filter(Boolean); }
+function tokenJaccard(a: string, b: string){
+  const A = new Set(tokens(a)), B = new Set(tokens(b));
+  const inter = [...A].filter(x=>B.has(x)).length;
+  const uni = new Set([...A, ...B]).size || 1;
+  return inter/uni;
+}
+function scoreNameQuery(q: string, name: string){
+  const qn = norm(q), nn = norm(name);
+  let s = 0;
+  if (!qn || !nn) return 0;
+  if (nn.startsWith(qn)) s += 0.5;               // prefix
+  if (nn.includes(qn))  s += 0.35;               // substring
+  s += 0.6 * jaccardSet(trigramsText(qn), trigramsText(nn)); // trigram
+  s += 0.3 * tokenJaccard(qn, nn);               // token overlap
+  return Math.min(1, s);
+}
+
+// ---- אוטוקומפליט DB-only: prefix → substring → fuzzy ----
+function suggestFromLocalSmart(q: string, limit = 12){
+  const out: ProductRow[] = [];
+  if (!q || !q.trim() || LOCAL_ALL.length===0) return out;
+
+  const qn = norm(q);
+
+  // 1) Prefix
+  const pref = binCollectPrefix(LOCAL_ALL, qn, limit*2);
+  const prefUniq: Record<string, LocalRow> = {};
+  for (const r of pref) {
+    const k = normName(r.name);
+    if (!prefUniq[k]) prefUniq[k] = r;
+  }
+  for (const r of Object.values(prefUniq)) {
+    out.push({ id:`local:${r.name}`, label:r.name, canonical:r.name, default_size:r.size, brand:r.brand, tags:["LocalDB"] });
+    if (out.length >= limit) return out;
+  }
+
+  // 2) Substring "מהאמצע"
+  if (out.length < limit) {
+    let scanned = 0, cap = Math.min(LOCAL_ALL.length, 8000);
+    const uniq: Record<string, LocalRow> = {};
+    for (const r of LOCAL_ALL) {
+      scanned++; if (scanned > cap) break;
+      const n = r.name.toLowerCase();
+      if (n.includes(qn)) {
+        const k = normName(r.name);
+        if (!uniq[k] && !prefUniq[k]) uniq[k] = r;
+      }
+      if (Object.keys(uniq).length >= limit*2) break;
+    }
+    for (const r of Object.values(uniq)) {
+      out.push({ id:`local:${r.name}`, label:r.name, canonical:r.name, default_size:r.size, brand:r.brand, tags:["LocalDB"] });
+      if (out.length >= limit) return out;
+    }
+  }
+
+  // 3) Fuzzy
+  if (out.length < limit) {
+    const scored: { r: LocalRow; s: number }[] = [];
+    let scanned = 0, cap = Math.min(LOCAL_ALL.length, 12000);
+    for (const r of LOCAL_ALL) {
+      scanned++; if (scanned > cap) break;
+      const s = scoreNameQuery(q, r.name);
+      if (s >= 0.42) scored.push({ r, s });
+    }
+    scored.sort((a,b)=> b.s - a.s);
+    for (const {r} of scored) {
+      const k = normName(r.name);
+      if (out.find(x => normName(x.label) === k)) continue;
+      out.push({ id:`local:${r.name}`, label:r.name, canonical:r.name, default_size:r.size, brand:r.brand, tags:["LocalDB"] });
+      if (out.length >= limit) break;
+    }
+  }
+
+  return out.slice(0, limit);
+}
+
+// products.json fallback (אופציונלי)
+function dedupSuggestions(list: ProductRow[]) {
+  const seen = new Set<string>();
+  const out: ProductRow[] = [];
+  for (const s of list) {
+    const key = normName(s.label || s.canonical || s.id);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(s);
+  }
+  return out;
 }
 function scoreRow(q: string, row: ProductRow) {
   const n = norm(q);
@@ -368,38 +461,9 @@ function suggestFromProducts(q: string, limit = 12) {
     .slice(0, limit)
     .map(x => x.r);
 }
-function dedupSuggestions(list: ProductRow[]) {
-  const seen = new Set<string>();
-  const out: ProductRow[] = [];
-  for (const s of list) {
-    const key = normName(s.label || s.canonical || s.id);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(s);
-  }
-  return out;
-}
-function suggestFromLocal(q: string, limit=12) {
-  if (!q || !q.trim() || LOCAL_ALL.length===0) return [];
-  const rows = binCollectPrefix(LOCAL_ALL, q, limit*2);
-  const uniq: Record<string, LocalRow> = {};
-  for (const r of rows) {
-    const k = normName(r.name);
-    if (!uniq[k]) uniq[k] = r;
-  }
-  const arr = Object.values(uniq).slice(0, limit);
-  return arr.map((r,i)=>({
-    id: `local_${i}_${r.name}`,
-    label: r.name,
-    canonical: r.name,
-    default_size: r.size,
-    brand: r.brand,
-    tags: ["LocalDB"]
-  }));
-}
 
 ////////////////////////////////////////////////////////////////
-// 5) MAPS (ג׳יאוקוד/חנויות קרובות) — בסיסי; אפשר להקל
+// 5) MAPS (ג׳יאוקוד/חנויות קרובות) — בסיסי; ניתן להקל/להחליף
 ////////////////////////////////////////////////////////////////
 type LatLng = { lat: number; lng: number };
 type NearbyShop = { chain: string; name: string; address?: string; lat: number; lng: number; place_id: string; rating?: number };
@@ -426,7 +490,7 @@ async function geocodeAddress(address: string, includeDebug = false): Promise<La
     provider = "nominatim";
     const nUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&addressdetails=0`;
     try {
-      const nArr = await safeJson(nUrl, { headers: { "User-Agent": "cartcompare-ai/1.0" } }, 2);
+      const nArr = await safeJson(nUrl, { headers: { "User-Agent": "aibasket/1.0" } }, 2);
       const first = Array.isArray(nArr) ? nArr[0] : null;
       if (first?.lat && first?.lon) loc = { lat: Number(first.lat), lng: Number(first.lon) };
       gData = { nominatim: first };
@@ -471,7 +535,6 @@ async function findNearbySupermarketsByLatLng(lat: number, lng: number, radiusKm
   const cached = cacheGet<NearbyShop[]>(ck);
   if (cached) return cached;
 
-  // אם אין Google API key—פשוט נחזיר רשימת "רשתות ידועות" בלי מיקום אמיתי
   if (!GOOGLE_API_KEY) {
     const pseudo: NearbyShop[] = Object.keys(CHAIN_MAP).slice(0, MAX_SUPERMARKETS).map((chain, i) => ({
       chain,
@@ -547,7 +610,7 @@ type LlmItemOut = {
   description?: string;
   unit_per_liter?: number;
   unit_per_kg?: number;
-  estimated?: boolean; // true אם זה מחיר מוערך (אין נתון בטבלה)
+  estimated?: boolean;
 };
 function computeUnits(e: LlmItemOut) {
   const price = e.price;
@@ -558,8 +621,8 @@ function computeUnits(e: LlmItemOut) {
   if ((k = m.match(/(\d{2,4})\s*ml/))) liters = Number(k[1]) / 1000;
   if ((k = m.match(/(\d+(?:\.\d+)?)\s*kg/))) kg = Number(k[1]);
   if ((k = m.match(/(\d{2,4})\s*g/))) kg = Number(k[1]) / 1000;
-  if (liters>0) e.unit_per_liter = price / liters;
-  if (kg>0) e.unit_per_kg = price / kg;
+  if (liters>0) e.unit_per_liter = +(price / liters).toFixed(2);
+  if (kg>0) e.unit_per_kg = +(price / kg).toFixed(2);
 }
 function mean(nums: number[]) { return nums.reduce((a,b)=>a+b,0) / nums.length; }
 
@@ -572,14 +635,14 @@ function averagePriceFromAll(item: string): number | undefined {
   return mean(nums);
 }
 
-// אומדן דטרמיניסטי (כשאין LLM או fallback), תמיד מעל הממוצע אם קיים, ועיגול לחצי
+// אומדן דטרמיניסטי (כשאין LLM)
 function estimatePriceDeterministic(avg?: number): number {
   const base = (typeof avg === 'number' && isFinite(avg)) ? avg : 10;
-  const bumped = base + Math.max(0.5, base * 0.08); // מעל הממוצע
+  const bumped = base + Math.max(0.5, base * 0.08);
   return roundToHalf(bumped);
 }
 
-// אומדן במחיר עם LLM (רק כשאין נתון), ומאכפים כללים
+// אומדן עם LLM (אם יש API key)
 async function estimatePriceWithLLM(item: string, avg?: number): Promise<{ price: number; note: string }> {
   if (!OPENAI_API_KEY) {
     return { price: estimatePriceDeterministic(avg), note: "estimated (deterministic)" };
@@ -613,27 +676,20 @@ Rules:
       headers: { "authorization": `Bearer ${OPENAI_API_KEY}`, "content-type": "application/json" },
       body: JSON.stringify(body)
     }).then(x=>x.json());
-
     const txt = r?.choices?.[0]?.message?.content ?? "";
     const parsed = JSON.parse(txt || "{}");
     let price = Number(parsed?.price);
     if (!isFinite(price) || price <= 0) price = estimatePriceDeterministic(avg);
-
-    // אכיפה מקומית: עיגול לחצי והבטחה לא לרדת מהממוצע
     price = roundToHalf(price);
     if (typeof avg === "number" && isFinite(avg) && price < avg) price = roundToHalf(avg + 0.5);
-
     return { price, note: "estimated (llm)" };
   } catch {
     return { price: estimatePriceDeterministic(avg), note: "estimated (fallback)" };
   }
 }
-
-// עטיפת אומדן לפריט/רשת
 async function estimatePriceForItem(item: string, chain: string): Promise<LlmItemOut> {
   const baseAvg = averagePriceFromAll(item);
   const { price, note } = await estimatePriceWithLLM(item, baseAvg);
-
   const out: LlmItemOut = {
     item,
     product_name: item,
@@ -649,6 +705,45 @@ async function estimatePriceForItem(item: string, chain: string): Promise<LlmIte
   return out;
 }
 
+////////////////////////////////////////////////////////////////
+// 7) RESOLVE קנוני + דומה בתוך שרשרת
+////////////////////////////////////////////////////////////////
+function resolveCanonicalFromDB(query: string): { canonicalKey: string; displayName: string; score: number } | null {
+  const qn = norm(query);
+  if (!qn) return null;
+
+  // exact על key מנורמל
+  const exactKey = normName(query);
+  if (LOCAL_ALL_MAP.has(exactKey)) {
+    const rows = LOCAL_ALL_MAP.get(exactKey)!;
+    const display = rows[0]?.name || query;
+    return { canonicalKey: exactKey, displayName: display, score: 0.99 };
+  }
+
+  // fuzzy על המפתחות (לפי שם ראשון של הפריט בכל key)
+  let best: { k: string; name: string; s: number } | null = null;
+  let scanned = 0, cap = Math.min(LOCAL_ALL_MAP.size, 20000);
+  for (const [k, rows] of LOCAL_ALL_MAP.entries()) {
+    scanned++; if (scanned > cap) break;
+    const candidateName = rows[0]?.name || k;
+    const s = scoreNameQuery(qn, candidateName);
+    if (s >= 0.5 && (!best || s > best.s)) best = { k, name: candidateName, s };
+  }
+  if (!best) return null;
+  return { canonicalKey: best.k, displayName: best.name, score: best.s };
+}
+function findSimilarInChain(localMap: Map<string, LocalRow>, canonicalDisplayName: string) {
+  let best: { row: LocalRow; s: number } | null = null;
+  for (const [, row] of localMap.entries()) {
+    const s = scoreNameQuery(canonicalDisplayName, row.name);
+    if (s >= 0.75 && (!best || s > best.s)) best = { row, s };
+  }
+  return best; // או null
+}
+
+////////////////////////////////////////////////////////////////
+// 8) PLAN HANDLER
+////////////////////////////////////////////////////////////////
 type PlanReq = {
   address?: string;
   lat?: number;
@@ -683,49 +778,97 @@ async function planHandler(req: PlanReq) {
 
   const userLoc = { lat, lng };
   const radiusKm = Number(req.radiusKm || 10);
-  const shops = await findNearbySupermarketsByLatLng(lat, lng, radiusKm);
-  if (!shops.length) return { ok:true, baskets: [], debug: include_debug ? { centerFrom, lat, lng } : undefined };
+  const near = await findNearbySupermarketsByLatLng(lat, lng, radiusKm);
+  if (!near.length) return { ok:true, baskets: [], debug: include_debug ? { centerFrom, lat, lng } : undefined };
 
   const userItems = Array.isArray(req.items) ? req.items.filter(Boolean) : [];
-  if (!userItems.length) return json({ ok:false, error:"No items", code:"NO_ITEMS" }, 422);
+  if (!userItems.length) return { ok:false, error:"No items", code:"NO_ITEMS" };
 
   const baskets: Basket[] = [];
-  const resolveCache = new Map<string, LlmItemOut>(); // עקביות באותה ריצה: chain|normItem → result
+  const resolveCache = new Map<string, LlmItemOut>(); // chain|canonicalKey → result
 
-  for (const s of shops) {
+  for (const s of near) {
     const chain = s.chain || "Unknown";
     const breakdown: LlmItemOut[] = [];
     const localMap = LOCAL_MAP[chain];
 
     for (const item of userItems) {
-      const nkey = normName(item);
-      const cacheKey = `${chain}|${nkey}`;
+      // **לא מכניסים פריט שלא קיים במאגר**
+      const resolved = resolveCanonicalFromDB(item);
+      if (!resolved) {
+        breakdown.push({
+          item,
+          product_name: item,
+          description: "לא נמצא במאגר (אין התאמה)",
+          confidence_pct: 0,
+          substitute: false,
+          estimated: false
+        });
+        continue;
+      }
+
+      const { canonicalKey, displayName, score: nameScore } = resolved;
+      const cacheKey = `${chain}|${canonicalKey}`;
       const cached = resolveCache.get(cacheKey);
       if (cached) { breakdown.push(cached); continue; }
 
-      // קודם כל: ניסיון נתון מהרשת עצמה
-      const localHit = localMap?.get(nkey);
-      if (localHit && isFinite(localHit.price)) {
+      const exact = localMap?.get(canonicalKey);
+      let picked: LocalRow | null = exact ?? null;
+      let pickedScore = exact ? 1 : 0;
+
+      if (!picked && localMap) {
+        const sim = findSimilarInChain(localMap, displayName);
+        if (sim) { picked = sim.row; pickedScore = sim.s; }
+      }
+
+      if (picked) {
+        const priceNum = isFinite(picked.price) ? roundToHalf(picked.price) : NaN;
         const out: LlmItemOut = {
           item,
-          product_name: localHit.name,
-          price: roundToHalf(localHit.price), // גם נתון קיים נציג מעוגל ל-0.5 אם תרצה עקביות
+          product_name: picked.name,
+          price: isFinite(priceNum) ? priceNum : undefined,
           currency: "₪",
           merchant: chain,
-          confidence_pct: 100,
-          substitute: false,
-          size_text: localHit.size
+          confidence_pct: Math.round(Math.max(nameScore, pickedScore) * 100),
+          substitute: !exact,
+          size_text: picked.size,
+          estimated: !isFinite(priceNum)
         };
         computeUnits(out);
+
+        // אין מחיר בחנות? נאמד (מותר—הפריט קיים במאגר)
+        if (!isFinite(priceNum)) {
+          const avg = averagePriceFromAll(displayName);
+          const est = await estimatePriceWithLLM(displayName, avg);
+          out.price = est.price;
+          out.description = `מחיר מוערך (אין מחיר לחנות)`;
+          out.estimated = true;
+        }
+
         resolveCache.set(cacheKey, out);
         breakdown.push(out);
         continue;
       }
 
-      // אין נתון—הערכה בלבד (LLM/ממוצע; תמיד מעל ממוצע אם קיים; עיגול לחצי)
-      const est = await estimatePriceForItem(item, chain);
-      resolveCache.set(cacheKey, est);
-      breakdown.push(est);
+      // אין התאמה בשרשרת (אפילו דומה) — הפריט כן במאגר → אפשר אומדן לחנות זו
+      {
+        const avg = averagePriceFromAll(displayName);
+        const est = await estimatePriceWithLLM(displayName, avg);
+        const out: LlmItemOut = {
+          item,
+          product_name: displayName,
+          price: est.price,
+          currency: "₪",
+          merchant: chain,
+          confidence_pct: Math.round(nameScore * 100),
+          substitute: true,
+          description: "מחיר מוערך (אין התאמה בשרשרת; מבוסס מאגר כללי)",
+          estimated: true
+        };
+        computeUnits(out);
+        resolveCache.set(cacheKey, out);
+        breakdown.push(out);
+      }
     }
 
     // סיכומים
@@ -749,7 +892,7 @@ async function planHandler(req: PlanReq) {
     });
   }
 
-  // מיון לפי זול→כיסוי→דיוק
+  // מיון: זול → כיסוי → דיוק
   baskets.sort((a,b)=>{
     const ta = typeof a.total === "number" ? a.total : Number.POSITIVE_INFINITY;
     const tb = typeof b.total === "number" ? b.total : Number.POSITIVE_INFINITY;
@@ -760,14 +903,14 @@ async function planHandler(req: PlanReq) {
     return mb - ma;
   });
 
-  // נביא רק את 4 המקומות הזולים ביותר (לבקשתך לשיפור מהירות/בהירות)
+  // Top-4 לשיפור בהירות/ביצועים
   const top4 = baskets.slice(0, 4);
 
-  return { ok: true, baskets: top4, debug: include_debug ? { centerFrom, lat, lng, shops } : undefined };
+  return { ok: true, baskets: top4, debug: include_debug ? { centerFrom, lat, lng, shops: near } : undefined };
 }
 
 ////////////////////////////////////////////////////////////////
-// 7) ROUTER: APIs + Static
+// 9) ROUTER: APIs + Static
 ////////////////////////////////////////////////////////////////
 async function handleApi(req: Request) {
   const pre = corsPreflight(req);
@@ -796,8 +939,12 @@ async function handleApi(req: Request) {
   if (pathname === "/api/suggest") {
     const q = searchParams.get("q") ?? "";
     const limit = Number(searchParams.get("limit") ?? "12");
-    const local = suggestFromLocal(q, limit);
-    if (local.length >= limit) return json({ ok:true, suggestions: dedupSuggestions(local).slice(0,limit) });
+
+    const local = suggestFromLocalSmart(q, limit);
+    if (!ALLOW_PRODUCTS_JSON) return json({ ok:true, suggestions: local });
+
+    // אופציונלי: השלמה מ-products.json אם רוצים
+    if (local.length >= limit) return json({ ok:true, suggestions: local });
     const rest = suggestFromProducts(q, Math.max(0, limit - local.length));
     const merged = dedupSuggestions([...local, ...rest]);
     return json({ ok:true, suggestions: merged.slice(0,limit) });
